@@ -44,6 +44,7 @@
 		C000003B /* SwipeCardContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = C000000B /* SwipeCardContent.swift */; };
 		C000003C /* ConfettiView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C000000C /* ConfettiView.swift */; };
 		C000003D /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = C000000D /* Theme.swift */; };
+		C000003E /* GHBottomBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = C000000E /* GHBottomBar.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -100,6 +101,7 @@
 		C000000B /* SwipeCardContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeCardContent.swift; sourceTree = "<group>"; };
 		C000000C /* ConfettiView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfettiView.swift; sourceTree = "<group>"; };
 		C000000D /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		C000000E /* GHBottomBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GHBottomBar.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -243,6 +245,7 @@
 			isa = PBXGroup;
 			children = (
 				C000000D /* Theme.swift */,
+				C000000E /* GHBottomBar.swift */,
 			);
 			path = Theme;
 			sourceTree = "<group>";
@@ -374,6 +377,7 @@
 				C000003B /* SwipeCardContent.swift in Sources */,
 				C000003C /* ConfettiView.swift in Sources */,
 				C000003D /* Theme.swift in Sources */,
+				C000003E /* GHBottomBar.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

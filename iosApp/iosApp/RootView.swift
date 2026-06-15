@@ -1,11 +1,17 @@
 import SwiftUI
 import Shared
 
-/// Top-level gate: OTP login until signed in, then the main tab bar.
+/// Top-level gate: OTP login until signed in, then the main screen with an
+/// Android-style custom bottom bar (GHBottomBar) instead of SwiftUI's TabView,
+/// so the nav matches Android (role accent, top indicator pill, gray
+/// unselected, larger icons). Tabs mirror Android exactly:
+///   employee: Home · Jobs · History · Earnings · Profile (violet)
+///   employer: Home · My Jobs · Applications · Payments · Profile (green)
 struct RootView: View {
 
     let container: AppContainer
     @StateObject private var auth: AuthViewModel
+    @State private var selected = 0
 
     init(container: AppContainer) {
         self.container = container
@@ -15,11 +21,8 @@ struct RootView: View {
     var body: some View {
         Group {
             if auth.isSignedIn, let session = auth.session {
-                if session.userType?.lowercased() == "employer" {
-                    employerTabs(session: session)
-                } else {
-                    employeeTabs(session: session)
-                }
+                let isEmployer = session.userType?.lowercased() == "employer"
+                mainShell(session: session, isEmployer: isEmployer)
             } else {
                 AuthView(viewModel: auth)
             }
@@ -29,63 +32,100 @@ struct RootView: View {
         .task { auth.startObserving() }
     }
 
-    /// Worker-facing tabs: find/track gigs, earnings, alerts, profile.
     @ViewBuilder
-    private func employeeTabs(session: AuthData) -> some View {
-        TabView {
-            DashboardView(dashboard: container.dashboard,
-                          referralRepo: container.referral,
-                          notifications: container.notifications,
-                          swipeJobs: container.jobs,
-                          applications: container.applications,
-                          session: session)
-                .tabItem { Label("Home", systemImage: "house") }
+    private func mainShell(session: AuthData, isEmployer: Bool) -> some View {
+        let tabs = isEmployer ? employerTabs : employeeTabs
+        VStack(spacing: 0) {
+            ZStack {
+                screen(for: selected, session: session, isEmployer: isEmployer)
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
 
-            JobFeedView(jobs: container.jobs,
-                        applications: container.applications,
-                        employeeId: session.userId)
-                .tabItem { Label("Jobs", systemImage: "briefcase") }
-
-            MyApplicationsView(applications: container.applications, employeeId: session.userId)
-                .tabItem { Label("Applications", systemImage: "doc.text") }
-
-            EarningsView(payouts: container.payouts)
-                .tabItem { Label("Earnings", systemImage: "indianrupeesign.circle") }
-
-            profileTab(session: session)
+            GHBottomBar(
+                tabs: tabs,
+                selected: Binding(
+                    get: { min(selected, tabs.count - 1) },
+                    set: { selected = $0 }
+                ),
+                isEmployer: isEmployer
+            )
         }
     }
 
-    /// Employer-facing tabs: hiring overview, jobs/applicants, payments, profile.
+    // MARK: - Tab definitions (icons mirror Android's Lucide set)
+
+    private var employeeTabs: [GHTab] {
+        [
+            GHTab(label: "Home", icon: "house"),
+            GHTab(label: "Jobs", icon: "briefcase"),
+            GHTab(label: "History", icon: "clock.arrow.circlepath"),
+            GHTab(label: "Earnings", icon: "creditcard"),
+            GHTab(label: "Profile", icon: "person.crop.circle"),
+        ]
+    }
+
+    private var employerTabs: [GHTab] {
+        [
+            GHTab(label: "Home", icon: "house"),
+            GHTab(label: "My Jobs", icon: "briefcase"),
+            GHTab(label: "Applications", icon: "person.2"),
+            GHTab(label: "Payments", icon: "creditcard"),
+            GHTab(label: "Profile", icon: "person.crop.circle"),
+        ]
+    }
+
+    // MARK: - Screen for the selected tab
+
     @ViewBuilder
-    private func employerTabs(session: AuthData) -> some View {
-        TabView {
-            DashboardView(dashboard: container.dashboard,
-                          referralRepo: container.referral,
-                          session: session)
-                .tabItem { Label("Overview", systemImage: "chart.bar") }
-
-            MyJobsView(container: container, employerId: session.userId)
-                .tabItem { Label("Hiring", systemImage: "person.2.badge.gearshape") }
-
-            PaymentsView(payments: container.payments,
-                         employerId: session.userId,
-                         employerPhone: session.phone,
-                         employerName: "Employer")
-                .tabItem { Label("Payments", systemImage: "indianrupeesign.circle") }
-
-            NotificationsView(notifications: container.notifications)
-                .tabItem { Label("Alerts", systemImage: "bell") }
-
-            profileTab(session: session)
+    private func screen(for index: Int, session: AuthData, isEmployer: Bool) -> some View {
+        if isEmployer {
+            switch index {
+            case 0:
+                DashboardView(dashboard: container.dashboard,
+                              referralRepo: container.referral,
+                              notifications: container.notifications,
+                              session: session)
+            case 1:
+                MyJobsView(container: container, employerId: session.userId)
+            case 2:
+                // Employer applications across jobs — reuse the notifications/alerts
+                // surface until a dedicated employer-applications list exists.
+                NotificationsView(notifications: container.notifications)
+            case 3:
+                PaymentsView(payments: container.payments,
+                             employerId: session.userId,
+                             employerPhone: session.phone,
+                             employerName: "Employer")
+            default:
+                profileScreen(session: session)
+            }
+        } else {
+            switch index {
+            case 0:
+                DashboardView(dashboard: container.dashboard,
+                              referralRepo: container.referral,
+                              notifications: container.notifications,
+                              swipeJobs: container.jobs,
+                              applications: container.applications,
+                              session: session)
+            case 1:
+                JobFeedView(jobs: container.jobs,
+                            applications: container.applications,
+                            employeeId: session.userId)
+            case 2:
+                MyApplicationsView(applications: container.applications, employeeId: session.userId)
+            case 3:
+                EarningsView(payouts: container.payouts)
+            default:
+                profileScreen(session: session)
+            }
         }
     }
 
     @ViewBuilder
-    private func profileTab(session: AuthData) -> some View {
+    private func profileScreen(session: AuthData) -> some View {
         ProfileView(profileRepo: container.profile, session: session) {
             Task { await auth.signOut() }
         }
-        .tabItem { Label("Profile", systemImage: "person.crop.circle") }
     }
 }
