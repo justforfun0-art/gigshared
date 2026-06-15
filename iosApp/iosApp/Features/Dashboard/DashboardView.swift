@@ -10,11 +10,17 @@ struct DashboardView: View {
     /// button opens notifications as a sheet. Employer Home leaves this nil
     /// because it has its own Alerts tab.
     private let notifications: (any NotificationRepository)?
+    /// Employee Home embeds the job-swipe deck (Android parity); nil for employer.
+    private let swipeJobs: (any JobRepository)?
+    private let applications: (any ApplicationRepository)?
+    private let employeeId: String
     @State private var showNotifications = false
 
     init(dashboard: any DashboardRepository,
          referralRepo: any ReferralRepository,
          notifications: (any NotificationRepository)? = nil,
+         swipeJobs: (any JobRepository)? = nil,
+         applications: (any ApplicationRepository)? = nil,
          session: AuthData) {
         _viewModel = StateObject(wrappedValue: DashboardViewModel(
             dashboard: dashboard,
@@ -23,6 +29,9 @@ struct DashboardView: View {
             userType: session.userType
         ))
         self.notifications = notifications
+        self.swipeJobs = swipeJobs
+        self.applications = applications
+        self.employeeId = session.userId
     }
 
     private let columns = [GridItem(.flexible()), GridItem(.flexible())]
@@ -31,6 +40,7 @@ struct DashboardView: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
+                    swipeSection
                     statsSection
                     if let referral = viewModel.referral {
                         ReferralCard(info: referral)
@@ -57,6 +67,21 @@ struct DashboardView: View {
             }
             .task { await viewModel.load() }
             .refreshable { await viewModel.load() }
+        }
+    }
+
+    /// Employee Home swipe deck (Android MiniSwipeWidget parity). Lives in a
+    /// fixed-height frame so its horizontal drag gesture stays contained and
+    /// doesn't fight the dashboard's vertical scroll.
+    @ViewBuilder
+    private var swipeSection: some View {
+        if !viewModel.isEmployer, let swipeJobs, let applications {
+            VStack(alignment: .leading, spacing: 10) {
+                Label("Swipe to apply", systemImage: "hand.draw")
+                    .font(.headline)
+                JobSwipeView(jobs: swipeJobs, applications: applications, employeeId: employeeId)
+                    .frame(height: 460)
+            }
         }
     }
 

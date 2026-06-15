@@ -104,6 +104,15 @@ suspend fun NotificationRepository.getNotificationsOrThrow(
     offset: Int = 0,
 ): NotificationsPage = getNotifications(limit, offset).getOrThrow()
 
+/**
+ * [JobRepository.getJobsForSwipe] as a throwing suspend — the relevance-ranked
+ * deck for the Tinder-style swipe UI. `filter` omitted (server scopes by the
+ * worker's signals); pass the userId so applied/skipped jobs are excluded.
+ */
+@Throws(Throwable::class)
+suspend fun JobRepository.getJobsForSwipeOrThrow(userId: String): List<Job> =
+    getJobsForSwipe(userId, filter = null).getOrThrow()
+
 // ---- Employer-side ----
 
 /** [JobRepository.getEmployerJobs] as a throwing suspend. */

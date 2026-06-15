@@ -36,6 +36,10 @@
 		C0000036 /* PaymentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000006 /* PaymentsView.swift */; };
 		C0000037 /* SafariSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000007 /* SafariSheet.swift */; };
 		C0000038 /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000008 /* SplashView.swift */; };
+		C0000039 /* JobSwipeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000009 /* JobSwipeViewModel.swift */; };
+		C000003A /* JobSwipeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C000000A /* JobSwipeView.swift */; };
+		C000003B /* SwipeCardContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = C000000B /* SwipeCardContent.swift */; };
+		C000003C /* ConfettiView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C000000C /* ConfettiView.swift */; };
 		A1000014 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1000005 /* Assets.xcassets */; };
 		A1000020 /* Shared.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1000006 /* Shared.xcframework */; };
 		A1000021 /* Shared.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A1000006 /* Shared.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -85,6 +89,10 @@
 		C0000006 /* PaymentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentsView.swift; sourceTree = "<group>"; };
 		C0000007 /* SafariSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariSheet.swift; sourceTree = "<group>"; };
 		C0000008 /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
+		C0000009 /* JobSwipeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobSwipeViewModel.swift; sourceTree = "<group>"; };
+		C000000A /* JobSwipeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobSwipeView.swift; sourceTree = "<group>"; };
+		C000000B /* SwipeCardContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeCardContent.swift; sourceTree = "<group>"; };
+		C000000C /* ConfettiView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfettiView.swift; sourceTree = "<group>"; };
 		A1000005 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A1000006 /* Shared.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = Shared.xcframework; path = ../shared/build/XCFrameworks/release/Shared.xcframework; sourceTree = "<group>"; };
 		A1000007 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -148,6 +156,7 @@
 				C0000051 /* Dashboard */,
 				C0000052 /* Payments */,
 				C0000053 /* Splash */,
+				C0000054 /* Swipe */,
 			);
 			path = Features;
 			sourceTree = "<group>";
@@ -158,6 +167,17 @@
 				C0000008 /* SplashView.swift */,
 			);
 			path = Splash;
+			sourceTree = "<group>";
+		};
+		C0000054 /* Swipe */ = {
+			isa = PBXGroup;
+			children = (
+				C0000009 /* JobSwipeViewModel.swift */,
+				C000000A /* JobSwipeView.swift */,
+				C000000B /* SwipeCardContent.swift */,
+				C000000C /* ConfettiView.swift */,
+			);
+			path = Swipe;
 			sourceTree = "<group>";
 		};
 		C0000050 /* WorkSession */ = {
@@ -338,6 +358,10 @@
 				C0000036 /* PaymentsView.swift in Sources */,
 				C0000037 /* SafariSheet.swift in Sources */,
 				C0000038 /* SplashView.swift in Sources */,
+				C0000039 /* JobSwipeViewModel.swift in Sources */,
+				C000003A /* JobSwipeView.swift in Sources */,
+				C000003B /* SwipeCardContent.swift in Sources */,
+				C000003C /* ConfettiView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

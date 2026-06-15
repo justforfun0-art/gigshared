@@ -36,6 +36,8 @@ struct RootView: View {
             DashboardView(dashboard: container.dashboard,
                           referralRepo: container.referral,
                           notifications: container.notifications,
+                          swipeJobs: container.jobs,
+                          applications: container.applications,
                           session: session)
                 .tabItem { Label("Home", systemImage: "house") }
 
