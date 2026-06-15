@@ -40,6 +40,7 @@
 		C000003A /* JobSwipeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C000000A /* JobSwipeView.swift */; };
 		C000003B /* SwipeCardContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = C000000B /* SwipeCardContent.swift */; };
 		C000003C /* ConfettiView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C000000C /* ConfettiView.swift */; };
+		C000003D /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = C000000D /* Theme.swift */; };
 		A1000014 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1000005 /* Assets.xcassets */; };
 		A1000020 /* Shared.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1000006 /* Shared.xcframework */; };
 		A1000021 /* Shared.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A1000006 /* Shared.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -93,6 +94,7 @@
 		C000000A /* JobSwipeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobSwipeView.swift; sourceTree = "<group>"; };
 		C000000B /* SwipeCardContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeCardContent.swift; sourceTree = "<group>"; };
 		C000000C /* ConfettiView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfettiView.swift; sourceTree = "<group>"; };
+		C000000D /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		A1000005 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A1000006 /* Shared.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = Shared.xcframework; path = ../shared/build/XCFrameworks/release/Shared.xcframework; sourceTree = "<group>"; };
 		A1000007 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -128,11 +130,20 @@
 				A1000001 /* GigHourApp.swift */,
 				A100000A /* RootView.swift */,
 				A1000002 /* AppContainer.swift */,
+				C0000055 /* Theme */,
 				A1000054 /* Features */,
 				A1000005 /* Assets.xcassets */,
 				A1000007 /* Info.plist */,
 			);
 			path = iosApp;
+			sourceTree = "<group>";
+		};
+		C0000055 /* Theme */ = {
+			isa = PBXGroup;
+			children = (
+				C000000D /* Theme.swift */,
+			);
+			path = Theme;
 			sourceTree = "<group>";
 		};
 		A1000054 /* Features */ = {
@@ -362,6 +373,7 @@
 				C000003A /* JobSwipeView.swift in Sources */,
 				C000003B /* SwipeCardContent.swift in Sources */,
 				C000003C /* ConfettiView.swift in Sources */,
+				C000003D /* Theme.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

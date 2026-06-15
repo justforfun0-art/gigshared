@@ -16,15 +16,18 @@ struct MyApplicationsView: View {
 
     var body: some View {
         NavigationStack {
-            content
-                .navigationTitle("My Applications")
-                .task { await viewModel.load() }
-                .refreshable { await viewModel.load() }
-                .alert("Couldn’t withdraw", isPresented: errorBinding) {
-                    Button("OK", role: .cancel) { viewModel.actionError = nil }
-                } message: {
-                    Text(viewModel.actionError ?? "")
-                }
+            ZStack {
+                GHTheme.pageGradient.ignoresSafeArea()
+                content
+            }
+            .navigationTitle("My Applications")
+            .task { await viewModel.load() }
+            .refreshable { await viewModel.load() }
+            .alert("Couldn’t withdraw", isPresented: errorBinding) {
+                Button("OK", role: .cancel) { viewModel.actionError = nil }
+            } message: {
+                Text(viewModel.actionError ?? "")
+            }
         }
     }
 
@@ -43,19 +46,22 @@ struct MyApplicationsView: View {
                 placeholder(title: "No applications yet", icon: "doc.text",
                             message: "Jobs you apply to show up here.")
             } else {
-                List {
-                    ForEach(apps, id: \.id) { app in
-                        row(for: app)
-                            .swipeActions(edge: .trailing) {
-                                if viewModel.canWithdraw(app) {
-                                    Button(role: .destructive) {
-                                        Task { await viewModel.withdraw(app) }
-                                    } label: {
-                                        Label("Withdraw", systemImage: "xmark.circle")
+                ScrollView {
+                    LazyVStack(spacing: 12) {
+                        ForEach(apps, id: \.id) { app in
+                            row(for: app)
+                                .contextMenu {
+                                    if viewModel.canWithdraw(app) {
+                                        Button(role: .destructive) {
+                                            Task { await viewModel.withdraw(app) }
+                                        } label: {
+                                            Label("Withdraw", systemImage: "xmark.circle")
+                                        }
                                     }
                                 }
-                            }
+                        }
                     }
+                    .padding()
                 }
             }
         case .failed(let message):
@@ -75,8 +81,9 @@ struct MyApplicationsView: View {
             NavigationLink {
                 WorkSessionView(applications: applications, application: app)
             } label: {
-                ApplicationRow(application: app)
+                ApplicationRow(application: app, actionable: true)
             }
+            .buttonStyle(.plain)
         } else {
             ApplicationRow(application: app)
         }
@@ -100,43 +107,38 @@ struct MyApplicationsView: View {
 
 private struct ApplicationRow: View {
     let application: Application
+    /// Actionable rows show a chevron to hint they open the work-session screen.
+    var actionable: Bool = false
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text(application.job?.title ?? "Job")
-                .font(.headline)
-            if let location = application.job?.location {
-                Text(location).font(.subheadline).foregroundStyle(.secondary)
-            }
-            HStack {
-                StatusBadge(application.status)
-                Spacer()
-                if let applied = application.appliedAt {
-                    Text(applied.prefix(10)).font(.caption).foregroundStyle(.secondary)
+        GHCard {
+            VStack(alignment: .leading, spacing: 8) {
+                HStack(alignment: .top) {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(application.job?.title ?? "Job")
+                            .font(.headline)
+                            .foregroundStyle(GHTheme.onBackground)
+                        if let location = application.job?.location {
+                            HStack(spacing: 4) {
+                                Image(systemName: "mappin.and.ellipse")
+                                    .font(.caption2).foregroundStyle(GHTheme.muted)
+                                Text(location).font(.subheadline).foregroundStyle(GHTheme.onSurfaceVariant)
+                            }
+                        }
+                    }
+                    Spacer()
+                    if actionable {
+                        Image(systemName: "chevron.right").font(.caption).foregroundStyle(GHTheme.muted)
+                    }
+                }
+                HStack {
+                    StatusBadgeView(status: application.status)
+                    Spacer()
+                    if let applied = application.appliedAt {
+                        Text(applied.prefix(10)).font(.caption).foregroundStyle(GHTheme.muted)
+                    }
                 }
             }
         }
-        .padding(.vertical, 2)
-    }
-}
-
-private struct StatusBadge: View {
-    let status: ApplicationStatus
-    init(_ status: ApplicationStatus) { self.status = status }
-
-    var body: some View {
-        Text(status.toDisplayString())
-            .font(.caption.weight(.medium))
-            .padding(.horizontal, 8)
-            .padding(.vertical, 3)
-            .background(color.opacity(0.18), in: Capsule())
-            .foregroundStyle(color)
-    }
-
-    private var color: Color {
-        if status.isTerminal() {
-            return status == ApplicationStatus.completed ? .green : .secondary
-        }
-        return .blue // active
     }
 }

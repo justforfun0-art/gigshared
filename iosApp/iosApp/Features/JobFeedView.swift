@@ -18,10 +18,13 @@ struct JobFeedView: View {
 
     var body: some View {
         NavigationStack {
-            content
-                .navigationTitle("Find Jobs")
-                .task { await viewModel.load() }
-                .refreshable { await viewModel.load() }
+            ZStack {
+                GHTheme.pageGradient.ignoresSafeArea()
+                content
+            }
+            .navigationTitle("Find Jobs")
+            .task { await viewModel.load() }
+            .refreshable { await viewModel.load() }
         }
     }
 
@@ -34,25 +37,25 @@ struct JobFeedView: View {
             if jobs.isEmpty {
                 emptyState(title: "No jobs", systemImage: "tray", message: "Check back later.")
             } else {
-                List(jobs, id: \.id) { job in
-                    NavigationLink {
-                        JobDetailView(job: job, applications: applications, employeeId: employeeId)
-                    } label: {
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(job.title).font(.headline)
-                            Text(job.location).font(.subheadline).foregroundStyle(.secondary)
-                            if let salary = job.salaryRange {
-                                Text(salary).font(.caption).foregroundStyle(.secondary)
+                ScrollView {
+                    LazyVStack(spacing: 12) {
+                        ForEach(jobs, id: \.id) { job in
+                            NavigationLink {
+                                JobDetailView(job: job, applications: applications, employeeId: employeeId)
+                            } label: {
+                                JobFeedRow(job: job)
                             }
+                            .buttonStyle(.plain)
                         }
                     }
+                    .padding()
                 }
             }
         case .failed(let message):
             VStack(spacing: 12) {
                 emptyState(title: "Couldn’t load jobs", systemImage: "exclamationmark.triangle", message: message)
                 Button("Retry") { Task { await viewModel.load() } }
-                    .buttonStyle(.borderedProminent)
+                    .buttonStyle(.borderedProminent).tint(GHTheme.primary)
             }
         }
     }
@@ -71,5 +74,38 @@ struct JobFeedView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding()
+    }
+}
+
+/// A job summary card for the feed list (Android card look).
+private struct JobFeedRow: View {
+    let job: Job
+
+    var body: some View {
+        GHCard {
+            VStack(alignment: .leading, spacing: 8) {
+                HStack(alignment: .top) {
+                    Text(job.title)
+                        .font(.headline)
+                        .foregroundStyle(GHTheme.onBackground)
+                    Spacer()
+                    Image(systemName: "chevron.right").font(.caption).foregroundStyle(GHTheme.muted)
+                }
+                if let salary = job.salaryRange, !salary.isEmpty {
+                    HStack(spacing: 2) {
+                        Image(systemName: "indianrupeesign")
+                            .font(.subheadline.weight(.bold))
+                            .foregroundStyle(GHTheme.tertiaryVariant)
+                        Text(salary)
+                            .font(.title3.weight(.bold))
+                            .foregroundStyle(GHTheme.tertiaryVariant)
+                    }
+                }
+                HStack(spacing: 4) {
+                    Image(systemName: "mappin.and.ellipse").font(.caption2).foregroundStyle(GHTheme.muted)
+                    Text(job.location).font(.subheadline).foregroundStyle(GHTheme.onSurfaceVariant)
+                }
+            }
+        }
     }
 }

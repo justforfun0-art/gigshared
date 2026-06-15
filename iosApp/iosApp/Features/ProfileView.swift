@@ -21,6 +21,8 @@ struct ProfileView: View {
         NavigationStack {
             Form {
                 photoSection
+                    .listRowBackground(Color.clear)
+                    .listRowInsets(EdgeInsets())
 
                 Section("Account") {
                     LabeledContent("Phone", value: session.phone)
@@ -56,11 +58,14 @@ struct ProfileView: View {
                     Button("Sign out", role: .destructive, action: onSignOut)
                 }
             }
+            .scrollContentBackground(.hidden)
+            .background(GHTheme.pageGradient.ignoresSafeArea())
             .navigationTitle("Profile")
             .toolbar {
                 if viewModel.currentProfile != nil {
                     ToolbarItem(placement: .topBarTrailing) {
                         Button("Edit") { viewModel.isEditing = true }
+                            .tint(GHTheme.primary)
                     }
                 }
             }
@@ -82,20 +87,25 @@ struct ProfileView: View {
 
     @ViewBuilder
     private var photoSection: some View {
-        Section {
-            HStack(spacing: 16) {
-                avatar
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(viewModel.currentProfile?.name ?? "—").font(.headline)
-                    PhotosPicker(selection: $photoItem, matching: .images) {
-                        Text(viewModel.isSavingPhoto ? "Uploading…" : "Change photo")
-                            .font(.subheadline)
-                    }
-                    .disabled(viewModel.isSavingPhoto)
+        // Violet hero header (matches the Android profile gradient header).
+        HStack(spacing: 16) {
+            avatar
+            VStack(alignment: .leading, spacing: 4) {
+                Text(viewModel.currentProfile?.name ?? "—")
+                    .font(.title3.weight(.semibold))
+                    .foregroundStyle(.white)
+                PhotosPicker(selection: $photoItem, matching: .images) {
+                    Text(viewModel.isSavingPhoto ? "Uploading…" : "Change photo")
+                        .font(.subheadline.weight(.medium))
+                        .foregroundStyle(.white.opacity(0.9))
                 }
-                Spacer()
+                .disabled(viewModel.isSavingPhoto)
             }
+            Spacer()
         }
+        .padding(20)
+        .frame(maxWidth: .infinity)
+        .background(GHTheme.heroGradient)
         // Single-parameter onChange for iOS 16 compatibility (the two-param
         // form is iOS 17+; deployment target is 16.0).
         .onChange(of: photoItem) { newItem in
@@ -126,7 +136,7 @@ struct ProfileView: View {
             Image(systemName: "person.crop.circle.fill")
                 .resizable().scaledToFit()
                 .frame(width: 64, height: 64)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.white.opacity(0.85))
         }
     }
 }
