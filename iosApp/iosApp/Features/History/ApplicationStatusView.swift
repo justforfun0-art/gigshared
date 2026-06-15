@@ -8,8 +8,21 @@ import Shared
 /// card, and the "Applied on …" footer.
 struct ApplicationStatusView: View {
     let application: Application
+    /// Messaging deps (optional so previews/older call sites still compile).
+    var messages: (any MessageRepository)? = nil
+    var myUserId: String? = nil
+
+    @State private var openingChat = false
+    @State private var chat: ChatTarget? = nil
 
     private var job: Job? { application.job }
+
+    /// A resolved conversation to push to (drives the chat NavigationDestination).
+    struct ChatTarget: Identifiable, Hashable {
+        let id: String          // conversation id
+        let receiverId: String
+        let title: String
+    }
 
     var body: some View {
         ScrollView {
@@ -31,6 +44,39 @@ struct ApplicationStatusView: View {
         .background(GHTheme.hex(0xF8F9FB).ignoresSafeArea())
         .navigationTitle("Application Status")
         .navigationBarTitleDisplayMode(.inline)
+        // iOS 16-compatible push (navigationDestination(item:) is iOS 17+).
+        .background(
+            NavigationLink(isActive: chatActive) {
+                if let messages, let myUserId, let target = chat {
+                    ConversationView(repo: messages, conversationId: target.id,
+                                     myUserId: myUserId, receiverId: target.receiverId,
+                                     title: target.title)
+                }
+            } label: { EmptyView() }
+            .hidden()
+        )
+    }
+
+    private var chatActive: Binding<Bool> {
+        Binding(get: { chat != nil }, set: { if !$0 { chat = nil } })
+    }
+
+    /// Open (or create) the conversation with this job's employer, then navigate.
+    private func openChat() {
+        guard let messages, let myUserId, let employerId = job?.employerId, !openingChat else { return }
+        openingChat = true
+        Task {
+            defer { openingChat = false }
+            do {
+                let convo = try await IosHelpersKt.getOrCreateConversationOrThrow(
+                    messages, employeeId: myUserId, employerId: employerId, jobId: job?.id
+                )
+                chat = ChatTarget(id: convo.id, receiverId: employerId,
+                                  title: job?.employerProfile?.companyName ?? "Employer")
+            } catch {
+                // Surface silently for now; a fuller UI could show an alert.
+            }
+        }
     }
 
     // MARK: - Hero banner
@@ -114,12 +160,16 @@ struct ApplicationStatusView: View {
         card {
             VStack(alignment: .leading, spacing: 14) {
                 Text("Contact Employer").font(.title3.weight(.bold)).foregroundStyle(GHTheme.onBackground)
-                Button { } label: {
-                    Label("Message", systemImage: "message.fill")
-                        .font(.headline).foregroundStyle(.white)
-                        .frame(maxWidth: .infinity).padding(.vertical, 14)
-                        .background(GHTheme.tertiaryVariant, in: RoundedRectangle(cornerRadius: 14))
+                Button { openChat() } label: {
+                    HStack {
+                        if openingChat { ProgressView().tint(.white) }
+                        else { Label("Message", systemImage: "message.fill") }
+                    }
+                    .font(.headline).foregroundStyle(.white)
+                    .frame(maxWidth: .infinity).padding(.vertical, 14)
+                    .background(GHTheme.tertiaryVariant, in: RoundedRectangle(cornerRadius: 14))
                 }
+                .disabled(messages == nil || openingChat)
             }
         }
     }

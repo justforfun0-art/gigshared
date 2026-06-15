@@ -113,7 +113,7 @@ struct RootView: View {
                             applications: container.applications,
                             employeeId: session.userId)
             case 2:
-                MyApplicationsView(applications: container.applications, employeeId: session.userId)
+                MyApplicationsView(applications: container.applications, employeeId: session.userId, messages: container.messages)
             case 3:
                 EarningsView(payouts: container.payouts)
             default:

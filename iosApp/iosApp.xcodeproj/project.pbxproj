@@ -47,6 +47,8 @@
 		C000003E /* GHBottomBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = C000000E /* GHBottomBar.swift */; };
 		C000003F /* DetailedHistoryCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = C000000F /* DetailedHistoryCard.swift */; };
 		C0000040 /* ApplicationStatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000010 /* ApplicationStatusView.swift */; };
+		C0000041 /* ConversationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000011 /* ConversationViewModel.swift */; };
+		C0000042 /* ConversationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000012 /* ConversationView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -106,6 +108,8 @@
 		C000000E /* GHBottomBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GHBottomBar.swift; sourceTree = "<group>"; };
 		C000000F /* DetailedHistoryCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailedHistoryCard.swift; sourceTree = "<group>"; };
 		C0000010 /* ApplicationStatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationStatusView.swift; sourceTree = "<group>"; };
+		C0000011 /* ConversationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationViewModel.swift; sourceTree = "<group>"; };
+		C0000012 /* ConversationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -183,8 +187,18 @@
 				C0000053 /* Splash */,
 				C0000054 /* Swipe */,
 				C0000056 /* History */,
+				C0000057 /* Messages */,
 			);
 			path = Features;
+			sourceTree = "<group>";
+		};
+		C0000057 /* Messages */ = {
+			isa = PBXGroup;
+			children = (
+				C0000011 /* ConversationViewModel.swift */,
+				C0000012 /* ConversationView.swift */,
+			);
+			path = Messages;
 			sourceTree = "<group>";
 		};
 		C0000056 /* History */ = {
@@ -394,6 +408,8 @@
 				C000003E /* GHBottomBar.swift in Sources */,
 				C000003F /* DetailedHistoryCard.swift in Sources */,
 				C0000040 /* ApplicationStatusView.swift in Sources */,
+				C0000041 /* ConversationViewModel.swift in Sources */,
+				C0000042 /* ConversationView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

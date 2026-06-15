@@ -6,9 +6,13 @@ import com.gighour.shared.data.local.db.SqlDelightJobCache
 import com.gighour.shared.data.local.db.createGighourDb
 import com.gighour.shared.domain.model.Application
 import com.gighour.shared.domain.model.AuthData
+import com.gighour.shared.domain.model.ConversationRow
+import com.gighour.shared.domain.model.ConversationSummary
 import com.gighour.shared.domain.model.EmployeeProfile
 import com.gighour.shared.domain.model.EmployerPaymentSummary
 import com.gighour.shared.domain.model.Job
+import com.gighour.shared.domain.model.MessageRow
+import com.gighour.shared.domain.model.ParticipantInfo
 import com.gighour.shared.domain.model.PaymentOrder
 import com.gighour.shared.domain.model.PaymentVerifyResult
 import com.gighour.shared.domain.model.PayoutPage
@@ -20,6 +24,7 @@ import com.gighour.shared.domain.repository.DashboardRepository
 import com.gighour.shared.domain.repository.EmployeeDashboardStats
 import com.gighour.shared.domain.repository.EmployerDashboardStats
 import com.gighour.shared.domain.repository.JobRepository
+import com.gighour.shared.domain.repository.MessageRepository
 import com.gighour.shared.domain.repository.NotificationsPage
 import com.gighour.shared.domain.repository.NotificationRepository
 import com.gighour.shared.domain.repository.OtpSendResult
@@ -319,3 +324,58 @@ suspend fun PaymentRepository.createOrderOrThrow(
 @Throws(Throwable::class)
 suspend fun PaymentRepository.verifyPaymentOrThrow(orderId: String): PaymentVerifyResult =
     verifyPayment(orderId).getOrThrow()
+
+// ---- Messaging (full parity) ----
+
+/** [MessageRepository.getConversations] as a throwing suspend. */
+@Throws(Throwable::class)
+suspend fun MessageRepository.getConversationsOrThrow(userId: String): List<ConversationRow> =
+    getConversations(userId).getOrThrow()
+
+/** [MessageRepository.getOrCreateConversation] as a throwing suspend (jobId optional → pass nil). */
+@Throws(Throwable::class)
+suspend fun MessageRepository.getOrCreateConversationOrThrow(
+    employeeId: String,
+    employerId: String,
+    jobId: String?,
+): ConversationRow = getOrCreateConversation(employeeId, employerId, jobId).getOrThrow()
+
+/** [MessageRepository.getMessages] as a throwing suspend. */
+@Throws(Throwable::class)
+suspend fun MessageRepository.getMessagesOrThrow(conversationId: String): List<MessageRow> =
+    getMessages(conversationId).getOrThrow()
+
+/** [MessageRepository.sendMessage] as a throwing suspend (receiverId optional → pass nil to derive). */
+@Throws(Throwable::class)
+suspend fun MessageRepository.sendMessageOrThrow(
+    conversationId: String,
+    senderId: String,
+    content: String,
+    receiverId: String?,
+): MessageRow = sendMessage(conversationId, senderId, content, receiverId).getOrThrow()
+
+/**
+ * [MessageRepository.getConversationSummaries] returns a Kotlin Map, which Swift
+ * sees as an opaque NSDictionary; flatten to a typed list so SwiftUI can iterate.
+ */
+@Throws(Throwable::class)
+suspend fun MessageRepository.getConversationSummariesList(
+    conversationIds: List<String>,
+    viewerUserId: String,
+): List<ConversationSummary> =
+    getConversationSummaries(conversationIds, viewerUserId).values.toList()
+
+/** Display name for one participant (null when unknown) — avoids bridging a Map. */
+@Throws(Throwable::class)
+suspend fun MessageRepository.participantNameOrNull(userId: String): String? =
+    getParticipantInfo(listOf(userId))[userId]?.name
+
+/** Full participant info for one user (null when unknown). */
+@Throws(Throwable::class)
+suspend fun MessageRepository.participantInfoOrNull(userId: String): ParticipantInfo? =
+    getParticipantInfo(listOf(userId))[userId]
+
+/** [MessageRepository.contactAdmin] as a throwing suspend (returns the conversation id). */
+@Throws(Throwable::class)
+suspend fun MessageRepository.contactAdminOrThrow(message: String): String =
+    contactAdmin(message).getOrThrow()

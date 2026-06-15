@@ -28,6 +28,7 @@ final class AppContainer {
     let dashboard: any DashboardRepository
     let notifications: any NotificationRepository
     let referral: any ReferralRepository
+    let messages: any MessageRepository
 
     init(config: BackendConfig) {
         self.config = config
@@ -70,6 +71,7 @@ final class AppContainer {
         self.dashboard = DashboardRepositoryImpl(supabaseClient: supabase, tokenStore: tokenStore)
         self.notifications = NotificationRepositoryImpl(api: NotificationsApi(client: api), serverClock: serverClock)
         self.referral = ReferralRepositoryImpl(supabaseClient: supabase)
+        self.messages = MessageRepositoryImpl(supabaseClient: supabase, messagesApi: MessagesApi(client: api))
     }
 
     /// Kick the server-time sync once on launch (repos that gate on the clock

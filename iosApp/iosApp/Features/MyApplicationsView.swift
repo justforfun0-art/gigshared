@@ -8,10 +8,14 @@ struct MyApplicationsView: View {
 
     @StateObject private var viewModel: MyApplicationsViewModel
     private let applications: any ApplicationRepository
+    private let messages: (any MessageRepository)?
+    private let employeeId: String
     @State private var filter: HistoryFilter = .all
 
-    init(applications: any ApplicationRepository, employeeId: String) {
+    init(applications: any ApplicationRepository, employeeId: String, messages: (any MessageRepository)? = nil) {
         self.applications = applications
+        self.messages = messages
+        self.employeeId = employeeId
         _viewModel = StateObject(
             wrappedValue: MyApplicationsViewModel(applications: applications, employeeId: employeeId)
         )
@@ -98,7 +102,7 @@ struct MyApplicationsView: View {
                     LazyVStack(spacing: 14) {
                         ForEach(filtered, id: \.id) { app in
                             NavigationLink {
-                                ApplicationStatusView(application: app)
+                                ApplicationStatusView(application: app, messages: messages, myUserId: employeeId)
                             } label: {
                                 HistoryCard(application: app)
                             }
