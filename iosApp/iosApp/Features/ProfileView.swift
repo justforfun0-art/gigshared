@@ -96,7 +96,9 @@ struct ProfileView: View {
                 Spacer()
             }
         }
-        .onChange(of: photoItem) { _, newItem in
+        // Single-parameter onChange for iOS 16 compatibility (the two-param
+        // form is iOS 17+; deployment target is 16.0).
+        .onChange(of: photoItem) { newItem in
             guard let newItem else { return }
             Task {
                 if let data = try? await newItem.loadTransferable(type: Data.self) {

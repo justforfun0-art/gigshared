@@ -44,11 +44,15 @@ final class DashboardViewModel: ObservableObject {
     private func loadStats() async {
         stats = .loading
         do {
+            // NB: SKIE relocates these extension shims onto the receiver type
+            // (DashboardRepository / ReferralRepository are SKIE-bridged because
+            // they declare nested data classes), so they're called as instance
+            // methods, not via IosHelpersKt like the other repos' shims.
             if isEmployer {
-                let s = try await IosHelpersKt.getEmployerStatsOrThrow(dashboard, employerId: userId)
+                let s = try await dashboard.getEmployerStatsOrThrow(employerId: userId)
                 stats = .employer(s)
             } else {
-                let s = try await IosHelpersKt.getEmployeeStatsOrThrow(dashboard, userId: userId)
+                let s = try await dashboard.getEmployeeStatsOrThrow(userId: userId)
                 stats = .employee(s)
             }
         } catch {
@@ -57,6 +61,6 @@ final class DashboardViewModel: ObservableObject {
     }
 
     private func loadReferral() async {
-        referral = try? await IosHelpersKt.getReferralInfoOrThrow(referralRepo, userId: userId)
+        referral = try? await referralRepo.getReferralInfoOrThrow(userId: userId)
     }
 }
