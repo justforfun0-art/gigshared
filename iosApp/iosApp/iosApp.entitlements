@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!--
+	  Keychain access group. The data-protection keychain (used by IosKeychain)
+	  rejects SecItem* with errSecMissingEntitlement (-34018) unless the app
+	  declares a keychain-access-group. A literal group (no $(AppIdentifierPrefix),
+	  which is empty without a signing team and yields a malformed group) keeps
+	  this valid for unsigned/ad-hoc simulator builds. On a real signed build,
+	  replace with $(AppIdentifierPrefix)com.gighour.iosApp.
+	-->
+	<key>keychain-access-groups</key>
+	<array>
+		<string>com.gighour.iosApp</string>
+	</array>
+</dict>
+</plist>

@@ -11,6 +11,7 @@
 		A1000011 /* AppContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000002 /* AppContainer.swift */; };
 		A1000012 /* JobFeedViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000003 /* JobFeedViewModel.swift */; };
 		A1000013 /* JobFeedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000004 /* JobFeedView.swift */; };
+		A1000014 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1000005 /* Assets.xcassets */; };
 		A1000015 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100000A /* RootView.swift */; };
 		A1000016 /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100000B /* AuthViewModel.swift */; };
 		A1000017 /* AuthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100000C /* AuthView.swift */; };
@@ -22,6 +23,8 @@
 		A100001D /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000022 /* ProfileView.swift */; };
 		A100001E /* NotificationsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000023 /* NotificationsViewModel.swift */; };
 		A100001F /* NotificationsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000024 /* NotificationsView.swift */; };
+		A1000020 /* Shared.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1000006 /* Shared.xcframework */; };
+		A1000021 /* Shared.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A1000006 /* Shared.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A1000026 /* JobDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000025 /* JobDetailView.swift */; };
 		B0000030 /* MyJobsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0000040 /* MyJobsViewModel.swift */; };
 		B0000031 /* MyJobsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0000041 /* MyJobsView.swift */; };
@@ -41,9 +44,6 @@
 		C000003B /* SwipeCardContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = C000000B /* SwipeCardContent.swift */; };
 		C000003C /* ConfettiView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C000000C /* ConfettiView.swift */; };
 		C000003D /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = C000000D /* Theme.swift */; };
-		A1000014 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1000005 /* Assets.xcassets */; };
-		A1000020 /* Shared.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1000006 /* Shared.xcframework */; };
-		A1000021 /* Shared.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A1000006 /* Shared.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -65,18 +65,23 @@
 		A1000002 /* AppContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppContainer.swift; sourceTree = "<group>"; };
 		A1000003 /* JobFeedViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobFeedViewModel.swift; sourceTree = "<group>"; };
 		A1000004 /* JobFeedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobFeedView.swift; sourceTree = "<group>"; };
+		A1000005 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		A1000006 /* Shared.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = Shared.xcframework; path = ../shared/build/XCFrameworks/release/Shared.xcframework; sourceTree = "<group>"; };
+		A1000007 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A1000008 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
+		A1000009 /* iosApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iosApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A100000A /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		A100000B /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
 		A100000C /* AuthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthView.swift; sourceTree = "<group>"; };
 		A100000D /* MyApplicationsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyApplicationsViewModel.swift; sourceTree = "<group>"; };
 		A100000E /* MyApplicationsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyApplicationsView.swift; sourceTree = "<group>"; };
 		A100000F /* EarningsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EarningsViewModel.swift; sourceTree = "<group>"; };
-		B0000020 /* EarningsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EarningsView.swift; sourceTree = "<group>"; };
-		B0000021 /* ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
 		A1000022 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		A1000023 /* NotificationsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsViewModel.swift; sourceTree = "<group>"; };
 		A1000024 /* NotificationsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsView.swift; sourceTree = "<group>"; };
 		A1000025 /* JobDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobDetailView.swift; sourceTree = "<group>"; };
+		B0000020 /* EarningsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EarningsView.swift; sourceTree = "<group>"; };
+		B0000021 /* ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
 		B0000040 /* MyJobsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyJobsViewModel.swift; sourceTree = "<group>"; };
 		B0000041 /* MyJobsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyJobsView.swift; sourceTree = "<group>"; };
 		B0000042 /* PostJobView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostJobView.swift; sourceTree = "<group>"; };
@@ -95,11 +100,6 @@
 		C000000B /* SwipeCardContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeCardContent.swift; sourceTree = "<group>"; };
 		C000000C /* ConfettiView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfettiView.swift; sourceTree = "<group>"; };
 		C000000D /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
-		A1000005 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		A1000006 /* Shared.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = Shared.xcframework; path = ../shared/build/XCFrameworks/release/Shared.xcframework; sourceTree = "<group>"; };
-		A1000007 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		A1000008 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
-		A1000009 /* iosApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iosApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -138,12 +138,20 @@
 			path = iosApp;
 			sourceTree = "<group>";
 		};
-		C0000055 /* Theme */ = {
+		A1000052 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				C000000D /* Theme.swift */,
+				A1000006 /* Shared.xcframework */,
 			);
-			path = Theme;
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		A1000053 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A1000009 /* iosApp.app */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		A1000054 /* Features */ = {
@@ -172,23 +180,16 @@
 			path = Features;
 			sourceTree = "<group>";
 		};
-		C0000053 /* Splash */ = {
+		B0000050 /* Employer */ = {
 			isa = PBXGroup;
 			children = (
-				C0000008 /* SplashView.swift */,
+				B0000040 /* MyJobsViewModel.swift */,
+				B0000041 /* MyJobsView.swift */,
+				B0000042 /* PostJobView.swift */,
+				B0000043 /* ApplicantsViewModel.swift */,
+				B0000044 /* ApplicantsView.swift */,
 			);
-			path = Splash;
-			sourceTree = "<group>";
-		};
-		C0000054 /* Swipe */ = {
-			isa = PBXGroup;
-			children = (
-				C0000009 /* JobSwipeViewModel.swift */,
-				C000000A /* JobSwipeView.swift */,
-				C000000B /* SwipeCardContent.swift */,
-				C000000C /* ConfettiView.swift */,
-			);
-			path = Swipe;
+			path = Employer;
 			sourceTree = "<group>";
 		};
 		C0000050 /* WorkSession */ = {
@@ -219,32 +220,31 @@
 			path = Payments;
 			sourceTree = "<group>";
 		};
-		B0000050 /* Employer */ = {
+		C0000053 /* Splash */ = {
 			isa = PBXGroup;
 			children = (
-				B0000040 /* MyJobsViewModel.swift */,
-				B0000041 /* MyJobsView.swift */,
-				B0000042 /* PostJobView.swift */,
-				B0000043 /* ApplicantsViewModel.swift */,
-				B0000044 /* ApplicantsView.swift */,
+				C0000008 /* SplashView.swift */,
 			);
-			path = Employer;
+			path = Splash;
 			sourceTree = "<group>";
 		};
-		A1000052 /* Frameworks */ = {
+		C0000054 /* Swipe */ = {
 			isa = PBXGroup;
 			children = (
-				A1000006 /* Shared.xcframework */,
+				C0000009 /* JobSwipeViewModel.swift */,
+				C000000A /* JobSwipeView.swift */,
+				C000000B /* SwipeCardContent.swift */,
+				C000000C /* ConfettiView.swift */,
 			);
-			name = Frameworks;
+			path = Swipe;
 			sourceTree = "<group>";
 		};
-		A1000053 /* Products */ = {
+		C0000055 /* Theme */ = {
 			isa = PBXGroup;
 			children = (
-				A1000009 /* iosApp.app */,
+				C000000D /* Theme.swift */,
 			);
-			name = Products;
+			path = Theme;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -259,6 +259,7 @@
 				A1000040 /* Frameworks */,
 				A1000062 /* Resources */,
 				A1000030 /* Embed Frameworks */,
+				C0000081 /* Sign with Entitlements */,
 			);
 			buildRules = (
 			);
@@ -277,7 +278,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1530;
-				LastUpgradeCheck = 1530;
+				LastUpgradeCheck = 1640;
 				TargetAttributes = {
 					A1000060 = {
 						CreatedOnToolsVersion = 15.3;
@@ -333,6 +334,25 @@
 			shellPath = /bin/sh;
 			shellScript = "cd \"$SRCROOT/..\"\nif [ \"$ACTION\" = \"clean\" ]; then exit 0; fi\n./gradlew :shared:assembleSharedReleaseXCFramework\n";
 		};
+		C0000081 /* Sign with Entitlements */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Sign with Entitlements";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Xcode's simulator signing drops the keychain-access-group entitlement,\n# which the data-protection Keychain needs (errSecMissingEntitlement -34018,\n# breaking session persistence). Re-sign the built app ad-hoc WITH the\n# entitlements so the Keychain works on the simulator.\nif [ \"$ACTION\" = \"clean\" ]; then exit 0; fi\nAPP=\"$BUILT_PRODUCTS_DIR/$WRAPPER_NAME\"\ncodesign --force --sign - --entitlements \"$SRCROOT/iosApp/iosApp.entitlements\" --generate-entitlement-der \"$APP\"\n";
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -386,8 +406,35 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -402,10 +449,37 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_VERSION = 5.0;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -417,14 +491,18 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
 				ENABLE_PREVIEWS = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/../shared/build/XCFrameworks/release",
 				);
+				CODE_SIGN_ENTITLEMENTS = iosApp/iosApp.entitlements;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				AD_HOC_CODE_SIGNING_ALLOWED = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = iosApp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -449,14 +527,18 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
 				ENABLE_PREVIEWS = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/../shared/build/XCFrameworks/release",
 				);
+				CODE_SIGN_ENTITLEMENTS = iosApp/iosApp.entitlements;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				AD_HOC_CODE_SIGNING_ALLOWED = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = iosApp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -478,20 +560,20 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		A1000091 /* Build configuration list for PBXProject "iosApp" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				A1000100 /* Debug */,
-				A1000101 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		A1000070 /* Build configuration list for PBXNativeTarget "iosApp" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A1000110 /* Debug */,
 				A1000111 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A1000091 /* Build configuration list for PBXProject "iosApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A1000100 /* Debug */,
+				A1000101 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
