@@ -35,6 +35,7 @@
 		C0000035 /* PaymentsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000005 /* PaymentsViewModel.swift */; };
 		C0000036 /* PaymentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000006 /* PaymentsView.swift */; };
 		C0000037 /* SafariSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000007 /* SafariSheet.swift */; };
+		C0000038 /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000008 /* SplashView.swift */; };
 		A1000014 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1000005 /* Assets.xcassets */; };
 		A1000020 /* Shared.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1000006 /* Shared.xcframework */; };
 		A1000021 /* Shared.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A1000006 /* Shared.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -83,6 +84,7 @@
 		C0000005 /* PaymentsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentsViewModel.swift; sourceTree = "<group>"; };
 		C0000006 /* PaymentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentsView.swift; sourceTree = "<group>"; };
 		C0000007 /* SafariSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariSheet.swift; sourceTree = "<group>"; };
+		C0000008 /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
 		A1000005 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A1000006 /* Shared.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = Shared.xcframework; path = ../shared/build/XCFrameworks/release/Shared.xcframework; sourceTree = "<group>"; };
 		A1000007 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -145,8 +147,17 @@
 				C0000050 /* WorkSession */,
 				C0000051 /* Dashboard */,
 				C0000052 /* Payments */,
+				C0000053 /* Splash */,
 			);
 			path = Features;
+			sourceTree = "<group>";
+		};
+		C0000053 /* Splash */ = {
+			isa = PBXGroup;
+			children = (
+				C0000008 /* SplashView.swift */,
+			);
+			path = Splash;
 			sourceTree = "<group>";
 		};
 		C0000050 /* WorkSession */ = {
@@ -326,6 +337,7 @@
 				C0000035 /* PaymentsViewModel.swift in Sources */,
 				C0000036 /* PaymentsView.swift in Sources */,
 				C0000037 /* SafariSheet.swift in Sources */,
+				C0000038 /* SplashView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

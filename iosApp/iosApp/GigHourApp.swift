@@ -21,11 +21,36 @@ struct GigHourApp: App {
 
     var body: some Scene {
         WindowGroup {
-            RootView(container: container)
+            RootContainerView(container: container)
         }
     }
 
     private static func plist(_ key: String) -> String {
         (Bundle.main.object(forInfoDictionaryKey: key) as? String) ?? ""
+    }
+}
+
+/// Shows the animated splash for a short beat on cold launch, then cross-fades
+/// to the app. Mirrors Android, where AnimatedSplashScreen is shown over the
+/// content until startup work settles.
+private struct RootContainerView: View {
+    let container: AppContainer
+    @State private var showSplash = true
+
+    var body: some View {
+        ZStack {
+            RootView(container: container)
+
+            if showSplash {
+                SplashView()
+                    .transition(.opacity)
+                    .zIndex(1)
+            }
+        }
+        .task {
+            // ~1.8s hero beat, then fade out (matches the Android dwell).
+            try? await Task.sleep(nanoseconds: 1_800_000_000)
+            withAnimation(.easeOut(duration: 0.4)) { showSplash = false }
+        }
     }
 }
