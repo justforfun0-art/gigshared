@@ -1,24 +1,29 @@
 package com.gighour.shared.util
 
-import platform.Foundation.NSLog
-
 /**
- * iOS logger. The message is built in Kotlin and passed as the *single* argument
- * to a constant `"%@"` format — never as the format string itself. Passing a
- * dynamic string as (part of) the NSLog format and substituting it with `%@`
- * is a crash hazard: if the substituted text contains a `%` (URL-encoded data,
- * "%s", a literal percent, etc.) the logging subsystem can re-parse it as a
- * format specifier and dereference a non-existent vararg → EXC_BAD_ACCESS.
- * Kotlin/Native's vararg→NSLog bridging makes this especially fragile, so we
- * keep the format constant and put everything in one already-built argument.
+ * iOS logger — uses Kotlin's [println] (→ stdout), NOT NSLog.
+ *
+ * NSLog is a C variadic function. Bridging it from Kotlin/Native and passing a
+ * Kotlin/ObjC string through its `...` args is unsafe on this toolchain: the
+ * varargs runtime tries to read the object as a format argument and crashes in
+ * `_NSDescriptionWithStringProxyFunc` / `objc_opt_respondsToSelector`
+ * (EXC_BAD_ACCESS) — this fired whenever any repository logged (e.g.
+ * JobRepository.getJobs on the Jobs tab). Even `NSLog("%@", str)` is affected
+ * because the crash is in the vararg bridge itself, not the format string.
+ *
+ * [println] needs no varargs and maps cleanly to stdout, which Xcode's console
+ * captures, so it's the safe choice for a debug logger.
  */
 actual object Logger {
     actual fun d(tag: String, message: String) {
-        NSLog("%@", "D/$tag: $message")
+        println("D/$tag: $message")
     }
 
     actual fun e(tag: String, message: String, throwable: Throwable?) {
-        val line = if (throwable != null) "E/$tag: $message — $throwable" else "E/$tag: $message"
-        NSLog("%@", line)
+        if (throwable != null) {
+            println("E/$tag: $message — $throwable")
+        } else {
+            println("E/$tag: $message")
+        }
     }
 }
