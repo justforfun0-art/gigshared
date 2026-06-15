@@ -8,6 +8,7 @@ import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.ptr
 import kotlinx.cinterop.value
 import platform.CoreFoundation.CFDictionaryRef
+import platform.CoreFoundation.CFRetain
 import platform.CoreFoundation.CFStringRef
 import platform.CoreFoundation.CFTypeRefVar
 import platform.Foundation.CFBridgingRelease
@@ -44,9 +45,15 @@ import platform.darwin.noErr
 @OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
 internal class IosKeychain(private val service: String) {
 
-    // The kSec* constants are CFStringRef; toll-free-bridge them to NSString so
-    // they can key an NSMutableDictionary (which wants NSCopying keys).
-    private fun key(cf: CFStringRef?): NSString = CFBridgingRelease(cf) as NSString
+    // The kSec* constants are CFStringRef GLOBALS we do NOT own. Toll-free-bridge
+    // them to NSString WITHOUT a net ownership change: CFBridgingRelease consumes
+    // a +1 reference, so calling it directly on an unowned constant over-releases
+    // it — and key() runs several times per query, so the global kSec* string is
+    // eventually deallocated and every later Keychain op reads freed memory
+    // (silent save/read failures → the app always falls back to the login
+    // screen). CFRetain first so the CFBridgingRelease balances to net-zero.
+    private fun key(cf: CFStringRef?): NSString =
+        CFBridgingRelease(CFRetain(cf)) as NSString
 
     private fun baseQuery(account: String): NSMutableDictionary {
         val q = NSMutableDictionary()
