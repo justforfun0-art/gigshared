@@ -1,0 +1,18 @@
+# Gradle / build
+.gradle/
+build/
+local.properties
+
+# Kotlin/Native
+*.klib
+
+# iOS app
+iosApp/Config.xcconfig
+iosApp/Info.plist
+# Track the Xcode project structure (project.pbxproj) but ignore user-specific bits
+iosApp/iosApp.xcodeproj/project.xcworkspace/
+iosApp/iosApp.xcodeproj/xcuserdata/
+iosApp/iosApp.xcworkspace/
+xcuserdata/
+*.xcuserstate
+.DS_Store

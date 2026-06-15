@@ -1,0 +1,40 @@
+-- Job cache. The full Job is stored as a kotlinx-serialized JSON blob (lossless,
+-- unlike Gigand's Room comma-join which dropped commas inside list values); the
+-- few columns the queries filter/order on are denormalized out for indexable
+-- access. Mirrors JobDao's observe/get/search/insert/clear/deleteOld surface.
+
+CREATE TABLE JobRow (
+    id TEXT NOT NULL PRIMARY KEY,
+    employer_id TEXT NOT NULL,
+    is_active INTEGER NOT NULL,          -- 0/1
+    title TEXT NOT NULL,
+    description TEXT NOT NULL,
+    job_date TEXT,
+    created_at TEXT,
+    cached_at INTEGER NOT NULL,          -- epoch millis (server clock)
+    job_json TEXT NOT NULL               -- full Job as JSON
+);
+
+CREATE INDEX JobRow_active_created ON JobRow(is_active, created_at);
+
+upsert:
+INSERT OR REPLACE INTO JobRow(id, employer_id, is_active, title, description, job_date, created_at, cached_at, job_json)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+selectById:
+SELECT job_json FROM JobRow WHERE id = ?;
+
+selectActive:
+SELECT job_json FROM JobRow WHERE is_active = 1 ORDER BY created_at DESC;
+
+search:
+SELECT job_json FROM JobRow
+WHERE is_active = 1
+AND (title LIKE '%' || :query || '%' OR description LIKE '%' || :query || '%')
+ORDER BY created_at DESC;
+
+clearAll:
+DELETE FROM JobRow;
+
+deleteOlderThan:
+DELETE FROM JobRow WHERE cached_at < ?;

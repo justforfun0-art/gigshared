@@ -1,0 +1,59 @@
+[versions]
+# Kept in lockstep with the Gigand Android app so the shared module is
+# binary-compatible when :app depends on it.
+kotlin = "2.1.20"
+# Kotlin 2.1.20 is required so the Native compiler can read supabase-kt 3.0.3's
+# iOS klibs (built with Kotlin 2.1.0; 2.0.21's Native compiler rejected them with
+# "Incompatible ABI version"). Toolchain: AGP 8.7.3 + Gradle 8.9. Gradle stays at
+# 8.9 (NOT 8.11.1) because the KMP "Type T not present" test-task-creation bug
+# recurs on Gradle 8.10+ with this AGP — 8.9 + AGP 8.7.3 builds AND runs tests.
+# Decoupled from Gigand's toolchain; doesn't affect :app binary compat.
+agp = "8.7.3"
+coroutines = "1.9.0"
+serialization = "1.7.3"
+ktor = "3.0.2"
+supabase = "3.0.3"
+sqldelight = "2.0.2"
+# Android library target
+androidMinSdk = "26"
+androidCompileSdk = "35"
+
+[libraries]
+kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
+kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "serialization" }
+kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version = "0.6.1" }
+
+# supabase-kt BOM + artifacts (KMP, has iOS targets)
+supabase-bom = { group = "io.github.jan-tennert.supabase", name = "bom", version.ref = "supabase" }
+supabase-postgrest = { group = "io.github.jan-tennert.supabase", name = "postgrest-kt" }
+supabase-auth = { group = "io.github.jan-tennert.supabase", name = "auth-kt" }
+supabase-realtime = { group = "io.github.jan-tennert.supabase", name = "realtime-kt" }
+supabase-storage = { group = "io.github.jan-tennert.supabase", name = "storage-kt" }
+
+# Ktor — shared HTTP client for the Next.js /api/secure routes
+ktor-client-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
+ktor-client-content-negotiation = { group = "io.ktor", name = "ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-serialization-kotlinx-json = { group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktor" }
+# Ktor engines (per-platform)
+ktor-client-okhttp = { group = "io.ktor", name = "ktor-client-okhttp", version.ref = "ktor" }
+ktor-client-darwin = { group = "io.ktor", name = "ktor-client-darwin", version.ref = "ktor" }
+
+# Android-only: secure at-rest token storage (EncryptedSharedPreferences)
+androidx-security-crypto = { group = "androidx.security", name = "security-crypto", version = "1.1.0-alpha06" }
+
+# SQLDelight — multiplatform local cache (replaces Room for the shared job cache)
+sqldelight-runtime = { group = "app.cash.sqldelight", name = "runtime", version.ref = "sqldelight" }
+sqldelight-coroutines = { group = "app.cash.sqldelight", name = "coroutines-extensions", version.ref = "sqldelight" }
+sqldelight-android-driver = { group = "app.cash.sqldelight", name = "android-driver", version.ref = "sqldelight" }
+sqldelight-native-driver = { group = "app.cash.sqldelight", name = "native-driver", version.ref = "sqldelight" }
+sqldelight-sqlite-driver = { group = "app.cash.sqldelight", name = "sqlite-driver", version.ref = "sqldelight" }
+
+# Test
+kotlin-test = { group = "org.jetbrains.kotlin", name = "kotlin-test", version.ref = "kotlin" }
+kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutines" }
+
+[plugins]
+kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+android-library = { id = "com.android.library", version.ref = "agp" }
+sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }

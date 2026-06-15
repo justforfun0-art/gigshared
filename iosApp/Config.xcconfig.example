@@ -1,0 +1,12 @@
+// Copy to Config.xcconfig (gitignored) and fill in. These feed Info.plist →
+// BackendConfig at launch. Do NOT commit real values.
+//
+// API_BASE_URL must end in /api/ — note xcconfig needs the // in https:// escaped
+// as a variable trick, or just store the host and append /api/ in Swift. The
+// simplest reliable approach: store the full URL WITHOUT the scheme's // here and
+// reconstruct, OR use a leading $() guard. Easiest of all: keep these in a plist
+// you generate, not raw xcconfig, to avoid the // comment clash.
+
+SUPABASE_URL = https:/$()/YOUR-PROJECT.supabase.co
+SUPABASE_ANON_KEY = your-anon-key
+API_BASE_URL = https:/$()/your-web-app.example.com/api/

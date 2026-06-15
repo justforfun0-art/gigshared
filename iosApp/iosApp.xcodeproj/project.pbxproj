@@ -1,0 +1,402 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A1000010 /* GigHourApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001 /* GigHourApp.swift */; };
+		A1000011 /* AppContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000002 /* AppContainer.swift */; };
+		A1000012 /* JobFeedViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000003 /* JobFeedViewModel.swift */; };
+		A1000013 /* JobFeedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000004 /* JobFeedView.swift */; };
+		A1000015 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100000A /* RootView.swift */; };
+		A1000016 /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100000B /* AuthViewModel.swift */; };
+		A1000017 /* AuthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100000C /* AuthView.swift */; };
+		A1000018 /* MyApplicationsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100000D /* MyApplicationsViewModel.swift */; };
+		A1000019 /* MyApplicationsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100000E /* MyApplicationsView.swift */; };
+		A100001A /* EarningsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100000F /* EarningsViewModel.swift */; };
+		A100001B /* EarningsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0000020 /* EarningsView.swift */; };
+		A100001C /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0000021 /* ProfileViewModel.swift */; };
+		A100001D /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000022 /* ProfileView.swift */; };
+		A100001E /* NotificationsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000023 /* NotificationsViewModel.swift */; };
+		A100001F /* NotificationsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000024 /* NotificationsView.swift */; };
+		A1000026 /* JobDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000025 /* JobDetailView.swift */; };
+		B0000030 /* MyJobsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0000040 /* MyJobsViewModel.swift */; };
+		B0000031 /* MyJobsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0000041 /* MyJobsView.swift */; };
+		B0000032 /* PostJobView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0000042 /* PostJobView.swift */; };
+		B0000033 /* ApplicantsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0000043 /* ApplicantsViewModel.swift */; };
+		B0000034 /* ApplicantsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0000044 /* ApplicantsView.swift */; };
+		A1000014 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1000005 /* Assets.xcassets */; };
+		A1000020 /* Shared.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1000006 /* Shared.xcframework */; };
+		A1000021 /* Shared.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A1000006 /* Shared.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		A1000030 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				A1000021 /* Shared.xcframework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		A1000001 /* GigHourApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GigHourApp.swift; sourceTree = "<group>"; };
+		A1000002 /* AppContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppContainer.swift; sourceTree = "<group>"; };
+		A1000003 /* JobFeedViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobFeedViewModel.swift; sourceTree = "<group>"; };
+		A1000004 /* JobFeedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobFeedView.swift; sourceTree = "<group>"; };
+		A100000A /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		A100000B /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
+		A100000C /* AuthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthView.swift; sourceTree = "<group>"; };
+		A100000D /* MyApplicationsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyApplicationsViewModel.swift; sourceTree = "<group>"; };
+		A100000E /* MyApplicationsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyApplicationsView.swift; sourceTree = "<group>"; };
+		A100000F /* EarningsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EarningsViewModel.swift; sourceTree = "<group>"; };
+		B0000020 /* EarningsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EarningsView.swift; sourceTree = "<group>"; };
+		B0000021 /* ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
+		A1000022 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
+		A1000023 /* NotificationsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsViewModel.swift; sourceTree = "<group>"; };
+		A1000024 /* NotificationsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsView.swift; sourceTree = "<group>"; };
+		A1000025 /* JobDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobDetailView.swift; sourceTree = "<group>"; };
+		B0000040 /* MyJobsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyJobsViewModel.swift; sourceTree = "<group>"; };
+		B0000041 /* MyJobsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyJobsView.swift; sourceTree = "<group>"; };
+		B0000042 /* PostJobView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostJobView.swift; sourceTree = "<group>"; };
+		B0000043 /* ApplicantsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicantsViewModel.swift; sourceTree = "<group>"; };
+		B0000044 /* ApplicantsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicantsView.swift; sourceTree = "<group>"; };
+		A1000005 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		A1000006 /* Shared.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = Shared.xcframework; path = ../shared/build/XCFrameworks/release/Shared.xcframework; sourceTree = "<group>"; };
+		A1000007 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A1000008 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
+		A1000009 /* iosApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iosApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A1000040 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1000020 /* Shared.xcframework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		A1000050 = {
+			isa = PBXGroup;
+			children = (
+				A1000008 /* Config.xcconfig */,
+				A1000051 /* iosApp */,
+				A1000052 /* Frameworks */,
+				A1000053 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		A1000051 /* iosApp */ = {
+			isa = PBXGroup;
+			children = (
+				A1000001 /* GigHourApp.swift */,
+				A100000A /* RootView.swift */,
+				A1000002 /* AppContainer.swift */,
+				A1000054 /* Features */,
+				A1000005 /* Assets.xcassets */,
+				A1000007 /* Info.plist */,
+			);
+			path = iosApp;
+			sourceTree = "<group>";
+		};
+		A1000054 /* Features */ = {
+			isa = PBXGroup;
+			children = (
+				A1000003 /* JobFeedViewModel.swift */,
+				A1000004 /* JobFeedView.swift */,
+				A100000B /* AuthViewModel.swift */,
+				A100000C /* AuthView.swift */,
+				A100000D /* MyApplicationsViewModel.swift */,
+				A100000E /* MyApplicationsView.swift */,
+				A100000F /* EarningsViewModel.swift */,
+				B0000020 /* EarningsView.swift */,
+				B0000021 /* ProfileViewModel.swift */,
+				A1000022 /* ProfileView.swift */,
+				A1000023 /* NotificationsViewModel.swift */,
+				A1000024 /* NotificationsView.swift */,
+				A1000025 /* JobDetailView.swift */,
+				B0000050 /* Employer */,
+			);
+			path = Features;
+			sourceTree = "<group>";
+		};
+		B0000050 /* Employer */ = {
+			isa = PBXGroup;
+			children = (
+				B0000040 /* MyJobsViewModel.swift */,
+				B0000041 /* MyJobsView.swift */,
+				B0000042 /* PostJobView.swift */,
+				B0000043 /* ApplicantsViewModel.swift */,
+				B0000044 /* ApplicantsView.swift */,
+			);
+			path = Employer;
+			sourceTree = "<group>";
+		};
+		A1000052 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				A1000006 /* Shared.xcframework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		A1000053 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A1000009 /* iosApp.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A1000060 /* iosApp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A1000070 /* Build configuration list for PBXNativeTarget "iosApp" */;
+			buildPhases = (
+				A1000080 /* Assemble Shared XCFramework */,
+				A1000061 /* Sources */,
+				A1000040 /* Frameworks */,
+				A1000062 /* Resources */,
+				A1000030 /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = iosApp;
+			productName = iosApp;
+			productReference = A1000009 /* iosApp.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A1000090 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1530;
+				LastUpgradeCheck = 1530;
+				TargetAttributes = {
+					A1000060 = {
+						CreatedOnToolsVersion = 15.3;
+					};
+				};
+			};
+			buildConfigurationList = A1000091 /* Build configuration list for PBXProject "iosApp" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = A1000050;
+			productRefGroup = A1000053 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A1000060 /* iosApp */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A1000062 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1000014 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		A1000080 /* Assemble Shared XCFramework */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Assemble Shared XCFramework";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cd \"$SRCROOT/..\"\nif [ \"$ACTION\" = \"clean\" ]; then exit 0; fi\n./gradlew :shared:assembleSharedReleaseXCFramework\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A1000061 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1000010 /* GigHourApp.swift in Sources */,
+				A1000011 /* AppContainer.swift in Sources */,
+				A1000012 /* JobFeedViewModel.swift in Sources */,
+				A1000013 /* JobFeedView.swift in Sources */,
+				A1000015 /* RootView.swift in Sources */,
+				A1000016 /* AuthViewModel.swift in Sources */,
+				A1000017 /* AuthView.swift in Sources */,
+				A1000018 /* MyApplicationsViewModel.swift in Sources */,
+				A1000019 /* MyApplicationsView.swift in Sources */,
+				A100001A /* EarningsViewModel.swift in Sources */,
+				A100001B /* EarningsView.swift in Sources */,
+				A100001C /* ProfileViewModel.swift in Sources */,
+				A100001D /* ProfileView.swift in Sources */,
+				A100001E /* NotificationsViewModel.swift in Sources */,
+				A100001F /* NotificationsView.swift in Sources */,
+				A1000026 /* JobDetailView.swift in Sources */,
+				B0000030 /* MyJobsViewModel.swift in Sources */,
+				B0000031 /* MyJobsView.swift in Sources */,
+				B0000032 /* PostJobView.swift in Sources */,
+				B0000033 /* ApplicantsViewModel.swift in Sources */,
+				B0000034 /* ApplicantsView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		A1000100 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = A1000008 /* Config.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		A1000101 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = A1000008 /* Config.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		A1000110 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = A1000008 /* Config.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
+				ENABLE_PREVIEWS = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/../shared/build/XCFrameworks/release",
+				);
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = iosApp/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-lsqlite3",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "$(PRODUCT_BUNDLE_IDENTIFIER)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		A1000111 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = A1000008 /* Config.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
+				ENABLE_PREVIEWS = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/../shared/build/XCFrameworks/release",
+				);
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = iosApp/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-lsqlite3",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "$(PRODUCT_BUNDLE_IDENTIFIER)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A1000091 /* Build configuration list for PBXProject "iosApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A1000100 /* Debug */,
+				A1000101 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A1000070 /* Build configuration list for PBXNativeTarget "iosApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A1000110 /* Debug */,
+				A1000111 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = A1000090 /* Project object */;
+}

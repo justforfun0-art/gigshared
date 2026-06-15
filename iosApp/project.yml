@@ -1,0 +1,47 @@
+# XcodeGen spec — generates iosApp.xcodeproj. Run `xcodegen generate` in this
+# dir (brew install xcodegen). This keeps the Xcode project text-based and
+# reviewable instead of a binary .pbxproj.
+name: iosApp
+options:
+  bundleIdPrefix: com.gighour
+  deploymentTarget:
+    iOS: "16.0"
+
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    # Pull secrets from Config.xcconfig (not committed). These get surfaced into
+    # Info.plist (see the target's info entries below).
+    # Create iosApp/Config.xcconfig with SUPABASE_URL / SUPABASE_ANON_KEY /
+    # API_BASE_URL=...$()/api/ — see Config.xcconfig.example.
+
+targets:
+  iosApp:
+    type: application
+    platform: iOS
+    sources:
+      - path: iosApp
+    configFiles:
+      Debug: Config.xcconfig
+      Release: Config.xcconfig
+    info:
+      path: iosApp/Info.plist
+      properties:
+        CFBundleDisplayName: GigHour
+        UILaunchScreen: {}
+        SUPABASE_URL: $(SUPABASE_URL)
+        SUPABASE_ANON_KEY: $(SUPABASE_ANON_KEY)
+        API_BASE_URL: $(API_BASE_URL)
+    dependencies:
+      # The KMP framework. Assemble it first:
+      #   ../gradlew :shared:assembleSharedXCFramework
+      # which writes shared/build/XCFrameworks/release/Shared.xcframework.
+      - framework: ../shared/build/XCFrameworks/release/Shared.xcframework
+        embed: true
+    # Optional but recommended: a run-script build phase that rebuilds the
+    # XCFramework on each Xcode build so Swift always sees fresh Kotlin.
+    preBuildScripts:
+      - name: Assemble Shared XCFramework
+        script: |
+          cd "$SRCROOT/.."
+          ./gradlew :shared:assembleSharedXCFramework
