@@ -35,6 +35,10 @@ class IosSecureTokenStore(
 
     override suspend fun getUserId(): String? = keychain.read(KEY_USER_ID)
 
+    override suspend fun setUserId(userId: String?) {
+        if (userId == null) keychain.delete(KEY_USER_ID) else keychain.write(KEY_USER_ID, userId)
+    }
+
     override suspend fun hasCachedSupabaseToken(): Boolean = cachedToken.value != null
 
     override suspend fun clear() {

@@ -34,6 +34,9 @@ interface SecureTokenStore {
     /** The authenticated user's id, or null if not logged in. */
     suspend fun getUserId(): String?
 
+    /** Persist (or clear, when null) the authenticated user's id. */
+    suspend fun setUserId(userId: String?)
+
     /** True when a token is already cached in memory/at-rest (skip re-mint). */
     suspend fun hasCachedSupabaseToken(): Boolean
 

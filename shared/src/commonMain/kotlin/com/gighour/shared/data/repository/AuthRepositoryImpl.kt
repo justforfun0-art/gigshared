@@ -1,5 +1,6 @@
 package com.gighour.shared.data.repository
 
+import com.gighour.shared.data.local.SecureTokenStore
 import com.gighour.shared.data.local.SessionStore
 import com.gighour.shared.data.remote.AuthApi
 import com.gighour.shared.data.remote.SendOtpRequest
@@ -32,6 +33,11 @@ import kotlinx.coroutines.withContext
 class AuthRepositoryImpl(
     private val authApi: AuthApi,
     private val sessionStore: SessionStore,
+    // The HTTP/Supabase layer reads its bearer + Supabase JWT from a SECOND
+    // store (SecureTokenStore), separate from the SessionStore. verifyOtp must
+    // populate it too, or every authenticated secure-API call (earnings,
+    // payouts, dashboard stats) goes out with no token and returns empty.
+    private val secureTokenStore: SecureTokenStore? = null,
 ) : AuthRepository {
 
     override suspend fun sendOtp(phone: String): Result<OtpSendResult> {
@@ -79,6 +85,12 @@ class AuthRepositoryImpl(
                 // Persist inside NonCancellable — see class KDoc / audit note.
                 withContext(NonCancellable) {
                     sessionStore.saveAuthData(authData)
+                    // Also seed the SecureTokenStore the HTTP/Supabase layer reads
+                    // from, so authenticated secure-API calls carry the bearer +
+                    // user_id cookie (without this, earnings/payouts/dashboard
+                    // come back empty).
+                    secureTokenStore?.setAuthToken(response.token)
+                    secureTokenStore?.setUserId(response.user.userId)
                 }
                 // Best-effort; the session is already durably saved above.
                 refreshSupabaseToken()
@@ -100,6 +112,9 @@ class AuthRepositoryImpl(
         return try {
             val token = authApi.getSupabaseToken().token
             sessionStore.setSupabaseToken(token)
+            // Mirror into the SecureTokenStore the ApiClient/Supabase client read,
+            // so PostgREST RLS (auth.uid()) resolves on user-scoped queries.
+            secureTokenStore?.setSupabaseToken(token)
             token
         } catch (e: Exception) {
             Logger.e(TAG, "refreshSupabaseToken failed: ${e.message}")
@@ -112,6 +127,7 @@ class AuthRepositoryImpl(
 
     override suspend fun logout() {
         sessionStore.clearAuthData()
+        secureTokenStore?.clear()
     }
 
     override fun getAuthState(): Flow<AuthData?> = sessionStore.authDataFlow

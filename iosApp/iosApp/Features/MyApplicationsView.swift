@@ -138,6 +138,15 @@ private struct ApplicationRow: View {
                         Text(applied.prefix(10)).font(.caption).foregroundStyle(GHTheme.muted)
                     }
                 }
+                // In-flight applications get the expandable stage tracker
+                // (Android's DetailedHistoryCard). Actionable rows are wrapped in
+                // a NavigationLink (→ the work-session screen, which already shows
+                // live progress + OTP), so the inline tracker is only added to
+                // non-actionable in-flight rows where the tap is free to expand.
+                if !application.status.isTerminal() && !actionable {
+                    Divider().padding(.top, 4)
+                    HistoryProgress(application: application)
+                }
             }
         }
     }

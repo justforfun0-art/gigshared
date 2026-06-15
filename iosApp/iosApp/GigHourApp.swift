@@ -16,6 +16,7 @@ struct GigHourApp: App {
         )
         let container = AppContainer(config: config)
         container.startServerTimeSync()
+        container.backfillSecureTokensFromSession()
         self.container = container
     }
 

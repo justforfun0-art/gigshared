@@ -45,6 +45,7 @@
 		C000003C /* ConfettiView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C000000C /* ConfettiView.swift */; };
 		C000003D /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = C000000D /* Theme.swift */; };
 		C000003E /* GHBottomBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = C000000E /* GHBottomBar.swift */; };
+		C000003F /* DetailedHistoryCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = C000000F /* DetailedHistoryCard.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -102,6 +103,7 @@
 		C000000C /* ConfettiView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfettiView.swift; sourceTree = "<group>"; };
 		C000000D /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		C000000E /* GHBottomBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GHBottomBar.swift; sourceTree = "<group>"; };
+		C000000F /* DetailedHistoryCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailedHistoryCard.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -178,8 +180,17 @@
 				C0000052 /* Payments */,
 				C0000053 /* Splash */,
 				C0000054 /* Swipe */,
+				C0000056 /* History */,
 			);
 			path = Features;
+			sourceTree = "<group>";
+		};
+		C0000056 /* History */ = {
+			isa = PBXGroup;
+			children = (
+				C000000F /* DetailedHistoryCard.swift */,
+			);
+			path = History;
 			sourceTree = "<group>";
 		};
 		B0000050 /* Employer */ = {
@@ -378,6 +389,7 @@
 				C000003C /* ConfettiView.swift in Sources */,
 				C000003D /* Theme.swift in Sources */,
 				C000003E /* GHBottomBar.swift in Sources */,
+				C000003F /* DetailedHistoryCard.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

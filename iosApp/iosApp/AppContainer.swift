@@ -47,7 +47,7 @@ final class AppContainer {
         let cache = IosHelpersKt.makeJobCache(driverFactory: driver)
         self.jobCache = cache
 
-        self.auth = AuthRepositoryImpl(authApi: AuthApi(client: api), sessionStore: sessionStore)
+        self.auth = AuthRepositoryImpl(authApi: AuthApi(client: api), sessionStore: sessionStore, secureTokenStore: tokenStore)
         self.jobs = JobRepositoryImpl(
             jobsApi: JobsApi(client: api),
             jobCache: jobCache,
@@ -76,5 +76,24 @@ final class AppContainer {
     /// will block on awaitSync until this lands; never a device-clock fallback).
     func startServerTimeSync() {
         Task { _ = try? await serverClock.syncServerTime() }
+    }
+
+    /// Backfill the SecureTokenStore (which ApiClient/Supabase read for the
+    /// bearer + RLS) from the persisted session on launch. Needed for sessions
+    /// created before the secure-store was wired in verifyOtp — and harmless
+    /// otherwise — so an already-logged-in user's data syncs without re-login.
+    /// Also mints a fresh Supabase token so RLS queries resolve auth.uid().
+    func backfillSecureTokensFromSession() {
+        Task {
+            let existing = try? await tokenStore.getAuthToken()
+            if existing == nil, let token = try? await sessionStore.getToken() {
+                try? await tokenStore.setAuthToken(token: token)
+            }
+            if let userId = try? await sessionStore.getUserId() {
+                try? await tokenStore.setUserId(userId: userId)
+            }
+            // Mint/refresh the Supabase JWT into the secure store for RLS.
+            _ = try? await auth.refreshSupabaseToken()
+        }
     }
 }

@@ -58,6 +58,12 @@ class AndroidSecureTokenStore(
 
     override suspend fun getUserId(): String? = securePrefs.getString(KEY_USER_ID, null)
 
+    override suspend fun setUserId(userId: String?) {
+        securePrefs.edit().apply {
+            if (userId == null) remove(KEY_USER_ID) else putString(KEY_USER_ID, userId)
+        }.apply()
+    }
+
     override suspend fun hasCachedSupabaseToken(): Boolean = cachedToken.get() != null
 
     override suspend fun clear() {
