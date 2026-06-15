@@ -26,6 +26,9 @@ struct ApplicantsView: View {
             .alert("Share this OTP", isPresented: otpBinding) {
                 Button("Done", role: .cancel) { viewModel.presentedOtp = nil }
             } message: { Text(viewModel.presentedOtp ?? "") }
+            .sheet(item: $viewModel.verifyingCompletion) { app in
+                CompletionCodeSheet(app: app, viewModel: viewModel)
+            }
     }
 
     private var errorBinding: Binding<Bool> {
@@ -74,10 +77,58 @@ struct ApplicantsView: View {
             } else if s == ApplicationStatus.accepted {
                 Button("Generate start OTP") { Task { await viewModel.generateStartOtp(app) } }
                     .buttonStyle(.borderedProminent).controlSize(.small)
+            } else if s == ApplicationStatus.workInProgress {
+                Label("Work in progress", systemImage: "clock")
+                    .font(.caption).foregroundStyle(.orange)
             } else if s == ApplicationStatus.completionPending {
-                Button("Verify completion") { Task { await viewModel.generateCompletionOtp(app) } }
+                Button("Enter completion code") { viewModel.beginCompletionVerify(app) }
                     .buttonStyle(.borderedProminent).controlSize(.small)
             }
         }
     }
 }
+
+/// Modal where the employer types the 6-digit completion code the worker read
+/// out, finishing the gig (`verifyCompletionOtp`).
+private struct CompletionCodeSheet: View {
+    let app: Application
+    @ObservedObject var viewModel: ApplicantsViewModel
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section {
+                    Text(app.employeeProfile?.name ?? "Worker").font(.headline)
+                    Text("Ask the worker for their completion code and enter it below to finish the gig and release payment.")
+                        .font(.subheadline).foregroundStyle(.secondary)
+                }
+                Section {
+                    TextField("6-digit code", text: $viewModel.completionInput)
+                        .keyboardType(.numberPad)
+                        .textContentType(.oneTimeCode)
+                        .font(.title2.monospaced())
+                }
+                if let err = viewModel.actionError {
+                    Section { Text(err).foregroundStyle(.red).font(.footnote) }
+                }
+            }
+            .navigationTitle("Complete gig")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { viewModel.verifyingCompletion = nil }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Finish") { Task { await viewModel.submitCompletionCode() } }
+                        .disabled(viewModel.isVerifying
+                                  || viewModel.completionInput.trimmingCharacters(in: .whitespaces).count != 6)
+                }
+            }
+        }
+    }
+}
+
+/// `Application` comes from the Kotlin framework without Swift's `Identifiable`;
+/// its stable `id` lets it drive `sheet(item:)` / `ForEach`.
+extension Application: Identifiable {}

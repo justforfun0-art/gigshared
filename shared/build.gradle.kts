@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.android.library)
     alias(libs.plugins.sqldelight)
+    alias(libs.plugins.skie)
 }
 
 kotlin {
@@ -49,7 +50,11 @@ kotlin {
             // supabase-kt — KMP, used for data access on both platforms
             implementation(project.dependencies.platform(libs.supabase.bom))
             implementation(libs.supabase.postgrest)
-            implementation(libs.supabase.auth)
+            // NB: the supabase-kt Auth plugin is deliberately NOT used — it's
+            // mutually exclusive with our custom `accessToken` callback and
+            // caused an iOS init crash (see SupabaseProvider). PostgREST RLS is
+            // satisfied by the per-request token from SecureTokenStore, so the
+            // auth-kt artifact was dead weight and is dropped here.
             implementation(libs.supabase.realtime)
             implementation(libs.supabase.storage)
             implementation(libs.ktor.client.core)

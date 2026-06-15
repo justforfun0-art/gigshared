@@ -28,6 +28,13 @@
 		B0000032 /* PostJobView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0000042 /* PostJobView.swift */; };
 		B0000033 /* ApplicantsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0000043 /* ApplicantsViewModel.swift */; };
 		B0000034 /* ApplicantsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0000044 /* ApplicantsView.swift */; };
+		C0000031 /* WorkSessionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000001 /* WorkSessionViewModel.swift */; };
+		C0000032 /* WorkSessionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000002 /* WorkSessionView.swift */; };
+		C0000033 /* DashboardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000003 /* DashboardViewModel.swift */; };
+		C0000034 /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000004 /* DashboardView.swift */; };
+		C0000035 /* PaymentsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000005 /* PaymentsViewModel.swift */; };
+		C0000036 /* PaymentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000006 /* PaymentsView.swift */; };
+		C0000037 /* SafariSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000007 /* SafariSheet.swift */; };
 		A1000014 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1000005 /* Assets.xcassets */; };
 		A1000020 /* Shared.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1000006 /* Shared.xcframework */; };
 		A1000021 /* Shared.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A1000006 /* Shared.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -69,6 +76,13 @@
 		B0000042 /* PostJobView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostJobView.swift; sourceTree = "<group>"; };
 		B0000043 /* ApplicantsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicantsViewModel.swift; sourceTree = "<group>"; };
 		B0000044 /* ApplicantsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicantsView.swift; sourceTree = "<group>"; };
+		C0000001 /* WorkSessionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkSessionViewModel.swift; sourceTree = "<group>"; };
+		C0000002 /* WorkSessionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkSessionView.swift; sourceTree = "<group>"; };
+		C0000003 /* DashboardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardViewModel.swift; sourceTree = "<group>"; };
+		C0000004 /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
+		C0000005 /* PaymentsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentsViewModel.swift; sourceTree = "<group>"; };
+		C0000006 /* PaymentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentsView.swift; sourceTree = "<group>"; };
+		C0000007 /* SafariSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariSheet.swift; sourceTree = "<group>"; };
 		A1000005 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A1000006 /* Shared.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = Shared.xcframework; path = ../shared/build/XCFrameworks/release/Shared.xcframework; sourceTree = "<group>"; };
 		A1000007 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -128,8 +142,39 @@
 				A1000024 /* NotificationsView.swift */,
 				A1000025 /* JobDetailView.swift */,
 				B0000050 /* Employer */,
+				C0000050 /* WorkSession */,
+				C0000051 /* Dashboard */,
+				C0000052 /* Payments */,
 			);
 			path = Features;
+			sourceTree = "<group>";
+		};
+		C0000050 /* WorkSession */ = {
+			isa = PBXGroup;
+			children = (
+				C0000001 /* WorkSessionViewModel.swift */,
+				C0000002 /* WorkSessionView.swift */,
+			);
+			path = WorkSession;
+			sourceTree = "<group>";
+		};
+		C0000051 /* Dashboard */ = {
+			isa = PBXGroup;
+			children = (
+				C0000003 /* DashboardViewModel.swift */,
+				C0000004 /* DashboardView.swift */,
+			);
+			path = Dashboard;
+			sourceTree = "<group>";
+		};
+		C0000052 /* Payments */ = {
+			isa = PBXGroup;
+			children = (
+				C0000005 /* PaymentsViewModel.swift */,
+				C0000006 /* PaymentsView.swift */,
+				C0000007 /* SafariSheet.swift */,
+			);
+			path = Payments;
 			sourceTree = "<group>";
 		};
 		B0000050 /* Employer */ = {
@@ -274,6 +319,13 @@
 				B0000032 /* PostJobView.swift in Sources */,
 				B0000033 /* ApplicantsViewModel.swift in Sources */,
 				B0000034 /* ApplicantsView.swift in Sources */,
+				C0000031 /* WorkSessionViewModel.swift in Sources */,
+				C0000032 /* WorkSessionView.swift in Sources */,
+				C0000033 /* DashboardViewModel.swift in Sources */,
+				C0000034 /* DashboardView.swift in Sources */,
+				C0000035 /* PaymentsViewModel.swift in Sources */,
+				C0000036 /* PaymentsView.swift in Sources */,
+				C0000037 /* SafariSheet.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

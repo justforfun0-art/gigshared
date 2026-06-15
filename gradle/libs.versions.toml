@@ -14,6 +14,10 @@ serialization = "1.7.3"
 ktor = "3.0.2"
 supabase = "3.0.3"
 sqldelight = "2.0.2"
+# SKIE — generates Swift-friendly bridges (Flow→AsyncSequence, sealed→enum,
+# default args, suspend→async). 0.10.12 supports Kotlin 2.0.0–2.3.10 (so our
+# pinned 2.1.20 is fine) and requires a static framework (we use isStatic = true).
+skie = "0.10.12"
 # Android library target
 androidMinSdk = "26"
 androidCompileSdk = "35"
@@ -26,7 +30,8 @@ kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime",
 # supabase-kt BOM + artifacts (KMP, has iOS targets)
 supabase-bom = { group = "io.github.jan-tennert.supabase", name = "bom", version.ref = "supabase" }
 supabase-postgrest = { group = "io.github.jan-tennert.supabase", name = "postgrest-kt" }
-supabase-auth = { group = "io.github.jan-tennert.supabase", name = "auth-kt" }
+# supabase-auth (auth-kt) intentionally removed — the Auth plugin conflicts with
+# our custom accessToken callback (see SupabaseProvider) and was never installed.
 supabase-realtime = { group = "io.github.jan-tennert.supabase", name = "realtime-kt" }
 supabase-storage = { group = "io.github.jan-tennert.supabase", name = "storage-kt" }
 
@@ -57,3 +62,4 @@ kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref 
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 android-library = { id = "com.android.library", version.ref = "agp" }
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
+skie = { id = "co.touchlab.skie", version.ref = "skie" }

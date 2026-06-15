@@ -21,12 +21,34 @@ final class AuthViewModel: ObservableObject {
     @Published private(set) var session: AuthData?
 
     private let auth: any AuthRepository
+    private var authStateTask: Task<Void, Never>?
 
     init(auth: any AuthRepository) {
         self.auth = auth
     }
 
+    deinit { authStateTask?.cancel() }
+
     var isSignedIn: Bool { session != nil }
+
+    /// Reactively track the persisted session via the shared `getAuthState()`
+    /// Flow, which SKIE bridges to a Swift `AsyncSequence`. This makes login
+    /// state observed rather than only set imperatively in `verify` — e.g. a
+    /// session restored on launch or cleared by `logout()` propagates here
+    /// without an explicit reload. Call once from the root view's `.task`.
+    func startObserving() {
+        guard authStateTask == nil else { return }
+        // SKIE bridges a plain Kotlin `Flow` to a non-throwing `AsyncSequence`,
+        // so this is `for await` (no `try`). Iteration ends when the task is
+        // cancelled (deinit) or the Flow completes.
+        authStateTask = Task { [weak self] in
+            guard let self else { return }
+            for await state in self.auth.getAuthState() {
+                self.session = state
+                if state == nil { self.phase = .enterPhone }
+            }
+        }
+    }
 
     func sendOtp(phone: String) async {
         let trimmed = phone.trimmingCharacters(in: .whitespaces)

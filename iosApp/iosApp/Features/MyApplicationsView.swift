@@ -5,8 +5,10 @@ import Shared
 struct MyApplicationsView: View {
 
     @StateObject private var viewModel: MyApplicationsViewModel
+    private let applications: any ApplicationRepository
 
     init(applications: any ApplicationRepository, employeeId: String) {
+        self.applications = applications
         _viewModel = StateObject(
             wrappedValue: MyApplicationsViewModel(applications: applications, employeeId: employeeId)
         )
@@ -43,7 +45,7 @@ struct MyApplicationsView: View {
             } else {
                 List {
                     ForEach(apps, id: \.id) { app in
-                        ApplicationRow(application: app)
+                        row(for: app)
                             .swipeActions(edge: .trailing) {
                                 if viewModel.canWithdraw(app) {
                                     Button(role: .destructive) {
@@ -63,6 +65,26 @@ struct MyApplicationsView: View {
                     .buttonStyle(.borderedProminent)
             }
         }
+    }
+
+    /// Hired/in-flight applications open the work-session screen (OTP loop);
+    /// everything else is a plain status row.
+    @ViewBuilder
+    private func row(for app: Application) -> some View {
+        if Self.isActionable(app.status) {
+            NavigationLink {
+                WorkSessionView(applications: applications, application: app)
+            } label: {
+                ApplicationRow(application: app)
+            }
+        } else {
+            ApplicationRow(application: app)
+        }
+    }
+
+    private static func isActionable(_ status: ApplicationStatus) -> Bool {
+        status == .selected || status == .accepted || status == .otpRequested
+            || status == .workInProgress || status == .completionPending
     }
 
     private func placeholder(title: String, icon: String, message: String) -> some View {

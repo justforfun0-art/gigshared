@@ -7,17 +7,27 @@ import com.gighour.shared.data.local.db.createGighourDb
 import com.gighour.shared.domain.model.Application
 import com.gighour.shared.domain.model.AuthData
 import com.gighour.shared.domain.model.EmployeeProfile
+import com.gighour.shared.domain.model.EmployerPaymentSummary
 import com.gighour.shared.domain.model.Job
+import com.gighour.shared.domain.model.PaymentOrder
+import com.gighour.shared.domain.model.PaymentVerifyResult
 import com.gighour.shared.domain.model.PayoutPage
 import com.gighour.shared.domain.model.PayoutStatus
+import com.gighour.shared.domain.model.WorkSession
 import com.gighour.shared.domain.repository.ApplicationRepository
 import com.gighour.shared.domain.repository.AuthRepository
+import com.gighour.shared.domain.repository.DashboardRepository
+import com.gighour.shared.domain.repository.EmployeeDashboardStats
+import com.gighour.shared.domain.repository.EmployerDashboardStats
 import com.gighour.shared.domain.repository.JobRepository
 import com.gighour.shared.domain.repository.NotificationsPage
 import com.gighour.shared.domain.repository.NotificationRepository
 import com.gighour.shared.domain.repository.OtpSendResult
+import com.gighour.shared.domain.repository.PaymentRepository
 import com.gighour.shared.domain.repository.PayoutRepository
 import com.gighour.shared.domain.repository.ProfileRepository
+import com.gighour.shared.domain.repository.ReferralInfo
+import com.gighour.shared.domain.repository.ReferralRepository
 import kotlinx.coroutines.Dispatchers
 
 /**
@@ -162,3 +172,141 @@ suspend fun ApplicationRepository.generateStartOtpOrThrow(applicationId: String)
 @Throws(Throwable::class)
 suspend fun ApplicationRepository.generateCompletionOtpOrThrow(applicationId: String): String =
     generateCompletionOtp(applicationId).getOrThrow()
+
+/** [ApplicationRepository.regenerateCompletionOtp] as a throwing suspend (returns a fresh OTP). */
+@Throws(Throwable::class)
+suspend fun ApplicationRepository.regenerateCompletionOtpOrThrow(applicationId: String): String =
+    regenerateCompletionOtp(applicationId).getOrThrow()
+
+// ---- Work-session OTP entry (item 3) ----
+
+/**
+ * [ApplicationRepository.verifyStartOtp] as a throwing suspend. The worker types
+ * the start OTP the employer generated; on success the application advances to
+ * WORK_IN_PROGRESS (returns the updated [Application]).
+ */
+@Throws(Throwable::class)
+suspend fun ApplicationRepository.verifyStartOtpOrThrow(applicationId: String, otp: String): Application =
+    verifyStartOtp(applicationId, otp).getOrThrow()
+
+/**
+ * [ApplicationRepository.verifyCompletionOtp] as a throwing suspend. The employer
+ * types the completion code the worker read out; on success the application
+ * advances to PAYMENT_PENDING / COMPLETED (returns the updated [Application]).
+ */
+@Throws(Throwable::class)
+suspend fun ApplicationRepository.verifyCompletionOtpOrThrow(applicationId: String, otp: String): Application =
+    verifyCompletionOtp(applicationId, otp).getOrThrow()
+
+/** [ApplicationRepository.acceptSelection] as a throwing suspend (worker accepts a SELECTED offer). */
+@Throws(Throwable::class)
+suspend fun ApplicationRepository.acceptSelectionOrThrow(applicationId: String): Application =
+    acceptSelection(applicationId).getOrThrow()
+
+/** [ApplicationRepository.getApplicationById] as a throwing suspend (nullable — null if not found). */
+@Throws(Throwable::class)
+suspend fun ApplicationRepository.getApplicationByIdOrThrow(applicationId: String): Application? =
+    getApplicationById(applicationId).getOrThrow()
+
+/** [ApplicationRepository.getWorkSession] as a throwing suspend (nullable — null until a session exists). */
+@Throws(Throwable::class)
+suspend fun ApplicationRepository.getWorkSessionOrThrow(applicationId: String): WorkSession? =
+    getWorkSession(applicationId).getOrThrow()
+
+// ---- Profile editing + photo upload (item 2) ----
+
+/** [ProfileRepository.updateEmployeeProfile] as a throwing suspend (returns the saved profile). */
+@Throws(Throwable::class)
+suspend fun ProfileRepository.updateEmployeeProfileOrThrow(profile: EmployeeProfile): EmployeeProfile =
+    updateEmployeeProfile(profile).getOrThrow()
+
+/**
+ * Edit just the user-facing fields of an existing [EmployeeProfile] and persist
+ * it — done Kotlin-side via `copy()` so Swift needn't reconstruct the whole
+ * (18-field) data class or know which columns are immutable. `skills` is passed
+ * as a list (empty → cleared). Returns the saved profile.
+ */
+@Throws(Throwable::class)
+suspend fun ProfileRepository.editEmployeeProfileOrThrow(
+    existing: EmployeeProfile,
+    name: String,
+    email: String?,
+    bio: String?,
+    skills: List<String>,
+): EmployeeProfile {
+    val updated = existing.copy(
+        name = name,
+        email = email?.takeIf { it.isNotBlank() },
+        bio = bio?.takeIf { it.isNotBlank() },
+        skills = skills.takeIf { it.isNotEmpty() },
+    )
+    return updateEmployeeProfile(updated).getOrThrow()
+}
+
+/**
+ * [ProfileRepository.uploadProfilePhoto] as a throwing suspend, taking the image
+ * as a **base64 string** rather than [ByteArray]. Kotlin/Native exports
+ * `ByteArray` as `KotlinByteArray`, which Swift can't build cheaply from `Data`;
+ * passing base64 (trivial from Swift `Data.base64EncodedString()`) and decoding
+ * here avoids an element-by-element copy. Returns the public photo URL.
+ */
+@OptIn(kotlin.io.encoding.ExperimentalEncodingApi::class)
+@Throws(Throwable::class)
+suspend fun ProfileRepository.uploadProfilePhotoBase64OrThrow(userId: String, base64: String): String {
+    val bytes = kotlin.io.encoding.Base64.decode(base64)
+    return uploadProfilePhoto(userId, bytes).getOrThrow()
+}
+
+// ---- Dashboard stats + referral (item 4) ----
+
+/** [DashboardRepository.getEmployeeStats] as a throwing suspend. */
+@Throws(Throwable::class)
+suspend fun DashboardRepository.getEmployeeStatsOrThrow(userId: String): EmployeeDashboardStats =
+    getEmployeeStats(userId).getOrThrow()
+
+/** [DashboardRepository.getEmployerStats] as a throwing suspend. */
+@Throws(Throwable::class)
+suspend fun DashboardRepository.getEmployerStatsOrThrow(employerId: String): EmployerDashboardStats =
+    getEmployerStats(employerId).getOrThrow()
+
+/** [ReferralRepository.getReferralInfo] as a throwing suspend. */
+@Throws(Throwable::class)
+suspend fun ReferralRepository.getReferralInfoOrThrow(userId: String): ReferralInfo =
+    getReferralInfo(userId).getOrThrow()
+
+// ---- Employer payments (item 1) ----
+
+/** [PaymentRepository.getEmployerPaymentSummary] as a throwing suspend. */
+@Throws(Throwable::class)
+suspend fun PaymentRepository.getEmployerPaymentSummaryOrThrow(employerId: String): List<EmployerPaymentSummary> =
+    getEmployerPaymentSummary(employerId).getOrThrow()
+
+/**
+ * [PaymentRepository.createOrder] as a throwing suspend. Returns the
+ * [PaymentOrder] (order id + payment session + link) the native Cashfree
+ * checkout SDK consumes. `customerEmail` is optional (Kotlin default doesn't
+ * survive the ObjC export, so Swift must pass it — pass nil for none).
+ */
+@Throws(Throwable::class)
+suspend fun PaymentRepository.createOrderOrThrow(
+    applicationId: String,
+    amount: Double,
+    employerId: String,
+    employeeId: String,
+    customerName: String,
+    customerPhone: String,
+    customerEmail: String?,
+): PaymentOrder = createOrder(
+    applicationId = applicationId,
+    amount = amount,
+    employerId = employerId,
+    employeeId = employeeId,
+    customerName = customerName,
+    customerPhone = customerPhone,
+    customerEmail = customerEmail,
+).getOrThrow()
+
+/** [PaymentRepository.verifyPayment] as a throwing suspend (poll order status after checkout). */
+@Throws(Throwable::class)
+suspend fun PaymentRepository.verifyPaymentOrThrow(orderId: String): PaymentVerifyResult =
+    verifyPayment(orderId).getOrThrow()
