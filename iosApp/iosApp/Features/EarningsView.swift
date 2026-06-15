@@ -32,6 +32,12 @@ struct EarningsView: View {
         case .loaded:
             ScrollView {
                 VStack(spacing: 16) {
+                    EarningsHero(amount: viewModel.periodEarnings,
+                                 periodLabel: viewModel.period.rawValue,
+                                 total: viewModel.stats.total,
+                                 completedJobs: viewModel.stats.completedCount)
+                    shareBanner
+                    periodChips
                     bigStats
                     miniStats
                     if viewModel.months.contains(where: { $0.amount > 0 }) {
@@ -46,6 +52,44 @@ struct EarningsView: View {
                 Text(message).foregroundStyle(.secondary).multilineTextAlignment(.center).padding()
                 Button("Retry") { Task { await viewModel.load() } }
                     .buttonStyle(.borderedProminent).tint(GHTheme.primary)
+            }
+        }
+    }
+
+    // MARK: - Share banner + period chips
+
+    private var shareBanner: some View {
+        HStack(spacing: 12) {
+            RoundedRectangle(cornerRadius: 12).fill(GHTheme.hex(0xA7F3D0))
+                .frame(width: 40, height: 40)
+                .overlay(Image(systemName: "square.and.arrow.up").foregroundStyle(GHTheme.hex(0x065F46)))
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Share your win").font(.subheadline.weight(.semibold)).foregroundStyle(GHTheme.hex(0x065F46))
+                Text("Tell friends you’re earning on GigHour")
+                    .font(.caption).foregroundStyle(GHTheme.hex(0x047857))
+            }
+            Spacer()
+            ShareLink(item: "I’ve earned ₹\(Int(viewModel.stats.total)) on GigHour! 🎉") {
+                Image(systemName: "chevron.right").font(.caption).foregroundStyle(GHTheme.hex(0x065F46))
+            }
+        }
+        .padding(14)
+        .background(GHTheme.hex(0xD1FAE5), in: RoundedRectangle(cornerRadius: 14))
+    }
+
+    private var periodChips: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 8) {
+                ForEach(EarningsViewModel.Period.allCases) { p in
+                    let selected = viewModel.period == p
+                    Text(p.rawValue)
+                        .font(.subheadline.weight(selected ? .semibold : .regular))
+                        .foregroundStyle(selected ? .white : GHTheme.onSurfaceVariant)
+                        .padding(.horizontal, 14).padding(.vertical, 7)
+                        .background(selected ? GHTheme.primary : Color(.systemBackground), in: Capsule())
+                        .overlay(Capsule().stroke(selected ? .clear : GHTheme.outline, lineWidth: 1))
+                        .onTapGesture { withAnimation(.easeInOut(duration: 0.2)) { viewModel.period = p } }
+                }
             }
         }
     }
@@ -116,6 +160,54 @@ struct EarningsView: View {
 }
 
 // MARK: - Components
+
+/// The prominent earnings hero: period label, a big animated green amount, a
+/// divider, then a Total Earned + Completed jobs row (Android's EarningsHero).
+private struct EarningsHero: View {
+    let amount: Double
+    let periodLabel: String
+    let total: Double
+    let completedJobs: Int
+
+    private let green = GHTheme.hex(0x047857)
+    @State private var shown: Double = 0
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            Text(periodLabel).font(.title3).foregroundStyle(GHTheme.onSurfaceVariant)
+            HStack(alignment: .top, spacing: 0) {
+                Text("₹").font(.system(size: 36, weight: .bold)).foregroundStyle(green).padding(.top, 12)
+                Text(shown.formatted(.number.precision(.fractionLength(0))))
+                    .font(.system(size: 56, weight: .bold)).foregroundStyle(green)
+                    .contentTransition(.numericText())
+            }
+            Divider().padding(.vertical, 12)
+            HStack {
+                heroStat("₹\(Int(total))", "Total Earned")
+                Rectangle().fill(GHTheme.outline).frame(width: 1, height: 40)
+                heroStat("\(completedJobs)", "Completed Jobs")
+            }
+        }
+        .padding(20)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(GHTheme.hex(0xF5F3FF), in: RoundedRectangle(cornerRadius: 16))
+        .onAppear { animate() }
+        .onChange(of: amount) { _ in animate() }
+    }
+
+    private func animate() {
+        shown = 0
+        withAnimation(.easeOut(duration: 0.8)) { shown = amount }
+    }
+
+    private func heroStat(_ value: String, _ label: String) -> some View {
+        VStack(spacing: 2) {
+            Text(value).font(.title3.weight(.bold)).foregroundStyle(GHTheme.onBackground)
+            Text(label).font(.caption).foregroundStyle(GHTheme.onSurfaceVariant)
+        }
+        .frame(maxWidth: .infinity)
+    }
+}
 
 private struct BigStatCard: View {
     let value: String; let label: String; let icon: String

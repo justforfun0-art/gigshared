@@ -17,6 +17,15 @@ final class EarningsViewModel: ObservableObject {
         var completedCount: Int = 0
     }
 
+    /// Period filter for the hero amount (mirrors Android's EarningsPeriod).
+    enum Period: String, CaseIterable, Identifiable {
+        case thisMonth = "This Month", thisWeek = "This Week", lastMonth = "Last Month"
+        case last3Months = "Last 3 Months", allTime = "All Time"
+        var id: String { rawValue }
+    }
+
+    @Published var period: Period = .allTime
+
     /// One month's bar for the trend chart.
     struct MonthBar: Identifiable {
         let id = UUID()
@@ -53,6 +62,27 @@ final class EarningsViewModel: ObservableObject {
         } catch {
             state = .failed((error as NSError).localizedDescription)
         }
+    }
+
+    /// Total successful earnings within the selected period (drives the hero).
+    var periodEarnings: Double {
+        guard period != .allTime else { return stats.total }
+        let now = Date()
+        let cal = Calendar.current
+        let cutoff: Date? = {
+            switch period {
+            case .thisWeek: return cal.date(byAdding: .day, value: -7, to: now)
+            case .thisMonth: return cal.dateInterval(of: .month, for: now)?.start
+            case .lastMonth: return cal.date(byAdding: .month, value: -1, to: now)
+            case .last3Months: return cal.date(byAdding: .month, value: -3, to: now)
+            case .allTime: return nil
+            }
+        }()
+        guard let cutoff else { return stats.total }
+        return payouts
+            .filter { $0.status == .success }
+            .filter { (Self.parseDate($0.completedAt ?? $0.createdAt) ?? .distantPast) >= cutoff }
+            .reduce(0.0) { $0 + $1.amount }
     }
 
     private static func computeStats(summary: PayoutSummary, payouts: [Payout]) -> Stats {
