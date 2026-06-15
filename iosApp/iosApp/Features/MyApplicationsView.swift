@@ -98,7 +98,7 @@ struct MyApplicationsView: View {
                     LazyVStack(spacing: 14) {
                         ForEach(filtered, id: \.id) { app in
                             NavigationLink {
-                                WorkSessionView(applications: applications, application: app)
+                                ApplicationStatusView(application: app)
                             } label: {
                                 HistoryCard(application: app)
                             }

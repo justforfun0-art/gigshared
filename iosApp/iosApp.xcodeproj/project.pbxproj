@@ -46,6 +46,7 @@
 		C000003D /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = C000000D /* Theme.swift */; };
 		C000003E /* GHBottomBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = C000000E /* GHBottomBar.swift */; };
 		C000003F /* DetailedHistoryCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = C000000F /* DetailedHistoryCard.swift */; };
+		C0000040 /* ApplicationStatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000010 /* ApplicationStatusView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -104,6 +105,7 @@
 		C000000D /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		C000000E /* GHBottomBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GHBottomBar.swift; sourceTree = "<group>"; };
 		C000000F /* DetailedHistoryCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailedHistoryCard.swift; sourceTree = "<group>"; };
+		C0000010 /* ApplicationStatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationStatusView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -189,6 +191,7 @@
 			isa = PBXGroup;
 			children = (
 				C000000F /* DetailedHistoryCard.swift */,
+				C0000010 /* ApplicationStatusView.swift */,
 			);
 			path = History;
 			sourceTree = "<group>";
@@ -390,6 +393,7 @@
 				C000003D /* Theme.swift in Sources */,
 				C000003E /* GHBottomBar.swift in Sources */,
 				C000003F /* DetailedHistoryCard.swift in Sources */,
+				C0000040 /* ApplicationStatusView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
