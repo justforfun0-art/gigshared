@@ -49,6 +49,8 @@
 		C0000040 /* ApplicationStatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000010 /* ApplicationStatusView.swift */; };
 		C0000041 /* ConversationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000011 /* ConversationViewModel.swift */; };
 		C0000042 /* ConversationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000012 /* ConversationView.swift */; };
+		C0000043 /* MessagesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000013 /* MessagesViewModel.swift */; };
+		C0000044 /* MessagesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000014 /* MessagesView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -110,6 +112,8 @@
 		C0000010 /* ApplicationStatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationStatusView.swift; sourceTree = "<group>"; };
 		C0000011 /* ConversationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationViewModel.swift; sourceTree = "<group>"; };
 		C0000012 /* ConversationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationView.swift; sourceTree = "<group>"; };
+		C0000013 /* MessagesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagesViewModel.swift; sourceTree = "<group>"; };
+		C0000014 /* MessagesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagesView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -197,6 +201,8 @@
 			children = (
 				C0000011 /* ConversationViewModel.swift */,
 				C0000012 /* ConversationView.swift */,
+				C0000013 /* MessagesViewModel.swift */,
+				C0000014 /* MessagesView.swift */,
 			);
 			path = Messages;
 			sourceTree = "<group>";
@@ -410,6 +416,8 @@
 				C0000040 /* ApplicationStatusView.swift in Sources */,
 				C0000041 /* ConversationViewModel.swift in Sources */,
 				C0000042 /* ConversationView.swift in Sources */,
+				C0000043 /* MessagesViewModel.swift in Sources */,
+				C0000044 /* MessagesView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
