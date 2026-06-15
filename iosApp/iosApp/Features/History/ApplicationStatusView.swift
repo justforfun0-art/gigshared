@@ -245,8 +245,13 @@ private struct ApplicationProgressTimeline: View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Application Progress").font(.title2.weight(.bold)).foregroundStyle(GHTheme.hex(0x1F2937))
 
-            ZStack(alignment: .top) {
+            // The ribbon Canvas is pinned to the LEFT rail (railWidth wide) and
+            // sits behind the rows, whose node column is the same railWidth — so
+            // the wave threads through the node centers instead of drifting to
+            // the screen center.
+            ZStack(alignment: .topLeading) {
                 ribbonCanvas
+                    .frame(width: railWidth, height: rowHeight * CGFloat(Self.steps.count))
                 VStack(spacing: 0) {
                     ForEach(Array(Self.steps.enumerated()), id: \.offset) { i, step in
                         stageRow(step, index: i).frame(height: rowHeight)
@@ -259,48 +264,64 @@ private struct ApplicationProgressTimeline: View {
         .background(GHTheme.hex(0xF7F4FC), in: RoundedRectangle(cornerRadius: 24))
     }
 
-    /// The continuous S-curve ribbon down the rail, violet up to the active node
-    /// then light-violet beyond (drawn behind the nodes).
+    /// The continuous, gently-breathing sine ribbon down the left rail — a sine
+    /// whose zero-crossings land on each node center (so it threads through every
+    /// node) and bows out between them. Light-violet for the full length, then
+    /// the brand violet overdrawn up to the active node, plus a white shimmer
+    /// gliding down the travelled portion. Animated via TimelineView.
     private var ribbonCanvas: some View {
-        Canvas { ctx, size in
-            let cx = railWidth / 2
-            let total = Self.steps.count
-            func y(_ i: Int) -> CGFloat { rowHeight * CGFloat(i) + rowHeight / 2 }
-            // Build one wavy path through all node centers.
-            var path = Path()
-            path.move(to: CGPoint(x: cx, y: y(0)))
-            for i in 1..<total {
-                let prev = CGPoint(x: cx, y: y(i - 1))
-                let cur = CGPoint(x: cx, y: y(i))
-                let midY = (prev.y + cur.y) / 2
-                let bow: CGFloat = (i % 2 == 0) ? 12 : -12
-                path.addCurve(
-                    to: cur,
-                    control1: CGPoint(x: cx + bow, y: midY - 6),
-                    control2: CGPoint(x: cx + bow, y: midY + 6)
-                )
-            }
-            // Full path in the future color, then overdraw the reached portion.
-            ctx.stroke(path, with: .color(futureRibbon), style: StrokeStyle(lineWidth: 8, lineCap: .round))
-            if currentIndex > 0 {
-                var reached = Path()
-                reached.move(to: CGPoint(x: cx, y: y(0)))
-                for i in 1...currentIndex {
-                    let prev = CGPoint(x: cx, y: y(i - 1))
-                    let cur = CGPoint(x: cx, y: y(i))
-                    let midY = (prev.y + cur.y) / 2
-                    let bow: CGFloat = (i % 2 == 0) ? 12 : -12
-                    reached.addCurve(
-                        to: cur,
-                        control1: CGPoint(x: cx + bow, y: midY - 6),
-                        control2: CGPoint(x: cx + bow, y: midY + 6)
-                    )
+        TimelineView(.animation) { timeline in
+            let t = timeline.date.timeIntervalSinceReferenceDate
+            // breathe: 7s amplitude pulse (matches Android wavePhase).
+            let breathe = 0.85 + 0.15 * sin(t * (2 * .pi / 7))
+            // shimmer: 0..1 glide every 2.6s.
+            let shimmer = (t.truncatingRemainder(dividingBy: 2.6)) / 2.6
+
+            Canvas { ctx, size in
+                let cx = railWidth / 2
+                let amp: CGFloat = 12
+                let total = Self.steps.count
+                func nodeY(_ i: Int) -> CGFloat { rowHeight * CGFloat(i) + rowHeight / 2 }
+                // Sine zero-crossings on node centers; bow between.
+                func waveX(_ y: CGFloat) -> CGFloat {
+                    let phase = y / rowHeight - 0.5
+                    return cx + amp * CGFloat(breathe) * CGFloat(sin(Double(phase) * .pi))
                 }
-                ctx.stroke(reached, with: .color(ribbon), style: StrokeStyle(lineWidth: 8, lineCap: .round))
+                func snake(_ y0: CGFloat, _ y1: CGFloat) -> Path {
+                    var p = Path()
+                    p.move(to: CGPoint(x: waveX(y0), y: y0))
+                    var y = y0
+                    let stepPx = rowHeight / 12
+                    while y < y1 { y += stepPx; p.addLine(to: CGPoint(x: waveX(y), y: y)) }
+                    p.addLine(to: CGPoint(x: waveX(y1), y: y1))
+                    return p
+                }
+
+                let startY = nodeY(0)
+                let endY = nodeY(total - 1)
+
+                // Future ribbon (light) for the full length.
+                ctx.stroke(snake(startY, endY), with: .color(futureRibbon),
+                           style: StrokeStyle(lineWidth: 18, lineCap: .round))
+
+                // Travelled portion in brand violet, up to the active node.
+                let reachedEnd = nodeY(min(max(currentIndex, 0), total - 1))
+                if reachedEnd > startY {
+                    ctx.stroke(snake(startY, reachedEnd), with: .color(ribbon),
+                               style: StrokeStyle(lineWidth: 18, lineCap: .round))
+
+                    // White shimmer sliding down the travelled portion.
+                    let shimmerY = startY + (reachedEnd - startY) * CGFloat(shimmer)
+                    let glow = rowHeight * 0.9
+                    let top = max(shimmerY - glow / 2, startY)
+                    let bot = min(shimmerY + glow / 2, reachedEnd)
+                    if bot > top {
+                        ctx.stroke(snake(top, bot), with: .color(.white.opacity(0.45)),
+                                   style: StrokeStyle(lineWidth: 8, lineCap: .round))
+                    }
+                }
             }
         }
-        .frame(width: railWidth)
-        .frame(maxWidth: railWidth, alignment: .leading)
         .allowsHitTesting(false)
     }
 
