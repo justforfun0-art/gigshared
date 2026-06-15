@@ -18,6 +18,7 @@ import platform.Foundation.NSData
 import platform.Foundation.NSMutableDictionary
 import platform.Foundation.NSNumber
 import platform.Foundation.NSString
+import platform.Foundation.NSUserDefaults
 import platform.Foundation.NSUTF8StringEncoding
 import platform.Foundation.create
 import platform.Foundation.dataUsingEncoding
@@ -88,30 +89,51 @@ internal class IosKeychain(private val service: String) {
         val q = baseQuery(account)
         q.setObject(data, forKey = cfValueData)
         val status = SecItemAdd(q.asCF(), null)
-        if (status != 0) Logger.e(TAG, "SecItemAdd($account) failed: OSStatus=$status")
+        if (status != 0) {
+            // Keychain unavailable (e.g. errSecMissingEntitlement -34018 on an
+            // unsigned simulator build). Fall back to NSUserDefaults so the
+            // session still persists; on a properly-signed device the keychain
+            // succeeds and this fallback is never reached.
+            Logger.e(TAG, "SecItemAdd($account) failed: OSStatus=$status — using NSUserDefaults fallback")
+            defaults.setObject(value, forKey = fallbackKey(account))
+        } else {
+            // Keychain is authoritative — clear any stale fallback copy.
+            defaults.removeObjectForKey(fallbackKey(account))
+        }
     }
 
-    fun read(account: String): String? = memScoped {
-        val q = baseQuery(account)
-        q.setObject(NSNumber(bool = true), forKey = cfReturnData)
-        q.setObject(cfMatchLimitOne, forKey = cfMatchLimit)
-        val result = alloc<CFTypeRefVar>()
-        val status: OSStatus = SecItemCopyMatching(
-            q.asCF(),
-            result.ptr as CValuesRef<CFTypeRefVar>,
-        )
-        if (status != 0) {
-            // errSecItemNotFound (-25300) is normal (no value yet); log others.
-            if (status != -25300) Logger.e(TAG, "SecItemCopyMatching($account) failed: OSStatus=$status")
-            return@memScoped null
+    fun read(account: String): String? {
+        memScoped {
+            val q = baseQuery(account)
+            q.setObject(NSNumber(bool = true), forKey = cfReturnData)
+            q.setObject(cfMatchLimitOne, forKey = cfMatchLimit)
+            val result = alloc<CFTypeRefVar>()
+            val status: OSStatus = SecItemCopyMatching(
+                q.asCF(),
+                result.ptr as CValuesRef<CFTypeRefVar>,
+            )
+            if (status == 0) {
+                val data = CFBridgingRelease(result.value) as? NSData
+                if (data != null) return NSString.create(data, NSUTF8StringEncoding) as String?
+            } else if (status != -25300) {
+                // Not just "no item" — the keychain is unusable; fall back.
+                Logger.e(TAG, "SecItemCopyMatching($account) failed: OSStatus=$status — trying NSUserDefaults fallback")
+                return defaults.stringForKey(fallbackKey(account))
+            }
         }
-        val data = CFBridgingRelease(result.value) as? NSData ?: return@memScoped null
-        NSString.create(data, NSUTF8StringEncoding) as String?
+        // errSecItemNotFound from the keychain: still check the fallback (an
+        // earlier write may have landed there if the keychain was unavailable).
+        return defaults.stringForKey(fallbackKey(account))
     }
 
     fun delete(account: String) {
         SecItemDelete(baseQuery(account).asCF())
+        defaults.removeObjectForKey(fallbackKey(account))
     }
+
+    // --- NSUserDefaults fallback (used only when the keychain is unavailable) ---
+    private val defaults = NSUserDefaults.standardUserDefaults
+    private fun fallbackKey(account: String): String = "kc_fallback_${service}_$account"
 
     private companion object {
         const val TAG = "IosKeychain"

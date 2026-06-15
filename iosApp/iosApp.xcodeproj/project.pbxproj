@@ -259,7 +259,6 @@
 				A1000040 /* Frameworks */,
 				A1000062 /* Resources */,
 				A1000030 /* Embed Frameworks */,
-				C0000081 /* Sign with Entitlements */,
 			);
 			buildRules = (
 			);
@@ -333,25 +332,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "cd \"$SRCROOT/..\"\nif [ \"$ACTION\" = \"clean\" ]; then exit 0; fi\n./gradlew :shared:assembleSharedReleaseXCFramework\n";
-		};
-		C0000081 /* Sign with Entitlements */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Sign with Entitlements";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Xcode's simulator signing drops the keychain-access-group entitlement,\n# which the data-protection Keychain needs (errSecMissingEntitlement -34018,\n# breaking session persistence). Re-sign the built app ad-hoc WITH the\n# entitlements so the Keychain works on the simulator.\nif [ \"$ACTION\" = \"clean\" ]; then exit 0; fi\nAPP=\"$BUILT_PRODUCTS_DIR/$WRAPPER_NAME\"\ncodesign --force --sign - --entitlements \"$SRCROOT/iosApp/iosApp.entitlements\" --generate-entitlement-der \"$APP\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -492,17 +472,13 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ENABLE_OBJC_WEAK = YES;
-				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/../shared/build/XCFrameworks/release",
 				);
-				CODE_SIGN_ENTITLEMENTS = iosApp/iosApp.entitlements;
-				CODE_SIGN_IDENTITY = "-";
-				CODE_SIGN_STYLE = Manual;
-				AD_HOC_CODE_SIGNING_ALLOWED = YES;
+				CODE_SIGN_STYLE = Automatic;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = iosApp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -528,17 +504,13 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ENABLE_OBJC_WEAK = YES;
-				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/../shared/build/XCFrameworks/release",
 				);
-				CODE_SIGN_ENTITLEMENTS = iosApp/iosApp.entitlements;
-				CODE_SIGN_IDENTITY = "-";
-				CODE_SIGN_STYLE = Manual;
-				AD_HOC_CODE_SIGNING_ALLOWED = YES;
+				CODE_SIGN_STYLE = Automatic;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = iosApp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
