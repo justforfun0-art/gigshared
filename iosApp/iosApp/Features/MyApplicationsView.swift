@@ -1,11 +1,14 @@
 import SwiftUI
 import Shared
 
-/// "My Applications" — the employee's applications with status + swipe-to-withdraw.
+/// "History" — the employee's applications with filter tabs, rich cards, and an
+/// inline horizontal stage stepper (port of Android's HistoryScreen). Every card
+/// is tappable → the work-session detail screen.
 struct MyApplicationsView: View {
 
     @StateObject private var viewModel: MyApplicationsViewModel
     private let applications: any ApplicationRepository
+    @State private var filter: HistoryFilter = .all
 
     init(applications: any ApplicationRepository, employeeId: String) {
         self.applications = applications
@@ -14,20 +17,27 @@ struct MyApplicationsView: View {
         )
     }
 
+    enum HistoryFilter: String, CaseIterable, Identifiable {
+        case all = "All", active = "Active", completed = "Completed"
+        case expired = "Expired", rejected = "Rejected"
+        var id: String { rawValue }
+    }
+
     var body: some View {
         NavigationStack {
             ZStack {
                 GHTheme.pageGradient.ignoresSafeArea()
-                content
+                VStack(spacing: 0) {
+                    filterTabs
+                    content
+                }
             }
-            .navigationTitle("My Applications")
+            .navigationTitle("History")
             .task { await viewModel.load() }
             .refreshable { await viewModel.load() }
             .alert("Couldn’t withdraw", isPresented: errorBinding) {
                 Button("OK", role: .cancel) { viewModel.actionError = nil }
-            } message: {
-                Text(viewModel.actionError ?? "")
-            }
+            } message: { Text(viewModel.actionError ?? "") }
         }
     }
 
@@ -36,29 +46,70 @@ struct MyApplicationsView: View {
                 set: { if !$0 { viewModel.actionError = nil } })
     }
 
+    // MARK: - Filter tabs
+
+    private var filterTabs: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 24) {
+                ForEach(HistoryFilter.allCases) { f in
+                    let selected = f == filter
+                    VStack(spacing: 6) {
+                        Text(f.rawValue)
+                            .font(.system(size: 15, weight: selected ? .semibold : .regular))
+                            .foregroundStyle(selected ? GHTheme.primary : GHTheme.onSurfaceVariant)
+                        Rectangle()
+                            .fill(selected ? GHTheme.primary : .clear)
+                            .frame(height: 2)
+                    }
+                    .onTapGesture { withAnimation(.easeInOut(duration: 0.2)) { filter = f } }
+                }
+            }
+            .padding(.horizontal)
+        }
+        .padding(.vertical, 8)
+    }
+
+    private func matches(_ app: Application) -> Bool {
+        switch filter {
+        case .all: return true
+        case .active: return app.status.isActive()
+        case .completed: return app.status == .completed
+        case .expired: return app.status == .expired
+        case .rejected:
+            return [.rejected, .rejectedOnce, .rejectedAndReshown, .noShow, .withdrawn, .notInterested]
+                .contains(app.status)
+        }
+    }
+
+    // MARK: - Content
+
     @ViewBuilder
     private var content: some View {
         switch viewModel.state {
         case .idle, .loading:
-            ProgressView("Loading…")
+            Spacer(); ProgressView("Loading…"); Spacer()
         case .loaded(let apps):
-            if apps.isEmpty {
-                placeholder(title: "No applications yet", icon: "doc.text",
-                            message: "Jobs you apply to show up here.")
+            let filtered = apps.filter(matches)
+            if filtered.isEmpty {
+                placeholder(title: "Nothing here yet", icon: "clock.arrow.circlepath",
+                            message: "Applications in this category will show up here.")
             } else {
                 ScrollView {
-                    LazyVStack(spacing: 12) {
-                        ForEach(apps, id: \.id) { app in
-                            row(for: app)
-                                .contextMenu {
-                                    if viewModel.canWithdraw(app) {
-                                        Button(role: .destructive) {
-                                            Task { await viewModel.withdraw(app) }
-                                        } label: {
-                                            Label("Withdraw", systemImage: "xmark.circle")
-                                        }
-                                    }
+                    LazyVStack(spacing: 14) {
+                        ForEach(filtered, id: \.id) { app in
+                            NavigationLink {
+                                WorkSessionView(applications: applications, application: app)
+                            } label: {
+                                HistoryCard(application: app)
+                            }
+                            .buttonStyle(.plain)
+                            .contextMenu {
+                                if viewModel.canWithdraw(app) {
+                                    Button(role: .destructive) {
+                                        Task { await viewModel.withdraw(app) }
+                                    } label: { Label("Withdraw", systemImage: "xmark.circle") }
                                 }
+                            }
                         }
                     }
                     .padding()
@@ -68,30 +119,9 @@ struct MyApplicationsView: View {
             VStack(spacing: 12) {
                 placeholder(title: "Couldn’t load", icon: "exclamationmark.triangle", message: message)
                 Button("Retry") { Task { await viewModel.load() } }
-                    .buttonStyle(.borderedProminent)
+                    .buttonStyle(.borderedProminent).tint(GHTheme.primary)
             }
         }
-    }
-
-    /// Hired/in-flight applications open the work-session screen (OTP loop);
-    /// everything else is a plain status row.
-    @ViewBuilder
-    private func row(for app: Application) -> some View {
-        if Self.isActionable(app.status) {
-            NavigationLink {
-                WorkSessionView(applications: applications, application: app)
-            } label: {
-                ApplicationRow(application: app, actionable: true)
-            }
-            .buttonStyle(.plain)
-        } else {
-            ApplicationRow(application: app)
-        }
-    }
-
-    private static func isActionable(_ status: ApplicationStatus) -> Bool {
-        status == .selected || status == .accepted || status == .otpRequested
-            || status == .workInProgress || status == .completionPending
     }
 
     private func placeholder(title: String, icon: String, message: String) -> some View {
@@ -105,49 +135,107 @@ struct MyApplicationsView: View {
     }
 }
 
-private struct ApplicationRow: View {
+/// One application history card — left accent bar, briefcase icon, title +
+/// employer, status badge, status subtitle, location/pay/date chips, the inline
+/// horizontal stepper (for in-flight), and the "Applied …" footer.
+private struct HistoryCard: View {
     let application: Application
-    /// Actionable rows show a chevron to hint they open the work-session screen.
-    var actionable: Bool = false
+
+    private var job: Job? { application.job }
+    private var inFlight: Bool { !application.status.isTerminal() }
 
     var body: some View {
-        GHCard {
-            VStack(alignment: .leading, spacing: 8) {
-                HStack(alignment: .top) {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(application.job?.title ?? "Job")
-                            .font(.headline)
-                            .foregroundStyle(GHTheme.onBackground)
-                        if let location = application.job?.location {
-                            HStack(spacing: 4) {
-                                Image(systemName: "mappin.and.ellipse")
-                                    .font(.caption2).foregroundStyle(GHTheme.muted)
-                                Text(location).font(.subheadline).foregroundStyle(GHTheme.onSurfaceVariant)
-                            }
-                        }
-                    }
-                    Spacer()
-                    if actionable {
-                        Image(systemName: "chevron.right").font(.caption).foregroundStyle(GHTheme.muted)
-                    }
+        HStack(spacing: 0) {
+            // Left accent bar.
+            Rectangle()
+                .fill(GHTheme.primary)
+                .frame(width: 4)
+
+            VStack(alignment: .leading, spacing: 10) {
+                header
+                if let subtitle = statusSubtitle {
+                    Text(subtitle).font(.footnote).foregroundStyle(GHTheme.onSurfaceVariant)
                 }
-                HStack {
-                    StatusBadgeView(status: application.status)
-                    Spacer()
-                    if let applied = application.appliedAt {
-                        Text(applied.prefix(10)).font(.caption).foregroundStyle(GHTheme.muted)
-                    }
+                chips
+                if inFlight {
+                    HistoryStepper(status: application.status)
+                        .padding(.top, 2)
                 }
-                // In-flight applications get the expandable stage tracker
-                // (Android's DetailedHistoryCard). Actionable rows are wrapped in
-                // a NavigationLink (→ the work-session screen, which already shows
-                // live progress + OTP), so the inline tracker is only added to
-                // non-actionable in-flight rows where the tap is free to expand.
-                if !application.status.isTerminal() && !actionable {
-                    Divider().padding(.top, 4)
-                    HistoryProgress(application: application)
+                Divider()
+                HStack(spacing: 6) {
+                    Image(systemName: "clock").font(.caption2).foregroundStyle(GHTheme.muted)
+                    Text("Applied \(formattedApplied)").font(.caption).foregroundStyle(GHTheme.muted)
                 }
             }
+            .padding(14)
         }
+        .background(Color(.systemBackground), in: RoundedRectangle(cornerRadius: 16))
+        .overlay(RoundedRectangle(cornerRadius: 16).stroke(GHTheme.outline, lineWidth: 1))
+        .shadow(color: .black.opacity(0.04), radius: 6, y: 2)
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+    }
+
+    private var header: some View {
+        HStack(alignment: .top, spacing: 10) {
+            RoundedRectangle(cornerRadius: 12)
+                .fill(GHTheme.primary)
+                .frame(width: 44, height: 44)
+                .overlay(Image(systemName: "briefcase.fill").foregroundStyle(.white))
+            VStack(alignment: .leading, spacing: 2) {
+                Text(job?.title ?? "Job")
+                    .font(.headline).foregroundStyle(GHTheme.onBackground).lineLimit(1)
+                if let employer = job?.employerProfile?.companyName, !employer.isEmpty {
+                    Text(employer).font(.subheadline).foregroundStyle(GHTheme.onSurfaceVariant).lineLimit(1)
+                }
+            }
+            Spacer()
+            StatusBadgeView(status: application.status)
+        }
+    }
+
+    private var chips: some View {
+        HStack(spacing: 8) {
+            if let loc = job?.district ?? job?.location {
+                Chip(icon: "mappin", text: loc)
+            }
+            if let pay = job?.salaryRange, !pay.isEmpty {
+                Chip(icon: "indianrupeesign", text: pay)
+            }
+            if let date = formatJobDate(job?.jobDate) {
+                Chip(icon: "calendar", text: date)
+            }
+        }
+    }
+
+    private var statusSubtitle: String? {
+        switch application.status {
+        case .applied, .shortlisted: return "Under review"
+        case .selected: return "You’re selected"
+        case .accepted, .otpRequested: return "Ready to start"
+        case .workInProgress: return "Work in progress"
+        case .completionPending: return "Awaiting verification"
+        case .paymentPending: return "Work verified — payment being processed"
+        case .completed: return "Completed"
+        default: return nil
+        }
+    }
+
+    private var formattedApplied: String {
+        formatJobDate(application.appliedAt ?? application.createdAt) ?? "—"
+    }
+}
+
+/// A small violet-tinted pill chip (icon + text) used for location/pay/date.
+private struct Chip: View {
+    let icon: String
+    let text: String
+    var body: some View {
+        HStack(spacing: 4) {
+            Image(systemName: icon).font(.caption2)
+            Text(text).font(.caption).lineLimit(1)
+        }
+        .foregroundStyle(GHTheme.primary)
+        .padding(.horizontal, 8).padding(.vertical, 4)
+        .background(GHTheme.primaryContainer, in: Capsule())
     }
 }
