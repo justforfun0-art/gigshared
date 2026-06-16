@@ -11,7 +11,6 @@ struct MyApplicationsView: View {
     private let messages: (any MessageRepository)?
     private let employeeId: String
     @State private var filter: HistoryFilter = .all
-    @State private var showInbox = false
 
     init(applications: any ApplicationRepository, employeeId: String, messages: (any MessageRepository)? = nil) {
         self.applications = applications
@@ -38,20 +37,6 @@ struct MyApplicationsView: View {
                 }
             }
             .navigationTitle("History")
-            .toolbar {
-                if messages != nil {
-                    ToolbarItem(placement: .topBarTrailing) {
-                        Button { showInbox = true } label: {
-                            Image(systemName: "bubble.left.and.bubble.right")
-                        }
-                    }
-                }
-            }
-            .sheet(isPresented: $showInbox) {
-                if let messages {
-                    MessagesView(repo: messages, myUserId: employeeId)
-                }
-            }
             .task { await viewModel.load() }
             .refreshable { await viewModel.load() }
             .alert("Couldn’t withdraw", isPresented: errorBinding) {

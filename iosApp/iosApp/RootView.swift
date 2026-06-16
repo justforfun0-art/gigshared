@@ -12,6 +12,7 @@ struct RootView: View {
     let container: AppContainer
     @StateObject private var auth: AuthViewModel
     @State private var selected = 0
+    @State private var showAssistant = false
 
     init(container: AppContainer) {
         self.container = container
@@ -36,10 +37,15 @@ struct RootView: View {
     private func mainShell(session: AuthData, isEmployer: Bool) -> some View {
         let tabs = isEmployer ? employerTabs : employeeTabs
         VStack(spacing: 0) {
-            ZStack {
+            ZStack(alignment: .bottomTrailing) {
                 screen(for: selected, session: session, isEmployer: isEmployer)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+                // Floating AI assistant — available from every tab (Android parity).
+                FloatingAssistantButton(isEmployer: isEmployer) { showAssistant = true }
+                    .padding(.trailing, 18)
+                    .padding(.bottom, 18)
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
 
             GHBottomBar(
                 tabs: tabs,
@@ -49,6 +55,9 @@ struct RootView: View {
                 ),
                 isEmployer: isEmployer
             )
+        }
+        .sheet(isPresented: $showAssistant) {
+            AssistantView(engine: container.assistant, userId: session.userId, isEmployer: isEmployer)
         }
     }
 

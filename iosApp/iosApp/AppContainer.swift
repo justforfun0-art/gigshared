@@ -29,6 +29,7 @@ final class AppContainer {
     let notifications: any NotificationRepository
     let referral: any ReferralRepository
     let messages: any MessageRepository
+    let assistant: AssistantEngine
 
     init(config: BackendConfig) {
         self.config = config
@@ -72,6 +73,13 @@ final class AppContainer {
         self.notifications = NotificationRepositoryImpl(api: NotificationsApi(client: api), serverClock: serverClock)
         self.referral = ReferralRepositoryImpl(supabaseClient: supabase)
         self.messages = MessageRepositoryImpl(supabaseClient: supabase, messagesApi: MessagesApi(client: api))
+        self.assistant = AssistantEngine(
+            jobs: jobs,
+            applications: applications,
+            profile: profile,
+            dashboard: dashboard,
+            assistantApi: AssistantApi(client: api)
+        )
     }
 
     /// Kick the server-time sync once on launch (repos that gate on the clock
