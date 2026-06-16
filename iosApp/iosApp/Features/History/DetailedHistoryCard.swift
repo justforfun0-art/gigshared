@@ -2,10 +2,10 @@ import SwiftUI
 import Shared
 
 /// Horizontal stage stepper for one application — the iOS port of Android's
-/// HistoryScreen HorizontalStepper. Seven lifecycle nodes (Applied → Selected →
-/// Accepted → Work Started → Completing → Payment → Completed) connected by a
-/// violet line that fills up to the active stage; the active node is larger and
-/// violet. Scrolls horizontally and auto-centers the active stage.
+/// StatusTimeline HorizontalProgressBar. Seven lifecycle nodes (Applied →
+/// Selected → Accepted → Work Started → Completing → Payment → Completed) joined
+/// by gentle cubic-bezier WAVE connectors. A small running-character icon surfs
+/// the wave on the active segment. Auto-centers the active stage.
 struct HistoryStepper: View {
     let status: ApplicationStatus
 
@@ -21,8 +21,14 @@ struct HistoryStepper: View {
     ]
 
     private let violet = GHTheme.primary
-    private let track = GHTheme.outline
+    private let completed = GHTheme.success            // green completed nodes/lines
+    private let completedSoft = GHTheme.hex(0xDCFCE7)
+    private let futureLine = GHTheme.outline
     private let pendingTint = GHTheme.muted
+
+    private let nodeSize: CGFloat = 44
+    private let connectorWidth: CGFloat = 54
+    private let connectorHeight: CGFloat = 34
 
     private var activeIndex: Int {
         switch status {
@@ -51,18 +57,26 @@ struct HistoryStepper: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 0) {
                     ForEach(Array(Self.steps.enumerated()), id: \.offset) { i, step in
-                        node(step, index: i)
-                            .id(i)
+                        node(step, index: i).id(i)
+                        if i < Self.steps.count - 1 {
+                            // The connector AFTER node i is "travelled" once we've
+                            // passed it; the active runner surfs the segment that
+                            // leaves the current node.
+                            ConnectorWithRunner(
+                                travelled: !isCancelled && i < activeIndex,
+                                showRunner: !isCancelled && i == activeIndex,
+                                width: connectorWidth, height: connectorHeight,
+                                doneColor: completed, futureColor: futureLine, runnerColor: violet
+                            )
+                        }
                     }
                 }
+                .padding(.vertical, 4)
             }
             .onAppear {
                 guard !isCancelled else { return }
-                // Center the active stage after first layout.
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
-                    withAnimation(.easeInOut(duration: 0.4)) {
-                        proxy.scrollTo(activeIndex, anchor: .center)
-                    }
+                    withAnimation(.easeInOut(duration: 0.4)) { proxy.scrollTo(activeIndex, anchor: .center) }
                 }
             }
         }
@@ -72,38 +86,92 @@ struct HistoryStepper: View {
     private func node(_ step: Step, index: Int) -> some View {
         let isCurrent = !isCancelled && index == activeIndex
         let isCompleted = !isCancelled && index < activeIndex
-        let circle: CGFloat = isCurrent ? 52 : 40
-        let nodeWidth: CGFloat = isCurrent ? 96 : 76
-        // Connector halves: left filled once reached, right filled once passed.
-        let leftFilled = !isCancelled && index <= activeIndex
-        let rightFilled = !isCancelled && index < activeIndex
+        let reached = isCurrent || isCompleted
+        let fill: Color = isCompleted ? completed : (isCurrent ? violet : GHTheme.outline)
 
         VStack(spacing: 8) {
             ZStack {
-                // Connector line behind the circle (left + right halves).
-                HStack(spacing: 0) {
-                    Rectangle()
-                        .fill(index == 0 ? Color.clear : (leftFilled ? violet : track))
-                        .frame(height: 4)
-                    Rectangle()
-                        .fill(index == Self.steps.count - 1 ? Color.clear : (rightFilled ? violet : track))
-                        .frame(height: 4)
+                if isCurrent {
+                    // Pulsing halo on the active node.
+                    TimelineView(.animation) { t in
+                        let p = abs((t.date.timeIntervalSinceReferenceDate.truncatingRemainder(dividingBy: 0.9) / 0.9) * 2 - 1)
+                        Circle().fill(violet.opacity(0.25))
+                            .frame(width: nodeSize, height: nodeSize)
+                            .scaleEffect(1 + 0.25 * p)
+                    }
                 }
-                // The node circle.
-                Circle()
-                    .fill(isCurrent || isCompleted ? violet : GHTheme.outline)
-                    .frame(width: circle, height: circle)
-                Image(systemName: step.icon)
-                    .font(.system(size: isCurrent ? 22 : 16, weight: .semibold))
-                    .foregroundStyle(isCurrent || isCompleted ? .white : pendingTint)
+                Circle().fill(fill).frame(width: nodeSize, height: nodeSize)
+                Image(systemName: isCompleted ? "checkmark" : step.icon)
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundStyle(reached ? .white : pendingTint)
             }
-            .frame(height: 52)
+            .frame(width: nodeSize, height: nodeSize)
 
             Text(step.label)
                 .font(.system(size: 11, weight: isCurrent ? .semibold : .regular))
                 .foregroundStyle(isCurrent ? violet : pendingTint)
-                .lineLimit(1)
+                .lineLimit(1).fixedSize()
         }
-        .frame(width: nodeWidth)
+        .frame(width: 72)
+    }
+}
+
+/// A cubic-bezier wave connector between two nodes; on the active segment a
+/// running-character icon surfs the wave (animated), with a vertical bob.
+private struct ConnectorWithRunner: View {
+    let travelled: Bool
+    let showRunner: Bool
+    let width: CGFloat
+    let height: CGFloat
+    let doneColor: Color
+    let futureColor: Color
+    let runnerColor: Color
+
+    // Control-point heights as fractions of the box height (dip then rise → S-wave).
+    private let cp1 = 0.85, cp2 = 0.15
+
+    var body: some View {
+        ZStack(alignment: .topLeading) {
+            // Wave path.
+            Path { p in
+                let midY = height / 2
+                p.move(to: CGPoint(x: 0, y: midY))
+                p.addCurve(
+                    to: CGPoint(x: width, y: midY),
+                    control1: CGPoint(x: width * 0.33, y: height * cp1),
+                    control2: CGPoint(x: width * 0.67, y: height * cp2)
+                )
+            }
+            .stroke(travelled ? doneColor : futureColor, style: StrokeStyle(lineWidth: 3, lineCap: .round))
+
+            if showRunner {
+                TimelineView(.animation) { timeline in
+                    let now = timeline.date.timeIntervalSinceReferenceDate
+                    let t = (now.truncatingRemainder(dividingBy: 1.6)) / 1.6        // 0..1 loop
+                    let bob = sin(now / 0.3 * .pi) * 2                               // ±2 vertical bob
+                    let pt = bezierPoint(t: t)
+                    Circle()
+                        .fill(runnerColor)
+                        .frame(width: 22, height: 22)
+                        .overlay(Image(systemName: "figure.run").font(.system(size: 12, weight: .bold)).foregroundStyle(.white))
+                        .position(x: pt.x, y: pt.y + bob)
+                }
+            }
+        }
+        .frame(width: width, height: height)
+        .padding(.top, 10)   // align the wave centre with the node centres
+    }
+
+    /// Standard cubic bezier point at t for the wave above.
+    private func bezierPoint(t: CGFloat) -> CGPoint {
+        let midY = height / 2
+        let p0 = CGPoint(x: 0, y: midY)
+        let p1 = CGPoint(x: width * 0.33, y: height * cp1)
+        let p2 = CGPoint(x: width * 0.67, y: height * cp2)
+        let p3 = CGPoint(x: width, y: midY)
+        let omt = 1 - t
+        let x = omt*omt*omt*p0.x + 3*omt*omt*t*p1.x + 3*omt*t*t*p2.x + t*t*t*p3.x
+        let y = omt*omt*omt*p0.y + 3*omt*omt*t*p1.y + 3*omt*t*t*p2.y + t*t*t*p3.y
+        return CGPoint(x: x, y: y)
     }
 }
