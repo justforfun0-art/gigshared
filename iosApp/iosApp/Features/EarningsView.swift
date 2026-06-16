@@ -143,15 +143,16 @@ struct EarningsView: View {
         VStack(alignment: .leading, spacing: 10) {
             Text("Transactions").font(.headline).foregroundStyle(GHTheme.onBackground)
                 .frame(maxWidth: .infinity, alignment: .leading)
-            if viewModel.transactions.isEmpty {
+            let txns = viewModel.filteredTransactions
+            if txns.isEmpty {
                 GHCard {
                     HStack {
                         Image(systemName: "indianrupeesign.circle").foregroundStyle(GHTheme.muted)
-                        Text("No transactions yet").foregroundStyle(GHTheme.onSurfaceVariant)
+                        Text("No transactions in this period").foregroundStyle(GHTheme.onSurfaceVariant)
                     }
                 }
             } else {
-                ForEach(viewModel.transactions) { TransactionCard(txn: $0) }
+                ForEach(txns) { TransactionCard(txn: $0) }
             }
         }
     }

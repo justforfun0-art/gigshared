@@ -32,10 +32,36 @@ final class EarningsViewModel: ObservableObject {
         let completed: Bool
     }
 
+    /// Matches Android's EarningsPeriod exactly — All Time, This Month, Last
+    /// Month, Last 3 Months. (No "This Week" — it isn't an Android period.)
     enum Period: String, CaseIterable, Identifiable {
-        case thisMonth = "This Month", thisWeek = "This Week", lastMonth = "Last Month"
-        case last3Months = "Last 3 Months", allTime = "All Time"
+        case allTime = "All Time", thisMonth = "This Month"
+        case lastMonth = "Last Month", last3Months = "Last 3 Months"
         var id: String { rawValue }
+
+        /// Calendar-boundary membership test (mirrors Android isInPeriod).
+        func contains(_ date: Date, now: Date = Date()) -> Bool {
+            if self == .allTime { return true }
+            let cal = Calendar.current
+            let dc = cal.dateComponents([.year, .month], from: date)
+            let nc = cal.dateComponents([.year, .month], from: now)
+            switch self {
+            case .allTime:
+                return true
+            case .thisMonth:
+                return dc.year == nc.year && dc.month == nc.month
+            case .lastMonth:
+                let lm = cal.date(byAdding: .month, value: -1, to: now) ?? now
+                let lc = cal.dateComponents([.year, .month], from: lm)
+                return dc.year == lc.year && dc.month == lc.month
+            case .last3Months:
+                // First day of the month, 2 months ago → covers 3 calendar months.
+                guard let twoAgo = cal.date(byAdding: .month, value: -2, to: now),
+                      let cutoff = cal.dateInterval(of: .month, for: twoAgo)?.start
+                else { return false }
+                return date >= cutoff
+            }
+        }
     }
 
     @Published var period: Period = .allTime
@@ -93,28 +119,34 @@ final class EarningsViewModel: ObservableObject {
         }
     }
 
-    // MARK: - Period hero amount
+    // MARK: - Period filtering (calendar-boundary, mirrors Android)
 
-    var periodEarnings: Double {
-        switch period {
-        case .allTime: return stats.total
-        case .thisMonth: return stats.thisMonth > 0 ? stats.thisMonth : sumCompleted(since: startOfMonth())
-        case .lastMonth: return stats.lastMonth
-        case .thisWeek: return sumCompleted(since: Calendar.current.date(byAdding: .day, value: -7, to: Date()))
-        case .last3Months: return sumCompleted(since: Calendar.current.date(byAdding: .month, value: -3, to: Date()))
+    /// The transactions visible for the selected period (the list is filtered,
+    /// not just the hero number).
+    var filteredTransactions: [Txn] {
+        guard period != .allTime else { return transactions }
+        return transactions.filter {
+            guard let d = Self.parseDate($0.date) else { return false }
+            return period.contains(d)
         }
     }
 
-    private func sumCompleted(since cutoff: Date?) -> Double {
-        guard let cutoff else { return stats.total }
-        return transactions
-            .filter { $0.completed }
-            .filter { (Self.parseDate($0.date) ?? .distantPast) >= cutoff }
-            .reduce(0) { $0 + $1.amount }
+    /// The hero amount for the selected period = completed earnings within it.
+    /// All Time / This Month trust the server stat; the rest sum the filtered
+    /// completed transactions (matches Android).
+    var periodEarnings: Double {
+        switch period {
+        case .allTime:
+            return stats.total
+        case .thisMonth:
+            return stats.thisMonth > 0 ? stats.thisMonth : completedSum(filteredTransactions)
+        case .lastMonth, .last3Months:
+            return completedSum(filteredTransactions)
+        }
     }
 
-    private func startOfMonth() -> Date? {
-        Calendar.current.dateInterval(of: .month, for: Date())?.start
+    private func completedSum(_ txns: [Txn]) -> Double {
+        txns.filter { $0.completed }.reduce(0) { $0 + $1.amount }
     }
 
     // MARK: - Derivations
