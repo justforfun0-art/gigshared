@@ -97,6 +97,11 @@ suspend fun AuthRepository.verifyOtpOrThrow(phone: String, otp: String): AuthDat
 suspend fun ApplicationRepository.getEmployeeApplicationsOrThrow(employeeId: String): List<Application> =
     getEmployeeApplications(employeeId).getOrThrow()
 
+/** [ApplicationRepository.getEmployerApplications] as a throwing suspend (applicants to the employer's jobs). */
+@Throws(Throwable::class)
+suspend fun ApplicationRepository.getEmployerApplicationsOrThrow(employerId: String): List<Application> =
+    getEmployerApplications(employerId).getOrThrow()
+
 /** [ApplicationRepository.withdrawApplication] as a throwing suspend. */
 @Throws(Throwable::class)
 suspend fun ApplicationRepository.withdrawApplicationOrThrow(applicationId: String): Application =

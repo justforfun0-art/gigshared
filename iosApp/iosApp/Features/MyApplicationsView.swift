@@ -10,14 +10,20 @@ struct MyApplicationsView: View {
     private let applications: any ApplicationRepository
     private let messages: (any MessageRepository)?
     private let employeeId: String
+    private let isEmployer: Bool
     @State private var filter: HistoryFilter = .all
 
-    init(applications: any ApplicationRepository, employeeId: String, messages: (any MessageRepository)? = nil) {
+    /// Role accent — violet for employees, green for employers.
+    private var accent: Color { isEmployer ? GHTheme.tertiary : GHTheme.primary }
+
+    init(applications: any ApplicationRepository, employeeId: String,
+         messages: (any MessageRepository)? = nil, isEmployer: Bool = false) {
         self.applications = applications
         self.messages = messages
         self.employeeId = employeeId
+        self.isEmployer = isEmployer
         _viewModel = StateObject(
-            wrappedValue: MyApplicationsViewModel(applications: applications, employeeId: employeeId)
+            wrappedValue: MyApplicationsViewModel(applications: applications, employeeId: employeeId, isEmployer: isEmployer)
         )
     }
 
@@ -60,9 +66,9 @@ struct MyApplicationsView: View {
                     VStack(spacing: 6) {
                         Text(f.rawValue)
                             .font(.system(size: 15, weight: selected ? .semibold : .regular))
-                            .foregroundStyle(selected ? GHTheme.primary : GHTheme.onSurfaceVariant)
+                            .foregroundStyle(selected ? accent : GHTheme.onSurfaceVariant)
                         Rectangle()
-                            .fill(selected ? GHTheme.primary : .clear)
+                            .fill(selected ? accent : .clear)
                             .frame(height: 2)
                     }
                     .onTapGesture { withAnimation(.easeInOut(duration: 0.2)) { filter = f } }
@@ -104,7 +110,7 @@ struct MyApplicationsView: View {
                             NavigationLink {
                                 ApplicationStatusView(application: app, messages: messages, myUserId: employeeId)
                             } label: {
-                                HistoryCard(application: app)
+                                HistoryCard(application: app, isEmployer: isEmployer)
                             }
                             .buttonStyle(.plain)
                             .contextMenu {
@@ -144,7 +150,9 @@ struct MyApplicationsView: View {
 /// horizontal stepper (for in-flight), and the "Applied …" footer.
 private struct HistoryCard: View {
     let application: Application
+    var isEmployer: Bool = false
 
+    private var accent: Color { isEmployer ? GHTheme.tertiary : GHTheme.primary }
     private var job: Job? { application.job }
     private var inFlight: Bool { !application.status.isTerminal() }
 
@@ -152,7 +160,7 @@ private struct HistoryCard: View {
         HStack(spacing: 0) {
             // Left accent bar.
             Rectangle()
-                .fill(GHTheme.primary)
+                .fill(accent)
                 .frame(width: 4)
 
             VStack(alignment: .leading, spacing: 10) {
@@ -162,7 +170,7 @@ private struct HistoryCard: View {
                 }
                 chips
                 if inFlight {
-                    HistoryStepper(status: application.status)
+                    HistoryStepper(status: application.status, isEmployer: isEmployer)
                         .padding(.top, 2)
                 }
                 Divider()
@@ -182,7 +190,7 @@ private struct HistoryCard: View {
     private var header: some View {
         HStack(alignment: .top, spacing: 10) {
             RoundedRectangle(cornerRadius: 12)
-                .fill(GHTheme.primary)
+                .fill(accent)
                 .frame(width: 44, height: 44)
                 .overlay(Image(systemName: "briefcase.fill").foregroundStyle(.white))
             VStack(alignment: .leading, spacing: 2) {
@@ -198,15 +206,16 @@ private struct HistoryCard: View {
     }
 
     private var chips: some View {
-        HStack(spacing: 8) {
+        let tint = isEmployer ? GHTheme.tertiaryContainer : GHTheme.primaryContainer
+        return HStack(spacing: 8) {
             if let loc = job?.district ?? job?.location {
-                Chip(icon: "mappin", text: loc)
+                Chip(icon: "mappin", text: loc, accent: accent, tint: tint)
             }
             if let pay = job?.salaryRange, !pay.isEmpty {
-                Chip(icon: "indianrupeesign", text: pay)
+                Chip(icon: "indianrupeesign", text: pay, accent: accent, tint: tint)
             }
             if let date = formatJobDate(job?.jobDate) {
-                Chip(icon: "calendar", text: date)
+                Chip(icon: "calendar", text: date, accent: accent, tint: tint)
             }
         }
     }
@@ -229,17 +238,19 @@ private struct HistoryCard: View {
     }
 }
 
-/// A small violet-tinted pill chip (icon + text) used for location/pay/date.
+/// A small role-tinted pill chip (icon + text) used for location/pay/date.
 private struct Chip: View {
     let icon: String
     let text: String
+    var accent: Color = GHTheme.primary
+    var tint: Color = GHTheme.primaryContainer
     var body: some View {
         HStack(spacing: 4) {
             Image(systemName: icon).font(.caption2)
             Text(text).font(.caption).lineLimit(1)
         }
-        .foregroundStyle(GHTheme.primary)
+        .foregroundStyle(accent)
         .padding(.horizontal, 8).padding(.vertical, 4)
-        .background(GHTheme.primaryContainer, in: Capsule())
+        .background(tint, in: Capsule())
     }
 }

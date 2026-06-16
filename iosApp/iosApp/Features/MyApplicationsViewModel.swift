@@ -18,26 +18,32 @@ final class MyApplicationsViewModel: ObservableObject {
     @Published var actionError: String?
 
     private let applications: any ApplicationRepository
-    private let employeeId: String
+    private let userId: String
+    private let isEmployer: Bool
 
-    init(applications: any ApplicationRepository, employeeId: String) {
+    init(applications: any ApplicationRepository, employeeId: String, isEmployer: Bool = false) {
         self.applications = applications
-        self.employeeId = employeeId
+        self.userId = employeeId
+        self.isEmployer = isEmployer
     }
 
     func load() async {
         state = .loading
         do {
-            let list = try await IosHelpersKt.getEmployeeApplicationsOrThrow(applications, employeeId: employeeId)
+            // Employees see their own applications; employers see applicants to
+            // their jobs — both render the same history cards + stepper.
+            let list = isEmployer
+                ? try await IosHelpersKt.getEmployerApplicationsOrThrow(applications, employerId: userId)
+                : try await IosHelpersKt.getEmployeeApplicationsOrThrow(applications, employeeId: userId)
             state = .loaded(list)
         } catch {
             state = .failed((error as NSError).localizedDescription)
         }
     }
 
-    /// Only non-terminal applications can be withdrawn (mirrors the repo guard).
+    /// Only employees can withdraw, and only non-terminal applications.
     func canWithdraw(_ application: Application) -> Bool {
-        !application.status.isTerminal()
+        !isEmployer && !application.status.isTerminal()
     }
 
     func withdraw(_ application: Application) async {

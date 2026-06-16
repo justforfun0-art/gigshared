@@ -97,9 +97,13 @@ struct RootView: View {
             case 1:
                 MyJobsView(container: container, employerId: session.userId)
             case 2:
-                // Employer applications across jobs — reuse the notifications/alerts
-                // surface until a dedicated employer-applications list exists.
-                NotificationsView(notifications: container.notifications)
+                // Employer applications — the same history cards + stepper as the
+                // employee History, but green-accented and loading applicants to
+                // the employer's jobs.
+                MyApplicationsView(applications: container.applications,
+                                   employeeId: session.userId,
+                                   messages: container.messages,
+                                   isEmployer: true)
             case 3:
                 PaymentsView(payments: container.payments,
                              employerId: session.userId,

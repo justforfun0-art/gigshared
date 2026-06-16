@@ -8,6 +8,8 @@ import Shared
 /// the wave on the active segment. Auto-centers the active stage.
 struct HistoryStepper: View {
     let status: ApplicationStatus
+    /// Role accent — violet for employees, green for employers.
+    var isEmployer: Bool = false
 
     private struct Step { let label: String; let icon: String }
     private static let steps: [Step] = [
@@ -20,9 +22,9 @@ struct HistoryStepper: View {
         Step(label: "Completed", icon: "checkmark.seal.fill"),
     ]
 
-    private let violet = GHTheme.primary
+    // Active/brand accent: violet for employees, emerald for employers.
+    private var accent: Color { isEmployer ? GHTheme.tertiary : GHTheme.primary }
     private let completed = GHTheme.success            // green completed nodes/lines
-    private let completedSoft = GHTheme.hex(0xDCFCE7)
     private let futureLine = GHTheme.outline
     private let pendingTint = GHTheme.muted
 
@@ -66,7 +68,7 @@ struct HistoryStepper: View {
                                 travelled: !isCancelled && i < activeIndex,
                                 showRunner: !isCancelled && i == activeIndex,
                                 width: connectorWidth, height: connectorHeight,
-                                doneColor: completed, futureColor: futureLine, runnerColor: violet
+                                doneColor: completed, futureColor: futureLine, runnerColor: accent
                             )
                         }
                     }
@@ -87,7 +89,7 @@ struct HistoryStepper: View {
         let isCurrent = !isCancelled && index == activeIndex
         let isCompleted = !isCancelled && index < activeIndex
         let reached = isCurrent || isCompleted
-        let fill: Color = isCompleted ? completed : (isCurrent ? violet : GHTheme.outline)
+        let fill: Color = isCompleted ? completed : (isCurrent ? accent : GHTheme.outline)
 
         VStack(spacing: 8) {
             ZStack {
@@ -95,7 +97,7 @@ struct HistoryStepper: View {
                     // Pulsing halo on the active node.
                     TimelineView(.animation) { t in
                         let p = abs((t.date.timeIntervalSinceReferenceDate.truncatingRemainder(dividingBy: 0.9) / 0.9) * 2 - 1)
-                        Circle().fill(violet.opacity(0.25))
+                        Circle().fill(accent.opacity(0.25))
                             .frame(width: nodeSize, height: nodeSize)
                             .scaleEffect(1 + 0.25 * p)
                     }
@@ -109,7 +111,7 @@ struct HistoryStepper: View {
 
             Text(step.label)
                 .font(.system(size: 11, weight: isCurrent ? .semibold : .regular))
-                .foregroundStyle(isCurrent ? violet : pendingTint)
+                .foregroundStyle(isCurrent ? accent : pendingTint)
                 .lineLimit(1).fixedSize()
         }
         .frame(width: 72)
