@@ -59,7 +59,10 @@ struct HistoryStepper: View {
     var body: some View {
         ScrollViewReader { proxy in
             ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 0) {
+                // Top-align so the connector's wave can be positioned to the
+                // node's icon center rather than centering against the taller
+                // node+label column.
+                HStack(alignment: .top, spacing: 0) {
                     ForEach(Array(Self.steps.enumerated()), id: \.offset) { i, step in
                         node(step, index: i).id(i)
                         if i < Self.steps.count - 1 {
@@ -70,6 +73,7 @@ struct HistoryStepper: View {
                                 travelled: !isCancelled && i < activeIndex,
                                 showRunner: !isCancelled && i == activeIndex,
                                 width: connectorWidth, height: connectorHeight,
+                                topInset: nodeSize / 2 - connectorHeight / 2,
                                 doneColor: completed, futureColor: futureLine, runnerColor: accent
                             )
                             // Pull the wave into the node's empty side-space (the
@@ -132,6 +136,8 @@ private struct ConnectorWithRunner: View {
     let showRunner: Bool
     let width: CGFloat
     let height: CGFloat
+    /// Top inset so the wave's center lines up with the node's icon center.
+    let topInset: CGFloat
     let doneColor: Color
     let futureColor: Color
     let runnerColor: Color
@@ -168,7 +174,7 @@ private struct ConnectorWithRunner: View {
             }
         }
         .frame(width: width, height: height)
-        .padding(.top, 10)   // align the wave centre with the node centres
+        .padding(.top, topInset)   // line up the wave centre with the icon centre
     }
 
     /// Standard cubic bezier point at t for the wave above.
