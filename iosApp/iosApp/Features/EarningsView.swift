@@ -21,7 +21,7 @@ struct EarningsView: View {
                 GHTheme.pageGradient.ignoresSafeArea()
                 content
             }
-            .navigationTitle("Earnings")
+            .navigationTitle(L("earnings_quick_label"))
             .drawerToolbar()
             .task { await viewModel.load() }
             .refreshable { await viewModel.load() }
@@ -59,7 +59,7 @@ struct EarningsView: View {
         case .failed(let message):
             VStack(spacing: 12) {
                 Text(message).foregroundStyle(.secondary).multilineTextAlignment(.center).padding()
-                Button("Retry") { Task { await viewModel.load() } }
+                Button(L("retry_btn")) { Task { await viewModel.load() } }
                     .buttonStyle(.borderedProminent).tint(GHTheme.primary)
             }
         }
@@ -73,8 +73,8 @@ struct EarningsView: View {
                 .frame(width: 40, height: 40)
                 .overlay(Image(systemName: "square.and.arrow.up").foregroundStyle(GHTheme.hex(0x065F46)))
             VStack(alignment: .leading, spacing: 2) {
-                Text("Share your win").font(.subheadline.weight(.semibold)).foregroundStyle(GHTheme.hex(0x065F46))
-                Text("Tell friends you’re earning on GigHour")
+                Text(L("earnings_share_title")).font(.subheadline.weight(.semibold)).foregroundStyle(GHTheme.hex(0x065F46))
+                Text(L("ios_tell_friends_you_re_earning_on_gighour"))
                     .font(.caption).foregroundStyle(GHTheme.hex(0x047857))
             }
             Spacer()
@@ -134,7 +134,7 @@ struct EarningsView: View {
 
     private var chartCard: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Earnings trend").font(.headline).foregroundStyle(GHTheme.onBackground)
+            Text(L("earnings_trend")).font(.headline).foregroundStyle(GHTheme.onBackground)
             MonthlyBarChart(months: viewModel.months)
                 .frame(height: 160)
         }
@@ -148,14 +148,14 @@ struct EarningsView: View {
 
     private var transactionsSection: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("Transactions").font(.headline).foregroundStyle(GHTheme.onBackground)
+            Text(L("transactions")).font(.headline).foregroundStyle(GHTheme.onBackground)
                 .frame(maxWidth: .infinity, alignment: .leading)
             let txns = viewModel.filteredTransactions
             if txns.isEmpty {
                 GHCard {
                     HStack {
                         Image(systemName: "indianrupeesign.circle").foregroundStyle(GHTheme.muted)
-                        Text("No transactions in this period").foregroundStyle(GHTheme.onSurfaceVariant)
+                        Text(L("ios_no_transactions_in_this_period")).foregroundStyle(GHTheme.onSurfaceVariant)
                     }
                 }
             } else {
@@ -320,7 +320,7 @@ private struct TransactionDetailSheet: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Text("Transaction Details")
+            Text(L("txn_details_title"))
                 .font(.title2.weight(.bold)).foregroundStyle(GHTheme.onBackground)
                 .padding(.top, 8)
 

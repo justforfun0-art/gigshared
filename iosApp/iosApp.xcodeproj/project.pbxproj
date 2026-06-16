@@ -12,6 +12,7 @@
 		A1000012 /* JobFeedViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000003 /* JobFeedViewModel.swift */; };
 		A1000013 /* JobFeedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000004 /* JobFeedView.swift */; };
 		A1000014 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1000005 /* Assets.xcassets */; };
+		D0000020 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = D0000001 /* Localizable.strings */; };
 		A1000015 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100000A /* RootView.swift */; };
 		A1000016 /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100000B /* AuthViewModel.swift */; };
 		A1000017 /* AuthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100000C /* AuthView.swift */; };
@@ -50,6 +51,7 @@
 		C0000048 /* FloatingAssistantButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000018 /* FloatingAssistantButton.swift */; };
 		C0000049 /* DrawerToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000019 /* DrawerToolbar.swift */; };
 		C000004A /* SideMenuDrawer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C000001A /* SideMenuDrawer.swift */; };
+		C000004B /* Localization.swift in Sources */ = {isa = PBXBuildFile; fileRef = C000001B /* Localization.swift */; };
 		C000003F /* DetailedHistoryCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = C000000F /* DetailedHistoryCard.swift */; };
 		C0000040 /* ApplicationStatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000010 /* ApplicationStatusView.swift */; };
 		C0000041 /* ConversationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000011 /* ConversationViewModel.swift */; };
@@ -78,6 +80,11 @@
 		A1000003 /* JobFeedViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobFeedViewModel.swift; sourceTree = "<group>"; };
 		A1000004 /* JobFeedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobFeedView.swift; sourceTree = "<group>"; };
 		A1000005 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		D0000010 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		D0000011 /* hi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hi; path = hi.lproj/Localizable.strings; sourceTree = "<group>"; };
+		D0000012 /* ta */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ta; path = ta.lproj/Localizable.strings; sourceTree = "<group>"; };
+		D0000013 /* te */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = te; path = te.lproj/Localizable.strings; sourceTree = "<group>"; };
+		D0000014 /* kn */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = kn; path = kn.lproj/Localizable.strings; sourceTree = "<group>"; };
 		A1000006 /* Shared.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = Shared.xcframework; path = ../shared/build/XCFrameworks/release/Shared.xcframework; sourceTree = "<group>"; };
 		A1000007 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A1000008 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
@@ -118,6 +125,7 @@
 		C0000018 /* FloatingAssistantButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingAssistantButton.swift; sourceTree = "<group>"; };
 		C0000019 /* DrawerToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawerToolbar.swift; sourceTree = "<group>"; };
 		C000001A /* SideMenuDrawer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideMenuDrawer.swift; sourceTree = "<group>"; };
+		C000001B /* Localization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Localization.swift; sourceTree = "<group>"; };
 		C000000F /* DetailedHistoryCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailedHistoryCard.swift; sourceTree = "<group>"; };
 		C0000010 /* ApplicationStatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationStatusView.swift; sourceTree = "<group>"; };
 		C0000011 /* ConversationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationViewModel.swift; sourceTree = "<group>"; };
@@ -157,6 +165,7 @@
 				C0000055 /* Theme */,
 				A1000054 /* Features */,
 				A1000005 /* Assets.xcassets */,
+				D0000001 /* Localizable.strings */,
 				A1000007 /* Info.plist */,
 			);
 			path = iosApp;
@@ -311,6 +320,7 @@
 				C000000D /* Theme.swift */,
 				C000000E /* GHBottomBar.swift */,
 				C0000019 /* DrawerToolbar.swift */,
+				C000001B /* Localization.swift */,
 			);
 			path = Theme;
 			sourceTree = "<group>";
@@ -359,6 +369,10 @@
 			knownRegions = (
 				en,
 				Base,
+				hi,
+				ta,
+				te,
+				kn,
 			);
 			mainGroup = A1000050;
 			productRefGroup = A1000053 /* Products */;
@@ -376,10 +390,26 @@
 			buildActionMask = 2147483647;
 			files = (
 				A1000014 /* Assets.xcassets in Resources */,
+				D0000020 /* Localizable.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		D0000001 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D0000010 /* en */,
+				D0000011 /* hi */,
+				D0000012 /* ta */,
+				D0000013 /* te */,
+				D0000014 /* kn */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin PBXShellScriptBuildPhase section */
 		A1000080 /* Assemble Shared XCFramework */ = {
@@ -448,6 +478,7 @@
 				C0000048 /* FloatingAssistantButton.swift in Sources */,
 				C0000049 /* DrawerToolbar.swift in Sources */,
 				C000004A /* SideMenuDrawer.swift in Sources */,
+				C000004B /* Localization.swift in Sources */,
 				C000003F /* DetailedHistoryCard.swift in Sources */,
 				C0000040 /* ApplicationStatusView.swift in Sources */,
 				C0000041 /* ConversationViewModel.swift in Sources */,

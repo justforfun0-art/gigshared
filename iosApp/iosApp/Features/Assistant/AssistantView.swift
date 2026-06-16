@@ -26,7 +26,7 @@ struct AssistantView: View {
                 inputBar
             }
             .background(GHTheme.pageGradient.ignoresSafeArea())
-            .navigationTitle("GigHour Assistant")
+            .navigationTitle(L("ios_gighour_assistant"))
             .navigationBarTitleDisplayMode(.inline)
             .task { await viewModel.greet() }
         }

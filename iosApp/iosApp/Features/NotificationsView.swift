@@ -13,11 +13,11 @@ struct NotificationsView: View {
     var body: some View {
         NavigationStack {
             content
-                .navigationTitle("Notifications")
+                .navigationTitle(L("profile_notifications"))
                 .drawerToolbar()
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
-                        Button("Mark all read") { Task { await viewModel.markAllRead() } }
+                        Button(L("mark_all_read")) { Task { await viewModel.markAllRead() } }
                     }
                 }
                 .task { await viewModel.load() }
@@ -32,7 +32,7 @@ struct NotificationsView: View {
             ProgressView("Loading…")
         case .loaded(let items):
             if items.isEmpty {
-                Text("You’re all caught up").foregroundStyle(.secondary)
+                Text(L("ios_you_re_all_caught_up")).foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
                 List(items, id: \.id) { item in
@@ -53,7 +53,7 @@ struct NotificationsView: View {
         case .failed(let message):
             VStack(spacing: 12) {
                 Text(message).foregroundStyle(.secondary).multilineTextAlignment(.center).padding()
-                Button("Retry") { Task { await viewModel.load() } }.buttonStyle(.borderedProminent)
+                Button(L("retry_btn")) { Task { await viewModel.load() } }.buttonStyle(.borderedProminent)
             }
         }
     }

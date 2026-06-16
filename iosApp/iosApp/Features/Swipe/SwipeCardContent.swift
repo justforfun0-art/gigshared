@@ -25,7 +25,7 @@ struct SwipeCardContent: View {
                         .font(.system(size: 32, weight: .heavy))
                         .foregroundStyle(payGreen)
                 }
-                Text("Total pay for this gig")
+                Text(L("ios_total_pay_for_this_gig"))
                     .font(.caption2).foregroundStyle(subtle)
                 Spacer().frame(height: 18)
             }

@@ -56,17 +56,17 @@ struct SplashView: View {
 
     private var wordmark: some View {
         VStack(spacing: 10) {
-            Text("GigHour")
+            Text(L("app_name"))
                 .font(.system(size: 40, weight: .bold))
                 .tracking(-0.8)
                 .foregroundStyle(Self.fg)
 
-            Text("EVERY HOUR MATTERS.")
+            Text(L("splash_subtagline"))
                 .font(.system(size: 12, weight: .semibold))
                 .tracking(2.6)
                 .foregroundStyle(Self.mint)
 
-            Text("Find part time jobs near you.")
+            Text(L("splash_tagline"))
                 .font(.system(size: 15))
                 .foregroundStyle(Self.fg2)
         }

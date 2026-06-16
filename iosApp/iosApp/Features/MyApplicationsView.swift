@@ -42,12 +42,12 @@ struct MyApplicationsView: View {
                     content
                 }
             }
-            .navigationTitle("History")
+            .navigationTitle(L("cd_history"))
             .drawerToolbar()
             .task { await viewModel.load() }
             .refreshable { await viewModel.load() }
             .alert("Couldn’t withdraw", isPresented: errorBinding) {
-                Button("OK", role: .cancel) { viewModel.actionError = nil }
+                Button(L("ok"), role: .cancel) { viewModel.actionError = nil }
             } message: { Text(viewModel.actionError ?? "") }
         }
     }
@@ -138,7 +138,7 @@ struct MyApplicationsView: View {
                                 if viewModel.canWithdraw(app) {
                                     Button(role: .destructive) {
                                         Task { await viewModel.withdraw(app) }
-                                    } label: { Label("Withdraw", systemImage: "xmark.circle") }
+                                    } label: { Label(L("withdraw"), systemImage: "xmark.circle") }
                                 }
                             }
                         }
@@ -149,7 +149,7 @@ struct MyApplicationsView: View {
         case .failed(let message):
             VStack(spacing: 12) {
                 placeholder(title: "Couldn’t load", icon: "exclamationmark.triangle", message: message)
-                Button("Retry") { Task { await viewModel.load() } }
+                Button(L("retry_btn")) { Task { await viewModel.load() } }
                     .buttonStyle(.borderedProminent).tint(GHTheme.primary)
             }
         }

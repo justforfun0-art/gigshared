@@ -82,10 +82,10 @@ struct AuthView: View {
 
     private var header: some View {
         VStack(spacing: 4) {
-            Text("GigHour")
+            Text(L("app_name"))
                 .font(.system(size: 34, weight: .heavy))
                 .foregroundStyle(.primary)
-            Text("Find part time jobs near you.")
+            Text(L("splash_tagline"))
                 .font(.body)
                 .foregroundStyle(.secondary)
         }
@@ -96,7 +96,7 @@ struct AuthView: View {
 
     private var phoneBlock: some View {
         VStack(spacing: 20) {
-            Text("Enter your phone number to get started")
+            Text(L("login_subtitle"))
                 .font(.title3.weight(.semibold))
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 24)
@@ -135,7 +135,7 @@ struct AuthView: View {
                 phoneFocused = false
                 Task { await viewModel.sendOtp(phone: phone) }
             } label: {
-                Text("Send OTP")
+                Text(L("send_otp"))
                     .font(.headline)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 14)
@@ -145,7 +145,7 @@ struct AuthView: View {
             .disabled(phone.count < 10 || viewModel.isBusy)
             .padding(.horizontal, 24)
 
-            Text("We’ll text you a one-time code. Standard rates may apply.")
+            Text(L("ios_we_ll_text_you_a_one_time_code_standard_"))
                 .font(.caption)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
@@ -158,7 +158,7 @@ struct AuthView: View {
 
     private func codeBlock(phoneNumber: String, method: String) -> some View {
         VStack(spacing: 20) {
-            Text("Enter the code")
+            Text(L("ios_enter_the_code"))
                 .font(.title3.weight(.semibold))
             Text("Sent via \(method) to +91 \(phoneNumber)")
                 .font(.subheadline)
@@ -191,7 +191,7 @@ struct AuthView: View {
                 codeFocused = false
                 Task { await viewModel.verify(otp: code) }
             } label: {
-                Text("Verify")
+                Text(L("verify"))
                     .font(.headline)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 14)
@@ -201,7 +201,7 @@ struct AuthView: View {
             .disabled(code.count < 4 || viewModel.isBusy)
             .padding(.horizontal, 24)
 
-            Button("Change number") {
+            Button(L("ios_change_number")) {
                 code = ""
                 viewModel.changeNumber()
             }

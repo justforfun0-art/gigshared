@@ -21,7 +21,7 @@ struct JobDetailView: View {
                 Text(job.title).font(.title3.bold())
                 Text(job.location).foregroundStyle(.secondary)
             }
-            Section("Details") {
+            Section(L("details")) {
                 if let salary = job.salaryRange { LabeledContent("Pay", value: salary) }
                 if let date = job.jobDate { LabeledContent("Date", value: date.prefix10) }
                 if let start = job.startTime { LabeledContent("Start", value: start) }
@@ -29,7 +29,7 @@ struct JobDetailView: View {
                 LabeledContent("Positions", value: "\(job.numPositions)")
             }
             if !job.skillsRequired.isEmpty {
-                Section("Skills") {
+                Section(L("skills")) {
                     Text(job.skillsRequired.joined(separator: ", "))
                 }
             }
@@ -37,7 +37,7 @@ struct JobDetailView: View {
                 applyButton
             }
         }
-        .navigationTitle("Job")
+        .navigationTitle(L("job_label"))
         .navigationBarTitleDisplayMode(.inline)
     }
 
@@ -45,11 +45,11 @@ struct JobDetailView: View {
     private var applyButton: some View {
         switch applyState {
         case .applied:
-            Label("Applied", systemImage: "checkmark.circle.fill").foregroundStyle(.green)
+            Label(L("timeline_applied"), systemImage: "checkmark.circle.fill").foregroundStyle(.green)
         case .applying:
-            HStack { ProgressView(); Text("Applying…") }
+            HStack { ProgressView(); Text(L("ios_applying")) }
         default:
-            Button("Apply for this job") { Task { await apply() } }
+            Button(L("ios_apply_for_this_job")) { Task { await apply() } }
                 .frame(maxWidth: .infinity)
             if case .failed(let message) = applyState {
                 Text(message).font(.caption).foregroundStyle(.red)

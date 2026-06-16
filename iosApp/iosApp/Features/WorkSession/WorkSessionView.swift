@@ -33,12 +33,12 @@ struct WorkSessionView: View {
 
             stageSection
         }
-        .navigationTitle("Work session")
+        .navigationTitle(L("ios_work_session"))
         .navigationBarTitleDisplayMode(.inline)
         .task { await viewModel.refresh() }
         .refreshable { await viewModel.refresh() }
         .alert("Couldn’t complete that", isPresented: errorBinding) {
-            Button("OK", role: .cancel) { viewModel.errorMessage = nil }
+            Button(L("ok"), role: .cancel) { viewModel.errorMessage = nil }
         } message: { Text(viewModel.errorMessage ?? "") }
     }
 
@@ -50,20 +50,20 @@ struct WorkSessionView: View {
     @ViewBuilder
     private var stageSection: some View {
         if viewModel.needsAccept {
-            Section("You’ve been selected") {
-                Text("Accept this offer to confirm you’ll work this gig.")
+            Section(L("youve_been_selected")) {
+                Text(L("ios_accept_this_offer_to_confirm_you_ll_work"))
                     .font(.subheadline).foregroundStyle(.secondary)
                 Button {
                     Task { await viewModel.accept() }
                 } label: {
-                    busyLabel("Accept offer")
+                    busyLabel(L("ios_accept_offer"))
                 }
                 .buttonStyle(.borderedProminent)
                 .disabled(viewModel.isBusy)
             }
         } else if viewModel.needsStartOtp {
-            Section("Enter start OTP") {
-                Text("Ask your employer for the start code, then enter it here to begin work.")
+            Section(L("ios_enter_start_otp")) {
+                Text(L("ios_ask_your_employer_for_the_start_code_the"))
                     .font(.subheadline).foregroundStyle(.secondary)
                 TextField("6-digit code", text: $viewModel.otpInput)
                     .keyboardType(.numberPad)
@@ -72,43 +72,43 @@ struct WorkSessionView: View {
                 Button {
                     Task { await viewModel.submitStartOtp() }
                 } label: {
-                    busyLabel("Start work")
+                    busyLabel(L("start_work"))
                 }
                 .buttonStyle(.borderedProminent)
                 .disabled(viewModel.isBusy || viewModel.otpInput.trimmingCharacters(in: .whitespaces).count < 4)
             }
         } else if viewModel.isWorking {
-            Section("Finish the gig") {
-                Text("When you’ve finished the work, generate the completion code and read it to your employer.")
+            Section(L("ios_finish_the_gig")) {
+                Text(L("ios_when_you_ve_finished_the_work_generate_t"))
                     .font(.subheadline).foregroundStyle(.secondary)
                 Button {
                     Task { await viewModel.completeWork() }
                 } label: {
-                    busyLabel("Complete work")
+                    busyLabel(L("status_help_complete_work"))
                 }
                 .buttonStyle(.borderedProminent)
                 .disabled(viewModel.isBusy)
             }
         } else if viewModel.awaitingCompletionVerify {
-            Section("Read this code to your employer") {
+            Section(L("ios_read_this_code_to_your_employer")) {
                 if let code = viewModel.completionCode {
                     Text(code)
                         .font(.system(.largeTitle, design: .monospaced).weight(.bold))
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 8)
-                    Text("Your employer types this in to finish the gig and release payment.")
+                    Text(L("ios_your_employer_types_this_in_to_finish_th"))
                         .font(.footnote).foregroundStyle(.secondary)
-                    Button("Generate a new code") {
+                    Button(L("ios_generate_a_new_code")) {
                         Task { await viewModel.regenerateCompletionCode() }
                     }
                     .disabled(viewModel.isBusy)
                 } else {
-                    HStack { ProgressView(); Text("Loading code…").foregroundStyle(.secondary) }
+                    HStack { ProgressView(); Text(L("ios_loading_code")).foregroundStyle(.secondary) }
                 }
             }
         } else {
             Section {
-                Text("No action needed right now.")
+                Text(L("ios_no_action_needed_right_now"))
                     .font(.subheadline).foregroundStyle(.secondary)
             }
         }

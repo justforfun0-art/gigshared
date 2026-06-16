@@ -11,6 +11,7 @@ struct RootView: View {
 
     let container: AppContainer
     @StateObject private var auth: AuthViewModel
+    @ObservedObject private var locale = LocaleManager.shared
     @State private var selected = 0
     @State private var showAssistant = false
     @State private var showMessages = false
@@ -30,6 +31,10 @@ struct RootView: View {
                 AuthView(viewModel: auth)
             }
         }
+        // Re-render the whole tree when the in-app language changes, and align
+        // SwiftUI's own formatting (dates/numbers) with the chosen locale.
+        .environment(\.locale, locale.locale)
+        .id(locale.language)
         // Observe the persisted-session Flow (SKIE-bridged) so a restored or
         // cleared session drives the UI without an imperative reload.
         .task { auth.startObserving() }
@@ -92,21 +97,21 @@ struct RootView: View {
 
     private var employeeTabs: [GHTab] {
         [
-            GHTab(label: "Home", icon: "house"),
-            GHTab(label: "Jobs", icon: "briefcase"),
-            GHTab(label: "History", icon: "clock.arrow.circlepath"),
-            GHTab(label: "Earnings", icon: "creditcard"),
-            GHTab(label: "Profile", icon: "person.crop.circle"),
+            GHTab(label: L("nav_home"), icon: "house"),
+            GHTab(label: L("jobs"), icon: "briefcase"),
+            GHTab(label: L("nav_applications"), icon: "clock.arrow.circlepath"),
+            GHTab(label: L("nav_earnings"), icon: "creditcard"),
+            GHTab(label: L("nav_profile"), icon: "person.crop.circle"),
         ]
     }
 
     private var employerTabs: [GHTab] {
         [
-            GHTab(label: "Home", icon: "house"),
-            GHTab(label: "My Jobs", icon: "briefcase"),
-            GHTab(label: "Applications", icon: "person.2"),
-            GHTab(label: "Payments", icon: "creditcard"),
-            GHTab(label: "Profile", icon: "person.crop.circle"),
+            GHTab(label: L("nav_home"), icon: "house"),
+            GHTab(label: L("nav_my_jobs"), icon: "briefcase"),
+            GHTab(label: L("nav_employer_applications"), icon: "person.2"),
+            GHTab(label: L("nav_payments"), icon: "creditcard"),
+            GHTab(label: L("nav_profile"), icon: "person.crop.circle"),
         ]
     }
 

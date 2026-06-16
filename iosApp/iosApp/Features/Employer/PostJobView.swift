@@ -26,13 +26,13 @@ struct PostJobView: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section("Job") {
+                Section(L("job_label")) {
                     TextField("Title", text: $title)
                     TextField("Description", text: $description, axis: .vertical).lineLimit(2...5)
                     TextField("Location", text: $location)
                     TextField("Pay (e.g. ₹150/hr)", text: $salary)
                 }
-                Section("Where & when") {
+                Section(L("ios_where_when")) {
                     TextField("State", text: $state)
                     TextField("District", text: $district)
                     DatePicker("Date", selection: $jobDate, displayedComponents: .date)
@@ -40,17 +40,17 @@ struct PostJobView: View {
                     TextField("End (HH:mm)", text: $endTime)
                     Stepper("Positions: \(positions)", value: $positions, in: 1...50)
                 }
-                Section("Skills (comma-separated)") {
+                Section(L("ios_skills_comma_separated")) {
                     TextField("e.g. lifting, packing", text: $skills)
                 }
                 if let error { Section { Text(error).foregroundStyle(.red).font(.footnote) } }
             }
-            .navigationTitle("Post a Job")
+            .navigationTitle(L("onboarding_employer_title_3"))
             .disabled(busy)
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } }
+                ToolbarItem(placement: .cancellationAction) { Button(L("cancel_filter")) { dismiss() } }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Post") { Task { await post() } }
+                    Button(L("ios_post")) { Task { await post() } }
                         .disabled(title.isEmpty || description.isEmpty || location.isEmpty)
                 }
             }

@@ -63,7 +63,7 @@ struct JobFeedView: View {
         case .failed(let message):
             VStack(spacing: 12) {
                 emptyState(title: "Couldn’t load jobs", systemImage: "exclamationmark.triangle", message: message)
-                Button("Retry") { Task { await viewModel.load() } }
+                Button(L("retry_btn")) { Task { await viewModel.load() } }
                     .buttonStyle(.borderedProminent).tint(GHTheme.primary)
             }
         }

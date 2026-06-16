@@ -42,7 +42,7 @@ struct ApplicationStatusView: View {
             }
         }
         .background(GHTheme.hex(0xF8F9FB).ignoresSafeArea())
-        .navigationTitle("Application Status")
+        .navigationTitle(L("application_status"))
         .navigationBarTitleDisplayMode(.inline)
         // iOS 16-compatible push (navigationDestination(item:) is iOS 17+).
         .background(
@@ -109,7 +109,7 @@ struct ApplicationStatusView: View {
     private var jobDetailsCard: some View {
         card {
             VStack(alignment: .leading, spacing: 16) {
-                Text("Job Details").font(.title3.weight(.bold)).foregroundStyle(GHTheme.onBackground)
+                Text(L("job_details_label")).font(.title3.weight(.bold)).foregroundStyle(GHTheme.onBackground)
                 detailRow(icon: "briefcase.fill", label: "Job Title", value: job?.title ?? "—")
                 detailRow(icon: "mappin.and.ellipse", label: "Location",
                           value: [job?.district, job?.state].compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: ", ").ifEmptyDash())
@@ -159,11 +159,11 @@ struct ApplicationStatusView: View {
     private var contactCard: some View {
         card {
             VStack(alignment: .leading, spacing: 14) {
-                Text("Contact Employer").font(.title3.weight(.bold)).foregroundStyle(GHTheme.onBackground)
+                Text(L("contact_employer")).font(.title3.weight(.bold)).foregroundStyle(GHTheme.onBackground)
                 Button { openChat() } label: {
                     HStack {
                         if openingChat { ProgressView().tint(.white) }
-                        else { Label("Message", systemImage: "message.fill") }
+                        else { Label(L("message"), systemImage: "message.fill") }
                     }
                     .font(.headline).foregroundStyle(.white)
                     .frame(maxWidth: .infinity).padding(.vertical, 14)
@@ -293,7 +293,7 @@ private struct ApplicationProgressTimeline: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Application Progress").font(.title2.weight(.bold)).foregroundStyle(GHTheme.hex(0x1F2937))
+            Text(L("application_progress_title")).font(.title2.weight(.bold)).foregroundStyle(GHTheme.hex(0x1F2937))
 
             // The ribbon Canvas is pinned to the LEFT rail (railWidth wide) and
             // sits behind the rows, whose node column is the same railWidth — so
@@ -387,7 +387,7 @@ private struct ApplicationProgressTimeline: View {
                     .font(.title3.weight(.bold))
                     .foregroundStyle(reached ? GHTheme.hex(0x1F2937) : GHTheme.muted)
                 if isCurrent {
-                    Text("Current step")
+                    Text(L("timeline_current_step_pill"))
                         .font(.system(size: 13, weight: .semibold))
                         .foregroundStyle(GHTheme.hex(0x6D28D9))
                         .padding(.horizontal, 12).padding(.vertical, 5)

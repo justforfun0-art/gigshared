@@ -18,7 +18,7 @@ struct MyJobsView: View {
     var body: some View {
         NavigationStack {
             content
-                .navigationTitle("My Jobs")
+                .navigationTitle(L("my_jobs_label"))
                 .drawerToolbar()
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
@@ -44,8 +44,8 @@ struct MyJobsView: View {
             if jobs.isEmpty {
                 VStack(spacing: 8) {
                     Image(systemName: "tray").font(.largeTitle).foregroundStyle(.secondary)
-                    Text("No jobs posted").font(.headline)
-                    Button("Post a job") { showPost = true }.buttonStyle(.borderedProminent)
+                    Text(L("ios_no_jobs_posted")).font(.headline)
+                    Button(L("post_a_job")) { showPost = true }.buttonStyle(.borderedProminent)
                 }.frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
                 List(jobs, id: \.id) { job in
@@ -66,7 +66,7 @@ struct MyJobsView: View {
         case .failed(let message):
             VStack(spacing: 12) {
                 Text(message).foregroundStyle(.secondary).multilineTextAlignment(.center).padding()
-                Button("Retry") { Task { await viewModel.load() } }.buttonStyle(.borderedProminent)
+                Button(L("retry_btn")) { Task { await viewModel.load() } }.buttonStyle(.borderedProminent)
             }
         }
     }

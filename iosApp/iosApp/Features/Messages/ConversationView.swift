@@ -25,7 +25,7 @@ struct ConversationView: View {
         .navigationBarTitleDisplayMode(.inline)
         .task { await viewModel.start() }
         .alert("Message error", isPresented: errorBinding) {
-            Button("OK", role: .cancel) { viewModel.errorMessage = nil }
+            Button(L("ok"), role: .cancel) { viewModel.errorMessage = nil }
         } message: { Text(viewModel.errorMessage ?? "") }
     }
 
@@ -40,7 +40,7 @@ struct ConversationView: View {
                     if viewModel.isLoading {
                         ProgressView().padding(.top, 40)
                     } else if viewModel.messages.isEmpty {
-                        Text("Say hello 👋")
+                        Text(L("ios_say_hello"))
                             .font(.subheadline).foregroundStyle(.secondary).padding(.top, 60)
                     }
                     ForEach(viewModel.messages, id: \.id) { msg in

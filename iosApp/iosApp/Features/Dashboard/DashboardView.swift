@@ -51,7 +51,7 @@ struct DashboardView: View {
                 }
                 .padding()
             }
-            .navigationTitle(viewModel.isEmployer ? "Hiring overview" : "Your dashboard")
+            .navigationTitle(viewModel.isEmployer ? L("ios_hiring_overview") : L("ios_your_dashboard"))
             .drawerToolbar()
             .toolbar {
                 if notifications != nil {
@@ -81,7 +81,7 @@ struct DashboardView: View {
     private var swipeSection: some View {
         if !viewModel.isEmployer, let swipeJobs, let applications {
             VStack(alignment: .leading, spacing: 10) {
-                Label("Swipe to apply", systemImage: "hand.draw")
+                Label(L("swipe_to_apply"), systemImage: "hand.draw")
                     .font(.headline)
                 JobSwipeView(jobs: swipeJobs, applications: applications, employeeId: employeeId, profile: profile)
                     .frame(height: 460)
@@ -116,7 +116,7 @@ struct DashboardView: View {
             VStack(spacing: 12) {
                 Image(systemName: "exclamationmark.triangle").font(.largeTitle).foregroundStyle(.secondary)
                 Text(message).font(.subheadline).foregroundStyle(.secondary).multilineTextAlignment(.center)
-                Button("Retry") { Task { await viewModel.load() } }.buttonStyle(.borderedProminent)
+                Button(L("retry_btn")) { Task { await viewModel.load() } }.buttonStyle(.borderedProminent)
             }
             .frame(maxWidth: .infinity).padding(.top, 40)
         }
@@ -146,7 +146,7 @@ private struct ReferralCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Label("Refer & earn", systemImage: "gift")
+            Label(L("ios_refer_earn"), systemImage: "gift")
                 .font(.headline)
             Text("\(info.referralCount) friend\(info.referralCount == 1 ? "" : "s") joined with your code")
                 .font(.subheadline).foregroundStyle(.secondary)
@@ -156,7 +156,7 @@ private struct ReferralCard: View {
                         .font(.title3.monospaced().weight(.semibold))
                     Spacer()
                     ShareLink(item: "Join GigHour with my referral code: \(info.referralCode)") {
-                        Label("Share", systemImage: "square.and.arrow.up")
+                        Label(L("earnings_share_action"), systemImage: "square.and.arrow.up")
                     }
                 }
                 .padding()

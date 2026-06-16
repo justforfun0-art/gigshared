@@ -6,6 +6,7 @@ import Shared
 struct ProfileView: View {
 
     @StateObject private var viewModel: ProfileViewModel
+    @ObservedObject private var locale = LocaleManager.shared
     let session: AuthData
     let onSignOut: () -> Void
 
@@ -24,7 +25,7 @@ struct ProfileView: View {
                     .listRowBackground(Color.clear)
                     .listRowInsets(EdgeInsets())
 
-                Section("Account") {
+                Section(L("settings_account")) {
                     LabeledContent("Phone", value: session.phone)
                     if let type = session.userType {
                         LabeledContent("Role", value: type)
@@ -36,7 +37,7 @@ struct ProfileView: View {
                     ProgressView()
                 case .loaded(let profile):
                     if let p = profile {
-                        Section("Profile") {
+                        Section(L("nav_profile")) {
                             LabeledContent("Name", value: p.name)
                             LabeledContent("Gender", value: p.gender.toDisplayString())
                             LabeledContent("District", value: p.district)
@@ -48,24 +49,37 @@ struct ProfileView: View {
                             }
                         }
                     } else {
-                        Section { Text("No profile yet").foregroundStyle(.secondary) }
+                        Section { Text(L("ios_no_profile_yet")).foregroundStyle(.secondary) }
                     }
                 case .failed(let message):
                     Section { Text(message).foregroundStyle(.secondary) }
                 }
 
+                Section(L("language")) {
+                    Picker(L("language"), selection: Binding(
+                        get: { locale.language },
+                        set: { locale.setLanguage($0) }
+                    )) {
+                        ForEach(LocaleManager.Language.allCases) { lang in
+                            Text(lang.nativeName).tag(lang)
+                        }
+                    }
+                    .pickerStyle(.menu)
+                    .tint(GHTheme.primary)
+                }
+
                 Section {
-                    Button("Sign out", role: .destructive, action: onSignOut)
+                    Button(L("ios_sign_out"), role: .destructive, action: onSignOut)
                 }
             }
             .scrollContentBackground(.hidden)
             .background(GHTheme.pageGradient.ignoresSafeArea())
-            .navigationTitle("Profile")
+            .navigationTitle(L("nav_profile"))
             .drawerToolbar()
             .toolbar {
                 if viewModel.currentProfile != nil {
                     ToolbarItem(placement: .topBarTrailing) {
-                        Button("Edit") { viewModel.isEditing = true }
+                        Button(L("edit")) { viewModel.isEditing = true }
                             .tint(GHTheme.primary)
                     }
                 }
@@ -77,7 +91,7 @@ struct ProfileView: View {
             }
             .task { await viewModel.load() }
             .alert("Something went wrong", isPresented: errorBinding) {
-                Button("OK", role: .cancel) { viewModel.actionError = nil }
+                Button(L("ok"), role: .cancel) { viewModel.actionError = nil }
             } message: { Text(viewModel.actionError ?? "") }
         }
     }
@@ -167,34 +181,34 @@ private struct EditProfileSheet: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section("Details") {
+                Section(L("details")) {
                     TextField("Name", text: $name)
                     TextField("Email", text: $email)
                         .keyboardType(.emailAddress)
                         .textInputAutocapitalization(.never)
                 }
-                Section("Bio") {
+                Section(L("bio")) {
                     TextField("Tell employers about yourself", text: $bio, axis: .vertical)
                         .lineLimit(2...5)
                 }
-                Section("Skills") {
+                Section(L("skills")) {
                     TextField("Comma-separated (e.g. Cooking, Driving)", text: $skillsText, axis: .vertical)
                         .lineLimit(1...3)
                 }
-                Section("Not editable here") {
+                Section(L("ios_not_editable_here")) {
                     LabeledContent("Gender", value: profile.gender.toDisplayString())
                     LabeledContent("District", value: profile.district)
                     LabeledContent("State", value: profile.state)
                 }
             }
-            .navigationTitle("Edit profile")
+            .navigationTitle(L("edit_profile"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
+                    Button(L("cancel_filter")) { dismiss() }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Save") { Task { await save() } }
+                    Button(L("save")) { Task { await save() } }
                         .disabled(isSaving || name.trimmingCharacters(in: .whitespaces).isEmpty)
                 }
             }

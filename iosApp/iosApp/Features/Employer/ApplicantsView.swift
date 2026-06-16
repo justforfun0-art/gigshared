@@ -21,10 +21,10 @@ struct ApplicantsView: View {
             .task { await viewModel.load() }
             .refreshable { await viewModel.load() }
             .alert("Action failed", isPresented: errorBinding) {
-                Button("OK", role: .cancel) { viewModel.actionError = nil }
+                Button(L("ok"), role: .cancel) { viewModel.actionError = nil }
             } message: { Text(viewModel.actionError ?? "") }
             .alert("Share this OTP", isPresented: otpBinding) {
-                Button("Done", role: .cancel) { viewModel.presentedOtp = nil }
+                Button(L("done"), role: .cancel) { viewModel.presentedOtp = nil }
             } message: { Text(viewModel.presentedOtp ?? "") }
             .sheet(item: $viewModel.verifyingCompletion) { app in
                 CompletionCodeSheet(app: app, viewModel: viewModel)
@@ -45,7 +45,7 @@ struct ApplicantsView: View {
             ProgressView("Loading…")
         case .loaded(let apps):
             if apps.isEmpty {
-                Text("No applicants yet").foregroundStyle(.secondary)
+                Text(L("no_applicants_yet")).foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
                 List(apps, id: \.id) { app in
@@ -60,7 +60,7 @@ struct ApplicantsView: View {
         case .failed(let message):
             VStack(spacing: 12) {
                 Text(message).foregroundStyle(.secondary).multilineTextAlignment(.center).padding()
-                Button("Retry") { Task { await viewModel.load() } }.buttonStyle(.borderedProminent)
+                Button(L("retry_btn")) { Task { await viewModel.load() } }.buttonStyle(.borderedProminent)
             }
         }
     }
@@ -70,18 +70,18 @@ struct ApplicantsView: View {
         let s = app.status
         HStack(spacing: 8) {
             if s == ApplicationStatus.applied || s == ApplicationStatus.shortlisted {
-                Button("Select") { Task { await viewModel.select(app) } }
+                Button(L("select")) { Task { await viewModel.select(app) } }
                     .buttonStyle(.borderedProminent).controlSize(.small)
-                Button("Reject", role: .destructive) { Task { await viewModel.reject(app) } }
+                Button(L("reject"), role: .destructive) { Task { await viewModel.reject(app) } }
                     .buttonStyle(.bordered).controlSize(.small)
             } else if s == ApplicationStatus.accepted {
-                Button("Generate start OTP") { Task { await viewModel.generateStartOtp(app) } }
+                Button(L("status_help_generate_start_otp")) { Task { await viewModel.generateStartOtp(app) } }
                     .buttonStyle(.borderedProminent).controlSize(.small)
             } else if s == ApplicationStatus.workInProgress {
-                Label("Work in progress", systemImage: "clock")
+                Label(L("status_work_in_progress"), systemImage: "clock")
                     .font(.caption).foregroundStyle(.orange)
             } else if s == ApplicationStatus.completionPending {
-                Button("Enter completion code") { viewModel.beginCompletionVerify(app) }
+                Button(L("status_help_enter_completion_code")) { viewModel.beginCompletionVerify(app) }
                     .buttonStyle(.borderedProminent).controlSize(.small)
             }
         }
@@ -100,7 +100,7 @@ private struct CompletionCodeSheet: View {
             Form {
                 Section {
                     Text(app.employeeProfile?.name ?? "Worker").font(.headline)
-                    Text("Ask the worker for their completion code and enter it below to finish the gig and release payment.")
+                    Text(L("ios_ask_the_worker_for_their_completion_code"))
                         .font(.subheadline).foregroundStyle(.secondary)
                 }
                 Section {
@@ -113,14 +113,14 @@ private struct CompletionCodeSheet: View {
                     Section { Text(err).foregroundStyle(.red).font(.footnote) }
                 }
             }
-            .navigationTitle("Complete gig")
+            .navigationTitle(L("ios_complete_gig"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { viewModel.verifyingCompletion = nil }
+                    Button(L("cancel_filter")) { viewModel.verifyingCompletion = nil }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Finish") { Task { await viewModel.submitCompletionCode() } }
+                    Button(L("payment_finish_btn")) { Task { await viewModel.submitCompletionCode() } }
                         .disabled(viewModel.isVerifying
                                   || viewModel.completionInput.trimmingCharacters(in: .whitespaces).count != 6)
                 }

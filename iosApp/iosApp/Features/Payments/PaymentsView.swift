@@ -22,12 +22,12 @@ struct PaymentsView: View {
     var body: some View {
         NavigationStack {
             content
-                .navigationTitle("Payments")
+                .navigationTitle(L("notification_channel_payments"))
                 .drawerToolbar()
                 .task { await viewModel.load() }
                 .refreshable { await viewModel.load() }
                 .alert("Payment error", isPresented: errorBinding) {
-                    Button("OK", role: .cancel) { viewModel.actionError = nil }
+                    Button(L("ok"), role: .cancel) { viewModel.actionError = nil }
                 } message: { Text(viewModel.actionError ?? "") }
                 .sheet(item: $viewModel.paymentLink) { link in
                     SafariSheet(url: link)
@@ -59,8 +59,8 @@ struct PaymentsView: View {
                 if rows.isEmpty {
                     VStack(spacing: 8) {
                         Image(systemName: "creditcard").font(.largeTitle).foregroundStyle(.secondary)
-                        Text("No payments yet").font(.headline)
-                        Text("Payments appear here once workers complete gigs.")
+                        Text(L("ios_no_payments_yet")).font(.headline)
+                        Text(L("ios_payments_appear_here_once_workers_comple"))
                             .font(.subheadline).foregroundStyle(.secondary).multilineTextAlignment(.center)
                     }
                     .frame(maxWidth: .infinity).padding(.top, 60)
@@ -76,7 +76,7 @@ struct PaymentsView: View {
         case .failed(let message):
             VStack(spacing: 12) {
                 Text(message).foregroundStyle(.secondary).multilineTextAlignment(.center).padding()
-                Button("Retry") { Task { await viewModel.load() } }.buttonStyle(.borderedProminent)
+                Button(L("retry_btn")) { Task { await viewModel.load() } }.buttonStyle(.borderedProminent)
             }
         }
     }
@@ -117,7 +117,7 @@ private struct PaymentRowCard: View {
                     Button {
                         Task { await viewModel.payNow(row) }
                     } label: {
-                        if isBusy { ProgressView() } else { Text("Pay now") }
+                        if isBusy { ProgressView() } else { Text(L("status_help_pay_now")) }
                     }
                     .buttonStyle(.borderedProminent)
                     .controlSize(.small)

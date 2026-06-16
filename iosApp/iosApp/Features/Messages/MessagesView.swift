@@ -19,7 +19,7 @@ struct MessagesView: View {
                 GHTheme.pageGradient.ignoresSafeArea()
                 content
             }
-            .navigationTitle("Messages")
+            .navigationTitle(L("notif_pref_messages"))
             .task { await viewModel.load() }
             .refreshable { await viewModel.load() }
         }
@@ -53,7 +53,7 @@ struct MessagesView: View {
         case .failed(let message):
             VStack(spacing: 12) {
                 Text(message).foregroundStyle(.secondary).multilineTextAlignment(.center).padding()
-                Button("Retry") { Task { await viewModel.load() } }
+                Button(L("retry_btn")) { Task { await viewModel.load() } }
                     .buttonStyle(.borderedProminent).tint(GHTheme.primary)
             }
         }
@@ -100,8 +100,8 @@ struct MessagesView: View {
     private var placeholder: some View {
         VStack(spacing: 8) {
             Image(systemName: "bubble.left.and.bubble.right").font(.largeTitle).foregroundStyle(.secondary)
-            Text("No conversations yet").font(.headline)
-            Text("Messages with employers show up here.")
+            Text(L("ios_no_conversations_yet")).font(.headline)
+            Text(L("ios_messages_with_employers_show_up_here"))
                 .font(.subheadline).foregroundStyle(.secondary).multilineTextAlignment(.center)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity).padding()

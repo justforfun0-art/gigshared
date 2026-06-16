@@ -213,10 +213,10 @@ struct JobSwipeView: View {
     private var emptyDeck: some View {
         VStack(spacing: 12) {
             Image(systemName: "checkmark.circle").font(.system(size: 48)).foregroundStyle(green)
-            Text("You’re all caught up!").font(.headline)
-            Text("No more gigs to swipe right now. Check back soon.")
+            Text(L("ios_you_re_all_caught_up")).font(.headline)
+            Text(L("ios_no_more_gigs_to_swipe_right_now_check_ba"))
                 .font(.subheadline).foregroundStyle(.secondary).multilineTextAlignment(.center)
-            Button("Refresh") { Task { await viewModel.load() } }.buttonStyle(.borderedProminent)
+            Button(L("refresh")) { Task { await viewModel.load() } }.buttonStyle(.borderedProminent)
         }
         .padding(32)
     }
@@ -225,7 +225,7 @@ struct JobSwipeView: View {
         VStack(spacing: 12) {
             Image(systemName: "exclamationmark.triangle").font(.largeTitle).foregroundStyle(.secondary)
             Text(message).font(.subheadline).foregroundStyle(.secondary).multilineTextAlignment(.center)
-            Button("Retry") { Task { await viewModel.load() } }.buttonStyle(.borderedProminent)
+            Button(L("retry_btn")) { Task { await viewModel.load() } }.buttonStyle(.borderedProminent)
         }.padding()
     }
 }

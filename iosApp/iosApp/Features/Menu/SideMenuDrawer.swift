@@ -42,25 +42,25 @@ struct SideMenuDrawer: View {
     private var items: [DrawerItem] {
         if isEmployer {
             return [
-                DrawerItem(label: "Dashboard", icon: "house", action: .tab(0)),
-                DrawerItem(label: "My Jobs", icon: "briefcase", action: .tab(1)),
-                DrawerItem(label: "Applications", icon: "person.2", action: .tab(2)),
-                DrawerItem(label: "Payments", icon: "creditcard", action: .tab(3)),
-                DrawerItem(label: "Messages", icon: "bubble.left.and.bubble.right", action: .messages),
-                DrawerItem(label: "Assistant", icon: "sparkles", action: .assistant),
-                DrawerItem(label: "Profile", icon: "person.crop.circle", action: .tab(4)),
-                DrawerItem(label: "Help & Support", icon: "questionmark.circle", action: .help),
+                DrawerItem(label: L("nav_dashboard"), icon: "house", action: .tab(0)),
+                DrawerItem(label: L("nav_my_jobs"), icon: "briefcase", action: .tab(1)),
+                DrawerItem(label: L("nav_employer_applications"), icon: "person.2", action: .tab(2)),
+                DrawerItem(label: L("nav_payments"), icon: "creditcard", action: .tab(3)),
+                DrawerItem(label: L("nav_messages"), icon: "bubble.left.and.bubble.right", action: .messages),
+                DrawerItem(label: L("assistant_title"), icon: "sparkles", action: .assistant),
+                DrawerItem(label: L("nav_profile"), icon: "person.crop.circle", action: .tab(4)),
+                DrawerItem(label: L("ios_help_support"), icon: "questionmark.circle", action: .help),
             ]
         } else {
             return [
-                DrawerItem(label: "Dashboard", icon: "house", action: .tab(0)),
-                DrawerItem(label: "Find Jobs", icon: "briefcase", action: .tab(1)),
-                DrawerItem(label: "History", icon: "clock.arrow.circlepath", action: .tab(2)),
-                DrawerItem(label: "Earnings", icon: "creditcard", action: .tab(3)),
-                DrawerItem(label: "Messages", icon: "bubble.left.and.bubble.right", action: .messages),
-                DrawerItem(label: "Assistant", icon: "sparkles", action: .assistant),
-                DrawerItem(label: "Profile", icon: "person.crop.circle", action: .tab(4)),
-                DrawerItem(label: "Help & Support", icon: "questionmark.circle", action: .help),
+                DrawerItem(label: L("nav_dashboard"), icon: "house", action: .tab(0)),
+                DrawerItem(label: L("nav_jobs"), icon: "briefcase", action: .tab(1)),
+                DrawerItem(label: L("nav_applications"), icon: "clock.arrow.circlepath", action: .tab(2)),
+                DrawerItem(label: L("nav_earnings"), icon: "creditcard", action: .tab(3)),
+                DrawerItem(label: L("nav_messages"), icon: "bubble.left.and.bubble.right", action: .messages),
+                DrawerItem(label: L("assistant_title"), icon: "sparkles", action: .assistant),
+                DrawerItem(label: L("nav_profile"), icon: "person.crop.circle", action: .tab(4)),
+                DrawerItem(label: L("ios_help_support"), icon: "questionmark.circle", action: .help),
             ]
         }
     }
@@ -88,7 +88,7 @@ struct SideMenuDrawer: View {
                 .padding(.vertical, 8)
             }
             Divider()
-            row(DrawerItem(label: "Log out", icon: "rectangle.portrait.and.arrow.right", action: .logout),
+            row(DrawerItem(label: L("log_out"), icon: "rectangle.portrait.and.arrow.right", action: .logout),
                 destructive: true)
                 .padding(.bottom, 8)
         }
@@ -110,9 +110,9 @@ struct SideMenuDrawer: View {
                         }
                     }
                 )
-            Text(userName?.isEmpty == false ? userName! : "GigHour User")
+            Text(userName?.isEmpty == false ? userName! : L("ios_gighour_user"))
                 .font(.title3.weight(.semibold)).foregroundStyle(.white).lineLimit(1)
-            Text(isEmployer ? "Employer" : "Employee")
+            Text(isEmployer ? L("employer") : L("employee"))
                 .font(.caption).foregroundStyle(.white.opacity(0.85))
         }
         .frame(maxWidth: .infinity, alignment: .leading)
