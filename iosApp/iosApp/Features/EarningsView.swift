@@ -7,6 +7,7 @@ import Shared
 struct EarningsView: View {
 
     @StateObject private var viewModel: EarningsViewModel
+    @State private var selectedTxn: EarningsViewModel.Txn?
 
     init(dashboard: any DashboardRepository, applications: any ApplicationRepository, employeeId: String) {
         _viewModel = StateObject(wrappedValue: EarningsViewModel(
@@ -23,6 +24,11 @@ struct EarningsView: View {
             .navigationTitle("Earnings")
             .task { await viewModel.load() }
             .refreshable { await viewModel.load() }
+            .sheet(item: $selectedTxn) { txn in
+                TransactionDetailSheet(txn: txn)
+                    .presentationDetents([.medium])
+                    .presentationDragIndicator(.visible)
+            }
         }
     }
 
@@ -152,7 +158,11 @@ struct EarningsView: View {
                     }
                 }
             } else {
-                ForEach(txns) { TransactionCard(txn: $0) }
+                ForEach(txns) { txn in
+                    TransactionCard(txn: txn)
+                        .contentShape(Rectangle())
+                        .onTapGesture { selectedTxn = txn }
+                }
             }
         }
     }
@@ -173,16 +183,19 @@ private struct EarningsHero: View {
     let completedJobs: Int
 
     private let green = GHTheme.hex(0x047857)
-    @State private var shown: Double = 0
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             Text(periodLabel).font(.title3).foregroundStyle(GHTheme.onSurfaceVariant)
             HStack(alignment: .top, spacing: 0) {
                 Text("₹").font(.system(size: 36, weight: .bold)).foregroundStyle(green).padding(.top, 12)
-                Text(shown.formatted(.number.precision(.fractionLength(0))))
+                // Show the exact period amount (no count-up animation — that made
+                // the number look "different" mid-animation). A numeric content
+                // transition gives a clean swap when the period changes.
+                Text(amount.formatted(.number.precision(.fractionLength(0))))
                     .font(.system(size: 56, weight: .bold)).foregroundStyle(green)
                     .contentTransition(.numericText())
+                    .animation(.easeInOut(duration: 0.25), value: amount)
             }
             Divider().padding(.vertical, 12)
             HStack {
@@ -194,13 +207,6 @@ private struct EarningsHero: View {
         .padding(20)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(GHTheme.hex(0xF5F3FF), in: RoundedRectangle(cornerRadius: 16))
-        .onAppear { animate() }
-        .onChange(of: amount) { _ in animate() }
-    }
-
-    private func animate() {
-        shown = 0
-        withAnimation(.easeOut(duration: 0.8)) { shown = amount }
     }
 
     private func heroStat(_ value: String, _ label: String) -> some View {
@@ -299,5 +305,73 @@ private struct TransactionCard: View {
         .padding(14)
         .background(Color(.systemBackground), in: RoundedRectangle(cornerRadius: 12))
         .overlay(RoundedRectangle(cornerRadius: 12).stroke(GHTheme.hex(0xF3F4F6), lineWidth: 1))
+    }
+}
+
+/// Half-sheet transaction detail (port of Android's TransactionDetailsSheet):
+/// title, a big colored amount, a status pill, then Job / Employer / Date rows.
+private struct TransactionDetailSheet: View {
+    let txn: EarningsViewModel.Txn
+    @Environment(\.dismiss) private var dismiss
+
+    private var pending: Bool { !txn.completed }
+    private var amountColor: Color { pending ? GHTheme.warning : GHTheme.tertiary }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            Text("Transaction Details")
+                .font(.title2.weight(.bold)).foregroundStyle(GHTheme.onBackground)
+                .padding(.top, 8)
+
+            Text("+₹\(Int(txn.amount))")
+                .font(.system(size: 36, weight: .bold)).foregroundStyle(amountColor)
+                .padding(.top, 20)
+
+            // Status pill.
+            Text(pending ? "Payment Pending" : "Completed")
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(pending ? GHTheme.hex(0xB45309) : GHTheme.hex(0x065F46))
+                .padding(.horizontal, 12).padding(.vertical, 6)
+                .background(pending ? GHTheme.hex(0xFEF3C7) : GHTheme.hex(0xD1FAE5), in: Capsule())
+                .padding(.top, 6)
+
+            VStack(spacing: 0) {
+                detailRow("Job", txn.title)
+                if let employer = txn.employer, !employer.isEmpty {
+                    Divider()
+                    detailRow("Employer", employer)
+                }
+                Divider()
+                detailRow("Date", formattedDate)
+            }
+            .padding(.top, 24)
+
+            Spacer()
+        }
+        .padding(.horizontal, 20).padding(.bottom, 16)
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private func detailRow(_ label: String, _ value: String) -> some View {
+        HStack {
+            Text(label).font(.subheadline).foregroundStyle(GHTheme.onSurfaceVariant)
+            Spacer()
+            Text(value).font(.subheadline.weight(.medium)).foregroundStyle(GHTheme.onBackground)
+                .multilineTextAlignment(.trailing)
+        }
+        .padding(.vertical, 12)
+    }
+
+    private var formattedDate: String {
+        guard !txn.date.isEmpty else { return "—" }
+        let iso = ISO8601DateFormatter()
+        iso.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        let date = iso.date(from: txn.date) ?? {
+            iso.formatOptions = [.withInternetDateTime]
+            return iso.date(from: txn.date)
+        }()
+        guard let date else { return String(txn.date.prefix(10)) }
+        let out = DateFormatter(); out.dateFormat = "d MMM yyyy, h:mm a"
+        return out.string(from: date)
     }
 }
