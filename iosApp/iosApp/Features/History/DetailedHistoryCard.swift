@@ -24,7 +24,9 @@ struct HistoryStepper: View {
 
     // Active/brand accent: violet for employees, emerald for employers.
     private var accent: Color { isEmployer ? GHTheme.tertiary : GHTheme.primary }
-    private let completed = GHTheme.success            // green completed nodes/lines
+    // Completed nodes + travelled lines use the SAME role accent (the reference
+    // shows violet completed steps for employees, not a separate green).
+    private var completed: Color { accent }
     private let futureLine = GHTheme.outline
     private let pendingTint = GHTheme.muted
 
@@ -70,6 +72,11 @@ struct HistoryStepper: View {
                                 width: connectorWidth, height: connectorHeight,
                                 doneColor: completed, futureColor: futureLine, runnerColor: accent
                             )
+                            // Pull the wave into the node's empty side-space (the
+                            // 44pt circle sits in a 72pt frame, ~14pt gap each
+                            // side) so the line meets the icons with no gap.
+                            .padding(.horizontal, -14)
+                            .zIndex(-1)
                         }
                     }
                 }
