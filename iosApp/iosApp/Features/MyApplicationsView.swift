@@ -91,6 +91,26 @@ struct MyApplicationsView: View {
         }
     }
 
+    /// Sort to match Android's HistoryViewModel: most-recent-activity first
+    /// (updatedAt → appliedAt → createdAt, ISO-8601 descending), and under "All"
+    /// pin SELECTED offers to the very top so the worker sees new offers first.
+    private func sorted(_ apps: [Application]) -> [Application] {
+        let byRecency = apps.sorted {
+            ($0.updatedAt ?? $0.appliedAt ?? $0.createdAt ?? "")
+                > ($1.updatedAt ?? $1.appliedAt ?? $1.createdAt ?? "")
+        }
+        guard filter == .all else { return byRecency }
+        // Stable pin: SELECTED first, otherwise keep recency order.
+        return byRecency.enumerated()
+            .sorted { lhs, rhs in
+                let lSel = lhs.element.status == .selected
+                let rSel = rhs.element.status == .selected
+                if lSel != rSel { return lSel }      // SELECTED before others
+                return lhs.offset < rhs.offset       // else preserve recency
+            }
+            .map(\.element)
+    }
+
     // MARK: - Content
 
     @ViewBuilder
@@ -99,7 +119,7 @@ struct MyApplicationsView: View {
         case .idle, .loading:
             Spacer(); ProgressView("Loading…"); Spacer()
         case .loaded(let apps):
-            let filtered = apps.filter(matches)
+            let filtered = sorted(apps.filter(matches))
             if filtered.isEmpty {
                 placeholder(title: "Nothing here yet", icon: "clock.arrow.circlepath",
                             message: "Applications in this category will show up here.")
