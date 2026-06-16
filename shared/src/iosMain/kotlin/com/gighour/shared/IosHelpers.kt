@@ -64,6 +64,24 @@ suspend fun JobRepository.getJobsOrThrow(
     limit: Int = 20,
 ): List<Job> = getJobs(filter, page, limit).getOrThrow()
 
+/**
+ * Jobs scoped to a worker's district/state (Android parity: employees only see
+ * jobs in their own district). Builds the [JobFilter] Kotlin-side so Swift
+ * needn't name every field; passing a blank district falls back to unfiltered.
+ */
+@Throws(Throwable::class)
+suspend fun JobRepository.getJobsForDistrictOrThrow(
+    district: String?,
+    state: String?,
+    page: Int = 1,
+    limit: Int = 20,
+): List<Job> {
+    val filter = if (!district.isNullOrBlank()) {
+        com.gighour.shared.domain.model.JobFilter(state = state, district = district)
+    } else null
+    return getJobs(filter, page, limit).getOrThrow()
+}
+
 /** [AuthRepository.sendOtp] unwrapped to a throwing suspend (→ Swift async throws). */
 @Throws(Throwable::class)
 suspend fun AuthRepository.sendOtpOrThrow(phone: String): OtpSendResult =
@@ -111,12 +129,21 @@ suspend fun NotificationRepository.getNotificationsOrThrow(
 
 /**
  * [JobRepository.getJobsForSwipe] as a throwing suspend — the relevance-ranked
- * deck for the Tinder-style swipe UI. `filter` omitted (server scopes by the
- * worker's signals); pass the userId so applied/skipped jobs are excluded.
+ * deck for the Tinder-style swipe UI. Scoped to the worker's district/state
+ * (Android parity) when a district is given; pass the userId so applied/skipped
+ * jobs are excluded.
  */
 @Throws(Throwable::class)
-suspend fun JobRepository.getJobsForSwipeOrThrow(userId: String): List<Job> =
-    getJobsForSwipe(userId, filter = null).getOrThrow()
+suspend fun JobRepository.getJobsForSwipeOrThrow(
+    userId: String,
+    district: String?,
+    state: String?,
+): List<Job> {
+    val filter = if (!district.isNullOrBlank()) {
+        com.gighour.shared.domain.model.JobFilter(state = state, district = district)
+    } else null
+    return getJobsForSwipe(userId, filter).getOrThrow()
+}
 
 // ---- Employer-side ----
 

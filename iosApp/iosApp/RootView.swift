@@ -107,11 +107,13 @@ struct RootView: View {
                               notifications: container.notifications,
                               swipeJobs: container.jobs,
                               applications: container.applications,
+                              profile: container.profile,
                               session: session)
             case 1:
                 JobFeedView(jobs: container.jobs,
                             applications: container.applications,
-                            employeeId: session.userId)
+                            employeeId: session.userId,
+                            profile: container.profile)
             case 2:
                 MyApplicationsView(applications: container.applications, employeeId: session.userId, messages: container.messages)
             case 3:

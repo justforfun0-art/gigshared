@@ -10,8 +10,11 @@ struct JobFeedView: View {
     private let applications: any ApplicationRepository
     private let employeeId: String
 
-    init(jobs: any JobRepository, applications: any ApplicationRepository, employeeId: String) {
-        _viewModel = StateObject(wrappedValue: JobFeedViewModel(jobs: jobs))
+    init(jobs: any JobRepository, applications: any ApplicationRepository,
+         employeeId: String, profile: (any ProfileRepository)? = nil) {
+        _viewModel = StateObject(wrappedValue: JobFeedViewModel(
+            jobs: jobs, profile: profile, employeeId: employeeId
+        ))
         self.applications = applications
         self.employeeId = employeeId
     }
@@ -22,10 +25,15 @@ struct JobFeedView: View {
                 GHTheme.pageGradient.ignoresSafeArea()
                 content
             }
-            .navigationTitle("Find Jobs")
+            .navigationTitle(navTitle)
             .task { await viewModel.load() }
             .refreshable { await viewModel.load() }
         }
+    }
+
+    private var navTitle: String {
+        if let d = viewModel.district, !d.isEmpty { return "Jobs in \(d)" }
+        return "Find Jobs"
     }
 
     @ViewBuilder

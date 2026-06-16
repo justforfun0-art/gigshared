@@ -1,9 +1,9 @@
 import Foundation
 import Shared
 
-/// Sample view-model over the shared `JobRepository`. Demonstrates the standard
-/// bridging pattern: call a Kotlin `suspend fun` from a Swift async context, and
-/// unwrap the Kotlin `Result<T>` the repos return.
+/// Job feed for an employee — scoped to the worker's own district (Android
+/// parity: employees only see jobs in their district). Loads the profile to
+/// resolve the district, then fetches district-filtered jobs.
 @MainActor
 final class JobFeedViewModel: ObservableObject {
 
@@ -15,28 +15,38 @@ final class JobFeedViewModel: ObservableObject {
     }
 
     @Published private(set) var state: State = .idle
+    /// The resolved district (shown in the header, e.g. "Jobs in Amritsar").
+    @Published private(set) var district: String?
 
     private let jobs: any JobRepository
+    private let profileRepo: (any ProfileRepository)?
+    private let employeeId: String?
 
-    init(jobs: any JobRepository) {
+    init(jobs: any JobRepository, profile: (any ProfileRepository)? = nil, employeeId: String? = nil) {
         self.jobs = jobs
+        self.profileRepo = profile
+        self.employeeId = employeeId
     }
 
-    func load(filter: JobFilter? = nil) async {
+    func load() async {
         state = .loading
         do {
-            // getJobsOrThrow (IosHelpers.kt) unwraps Kotlin Result into a plain
-            // throwing suspend → Swift gets `[Job]` directly or an error thrown.
-            // (Kotlin `Result<T>` itself boxes opaquely over ObjC; SKIE would
-            //  generate typed wrappers if you'd rather call getJobs directly.)
-            let list = try await JobFeedViewModel.fetch(jobs, filter)
-            state = .loaded(list)
-        } catch {
-            state = .failed((error as NSError).localizedDescription)
-        }
-    }
+            // Resolve the worker's district from their profile (if available).
+            var district: String? = nil
+            var stateName: String? = nil
+            if let profileRepo, let employeeId,
+               let profile = try? await IosHelpersKt.getEmployeeProfileOrThrow(profileRepo, userId: employeeId) {
+                district = profile.district
+                stateName = profile.state
+            }
+            self.district = district
 
-    private static func fetch(_ jobs: any JobRepository, _ filter: JobFilter?) async throws -> [Job] {
-        try await IosHelpersKt.getJobsOrThrow(jobs, filter: filter, page: 1, limit: 20)
+            let list = try await IosHelpersKt.getJobsForDistrictOrThrow(
+                jobs, district: district, state: stateName, page: 1, limit: 20
+            )
+            self.state = .loaded(list)
+        } catch {
+            self.state = .failed((error as NSError).localizedDescription)
+        }
     }
 }

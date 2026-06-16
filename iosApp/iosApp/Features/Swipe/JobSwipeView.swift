@@ -17,9 +17,10 @@ struct JobSwipeView: View {
     private let green = Color(red: 0x22/255, green: 0xC5/255, blue: 0x5E/255)
     private let red = Color(red: 0xEF/255, green: 0x44/255, blue: 0x44/255)
 
-    init(jobs: any JobRepository, applications: any ApplicationRepository, employeeId: String) {
+    init(jobs: any JobRepository, applications: any ApplicationRepository,
+         employeeId: String, profile: (any ProfileRepository)? = nil) {
         _viewModel = StateObject(wrappedValue: JobSwipeViewModel(
-            jobs: jobs, applications: applications, employeeId: employeeId
+            jobs: jobs, applications: applications, employeeId: employeeId, profile: profile
         ))
     }
 

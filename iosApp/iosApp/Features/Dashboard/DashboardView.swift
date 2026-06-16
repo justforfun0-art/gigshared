@@ -13,6 +13,7 @@ struct DashboardView: View {
     /// Employee Home embeds the job-swipe deck (Android parity); nil for employer.
     private let swipeJobs: (any JobRepository)?
     private let applications: (any ApplicationRepository)?
+    private let profile: (any ProfileRepository)?
     private let employeeId: String
     @State private var showNotifications = false
 
@@ -21,6 +22,7 @@ struct DashboardView: View {
          notifications: (any NotificationRepository)? = nil,
          swipeJobs: (any JobRepository)? = nil,
          applications: (any ApplicationRepository)? = nil,
+         profile: (any ProfileRepository)? = nil,
          session: AuthData) {
         _viewModel = StateObject(wrappedValue: DashboardViewModel(
             dashboard: dashboard,
@@ -31,6 +33,7 @@ struct DashboardView: View {
         self.notifications = notifications
         self.swipeJobs = swipeJobs
         self.applications = applications
+        self.profile = profile
         self.employeeId = session.userId
     }
 
@@ -79,7 +82,7 @@ struct DashboardView: View {
             VStack(alignment: .leading, spacing: 10) {
                 Label("Swipe to apply", systemImage: "hand.draw")
                     .font(.headline)
-                JobSwipeView(jobs: swipeJobs, applications: applications, employeeId: employeeId)
+                JobSwipeView(jobs: swipeJobs, applications: applications, employeeId: employeeId, profile: profile)
                     .frame(height: 460)
             }
         }

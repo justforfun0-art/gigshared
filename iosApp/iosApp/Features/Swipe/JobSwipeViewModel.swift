@@ -26,11 +26,14 @@ final class JobSwipeViewModel: ObservableObject {
     private let jobs_repo: any JobRepository
     private let applications: any ApplicationRepository
     private let employeeId: String
+    private let profileRepo: (any ProfileRepository)?
 
-    init(jobs: any JobRepository, applications: any ApplicationRepository, employeeId: String) {
+    init(jobs: any JobRepository, applications: any ApplicationRepository,
+         employeeId: String, profile: (any ProfileRepository)? = nil) {
         self.jobs_repo = jobs
         self.applications = applications
         self.employeeId = employeeId
+        self.profileRepo = profile
     }
 
     var topJob: Job? { jobs.first }
@@ -39,7 +42,17 @@ final class JobSwipeViewModel: ObservableObject {
     func load() async {
         state = .loading
         do {
-            let deck = try await IosHelpersKt.getJobsForSwipeOrThrow(jobs_repo, userId: employeeId)
+            // Scope the deck to the worker's district (Android parity).
+            var district: String? = nil
+            var stateName: String? = nil
+            if let profileRepo,
+               let profile = try? await IosHelpersKt.getEmployeeProfileOrThrow(profileRepo, userId: employeeId) {
+                district = profile.district
+                stateName = profile.state
+            }
+            let deck = try await IosHelpersKt.getJobsForSwipeOrThrow(
+                jobs_repo, userId: employeeId, district: district, state: stateName
+            )
             jobs = deck
             state = .loaded
         } catch {
