@@ -14,6 +14,7 @@ struct NotificationsView: View {
         NavigationStack {
             content
                 .navigationTitle("Notifications")
+                .drawerToolbar()
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
                         Button("Mark all read") { Task { await viewModel.markAllRead() } }

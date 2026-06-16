@@ -13,6 +13,8 @@ struct RootView: View {
     @StateObject private var auth: AuthViewModel
     @State private var selected = 0
     @State private var showAssistant = false
+    @State private var showMessages = false
+    @State private var showDrawer = false
 
     init(container: AppContainer) {
         self.container = container
@@ -36,28 +38,53 @@ struct RootView: View {
     @ViewBuilder
     private func mainShell(session: AuthData, isEmployer: Bool) -> some View {
         let tabs = isEmployer ? employerTabs : employeeTabs
-        VStack(spacing: 0) {
-            ZStack(alignment: .bottomTrailing) {
-                screen(for: selected, session: session, isEmployer: isEmployer)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+        ZStack {
+            VStack(spacing: 0) {
+                ZStack(alignment: .bottomTrailing) {
+                    screen(for: selected, session: session, isEmployer: isEmployer)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
 
-                // Floating AI assistant — available from every tab (Android parity).
-                FloatingAssistantButton(isEmployer: isEmployer) { showAssistant = true }
-                    .padding(.trailing, 18)
-                    .padding(.bottom, 18)
+                    // Floating AI assistant — available from every tab (Android parity).
+                    FloatingAssistantButton(isEmployer: isEmployer) { showAssistant = true }
+                        .padding(.trailing, 18)
+                        .padding(.bottom, 18)
+                }
+
+                GHBottomBar(
+                    tabs: tabs,
+                    selected: Binding(
+                        get: { min(selected, tabs.count - 1) },
+                        set: { selected = $0 }
+                    ),
+                    isEmployer: isEmployer
+                )
             }
 
-            GHBottomBar(
-                tabs: tabs,
-                selected: Binding(
-                    get: { min(selected, tabs.count - 1) },
-                    set: { selected = $0 }
-                ),
-                isEmployer: isEmployer
-            )
+            // Side menu drawer (Android NavigationDrawer), slides in from the
+            // left over a scrim when the nav-bar hamburger is tapped.
+            if showDrawer {
+                SideMenuDrawer(
+                    isEmployer: isEmployer,
+                    userName: session.phone,   // name resolved in the drawer header fallback
+                    selectedTab: selected,
+                    onSelectTab: { selected = $0 },
+                    onMessages: { showMessages = true },
+                    onAssistant: { showAssistant = true },
+                    onHelp: { showAssistant = true },   // route Help to the assistant for now
+                    onLogout: { Task { await auth.signOut() } },
+                    onClose: { withAnimation(.easeInOut(duration: 0.25)) { showDrawer = false } }
+                )
+                .zIndex(2)
+            }
         }
+        // Publish the "open drawer" action so each tab screen can show the
+        // hamburger leading nav-bar button via `.drawerToolbar()`.
+        .environment(\.openDrawer, { withAnimation(.easeInOut(duration: 0.25)) { showDrawer = true } })
         .sheet(isPresented: $showAssistant) {
             AssistantView(engine: container.assistant, userId: session.userId, isEmployer: isEmployer)
+        }
+        .sheet(isPresented: $showMessages) {
+            MessagesView(repo: container.messages, myUserId: session.userId)
         }
     }
 

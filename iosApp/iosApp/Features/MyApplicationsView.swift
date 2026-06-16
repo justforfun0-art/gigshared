@@ -43,6 +43,7 @@ struct MyApplicationsView: View {
                 }
             }
             .navigationTitle("History")
+            .drawerToolbar()
             .task { await viewModel.load() }
             .refreshable { await viewModel.load() }
             .alert("Couldn’t withdraw", isPresented: errorBinding) {

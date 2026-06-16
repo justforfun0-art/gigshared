@@ -22,6 +22,7 @@ struct EarningsView: View {
                 content
             }
             .navigationTitle("Earnings")
+            .drawerToolbar()
             .task { await viewModel.load() }
             .refreshable { await viewModel.load() }
             .sheet(item: $selectedTxn) { txn in

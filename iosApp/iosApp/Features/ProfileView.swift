@@ -61,6 +61,7 @@ struct ProfileView: View {
             .scrollContentBackground(.hidden)
             .background(GHTheme.pageGradient.ignoresSafeArea())
             .navigationTitle("Profile")
+            .drawerToolbar()
             .toolbar {
                 if viewModel.currentProfile != nil {
                     ToolbarItem(placement: .topBarTrailing) {

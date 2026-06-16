@@ -26,6 +26,7 @@ struct JobFeedView: View {
                 content
             }
             .navigationTitle(navTitle)
+            .drawerToolbar()
             .task { await viewModel.load() }
             .refreshable { await viewModel.load() }
         }

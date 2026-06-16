@@ -23,6 +23,7 @@ struct PaymentsView: View {
         NavigationStack {
             content
                 .navigationTitle("Payments")
+                .drawerToolbar()
                 .task { await viewModel.load() }
                 .refreshable { await viewModel.load() }
                 .alert("Payment error", isPresented: errorBinding) {

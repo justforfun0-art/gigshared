@@ -52,6 +52,7 @@ struct DashboardView: View {
                 .padding()
             }
             .navigationTitle(viewModel.isEmployer ? "Hiring overview" : "Your dashboard")
+            .drawerToolbar()
             .toolbar {
                 if notifications != nil {
                     ToolbarItem(placement: .topBarTrailing) {

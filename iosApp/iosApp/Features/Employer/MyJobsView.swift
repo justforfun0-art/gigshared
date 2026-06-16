@@ -19,6 +19,7 @@ struct MyJobsView: View {
         NavigationStack {
             content
                 .navigationTitle("My Jobs")
+                .drawerToolbar()
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
                         Button { showPost = true } label: { Image(systemName: "plus") }
