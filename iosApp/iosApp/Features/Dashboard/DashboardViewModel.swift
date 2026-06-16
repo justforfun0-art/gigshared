@@ -55,12 +55,29 @@ final class DashboardViewModel: ObservableObject {
                 let s = try await dashboard.getEmployeeStatsOrThrow(userId: userId)
                 stats = .employee(s)
             }
+        } catch is CancellationError {
+            // The .task was cancelled (tab switch / view update) — not a real
+            // failure. Leave the prior state instead of flashing an error.
         } catch {
+            // Kotlin/Native surfaces a cancelled coroutine as an NSError too;
+            // ignore that as well so a cancelled load never shows as an error.
+            if (error as NSError).isCancellation { return }
             stats = .failed((error as NSError).localizedDescription)
         }
     }
 
     private func loadReferral() async {
         referral = try? await referralRepo.getReferralInfoOrThrow(userId: userId)
+    }
+}
+
+extension NSError {
+    /// True when this error represents a cancelled task/coroutine — Swift
+    /// CancellationError, the Cocoa user-cancelled code, or a Kotlin/Native
+    /// JobCancellationException surfaced as an NSError.
+    var isCancellation: Bool {
+        if domain == NSCocoaErrorDomain && code == NSUserCancelledError { return true }
+        let desc = localizedDescription.lowercased()
+        return desc.contains("cancellation") || desc.contains("cancelled") || desc.contains("jobcancellation")
     }
 }
