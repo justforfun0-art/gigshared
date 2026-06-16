@@ -117,7 +117,9 @@ struct RootView: View {
             case 2:
                 MyApplicationsView(applications: container.applications, employeeId: session.userId, messages: container.messages)
             case 3:
-                EarningsView(payouts: container.payouts)
+                EarningsView(dashboard: container.dashboard,
+                             applications: container.applications,
+                             employeeId: session.userId)
             default:
                 profileScreen(session: session)
             }

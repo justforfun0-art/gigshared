@@ -8,8 +8,10 @@ struct EarningsView: View {
 
     @StateObject private var viewModel: EarningsViewModel
 
-    init(payouts: any PayoutRepository) {
-        _viewModel = StateObject(wrappedValue: EarningsViewModel(payouts: payouts))
+    init(dashboard: any DashboardRepository, applications: any ApplicationRepository, employeeId: String) {
+        _viewModel = StateObject(wrappedValue: EarningsViewModel(
+            dashboard: dashboard, applications: applications, employeeId: employeeId
+        ))
     }
 
     var body: some View {
@@ -141,7 +143,7 @@ struct EarningsView: View {
         VStack(alignment: .leading, spacing: 10) {
             Text("Transactions").font(.headline).foregroundStyle(GHTheme.onBackground)
                 .frame(maxWidth: .infinity, alignment: .leading)
-            if viewModel.payouts.isEmpty {
+            if viewModel.transactions.isEmpty {
                 GHCard {
                     HStack {
                         Image(systemName: "indianrupeesign.circle").foregroundStyle(GHTheme.muted)
@@ -149,7 +151,7 @@ struct EarningsView: View {
                     }
                 }
             } else {
-                ForEach(viewModel.payouts, id: \.id) { TransactionCard(payout: $0) }
+                ForEach(viewModel.transactions) { TransactionCard(txn: $0) }
             }
         }
     }
@@ -272,8 +274,8 @@ private struct MonthlyBarChart: View {
 }
 
 private struct TransactionCard: View {
-    let payout: Payout
-    private var isPending: Bool { payout.status != .success }
+    let txn: EarningsViewModel.Txn
+    private var isPending: Bool { !txn.completed }
 
     var body: some View {
         HStack(spacing: 12) {
@@ -283,13 +285,13 @@ private struct TransactionCard: View {
                 .overlay(Image(systemName: isPending ? "clock.fill" : "checkmark")
                     .foregroundStyle(isPending ? GHTheme.warning : GHTheme.tertiaryVariant))
             VStack(alignment: .leading, spacing: 2) {
-                Text(payout.jobTitle ?? "Payout")
+                Text(txn.title)
                     .font(.subheadline.weight(.semibold)).foregroundStyle(GHTheme.onBackground).lineLimit(1)
-                Text(payout.status.name.replacingOccurrences(of: "_", with: " ").capitalized)
+                Text(isPending ? "Payment pending" : "Completed")
                     .font(.caption).foregroundStyle(GHTheme.onSurfaceVariant)
             }
             Spacer()
-            Text("₹\(Int(payout.amount))")
+            Text("₹\(Int(txn.amount))")
                 .font(.headline)
                 .foregroundStyle(isPending ? GHTheme.warning : GHTheme.tertiaryVariant)
         }

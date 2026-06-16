@@ -1,9 +1,14 @@
 import Foundation
 import Shared
 
-/// Employee earnings over the shared `PayoutRepository`. Loads the payout page
-/// (summary + payouts), then derives the Android-style stats (avg per job, this/
-/// last month, monthly chart) client-side from the payout list.
+/// Employee earnings — mirrors Android's EarningsViewModel data sources:
+///   - DashboardRepository.getEmployeeStats → headline totals (total / pending /
+///     this-month / completed jobs)
+///   - ApplicationRepository.getEmployeeApplications (COMPLETED + PAYMENT_PENDING)
+///     → the transaction list + the monthly chart, amount resolved from
+///     paymentAmount → salaryRange.
+/// (The payouts table is empty for most users; earnings live on the applications
+/// / work sessions, which is why reading payouts alone showed all zeros.)
 @MainActor
 final class EarningsViewModel: ObservableObject {
 
@@ -17,7 +22,16 @@ final class EarningsViewModel: ObservableObject {
         var completedCount: Int = 0
     }
 
-    /// Period filter for the hero amount (mirrors Android's EarningsPeriod).
+    /// A derived earnings transaction (from an application).
+    struct Txn: Identifiable {
+        let id: String
+        let title: String
+        let employer: String?
+        let amount: Double
+        let date: String
+        let completed: Bool
+    }
+
     enum Period: String, CaseIterable, Identifiable {
         case thisMonth = "This Month", thisWeek = "This Week", lastMonth = "Last Month"
         case last3Months = "Last 3 Months", allTime = "All Time"
@@ -26,102 +40,137 @@ final class EarningsViewModel: ObservableObject {
 
     @Published var period: Period = .allTime
 
-    /// One month's bar for the trend chart.
     struct MonthBar: Identifiable {
         let id = UUID()
-        let label: String       // "Jun"
+        let label: String
         let amount: Double
     }
 
-    enum State {
-        case idle, loading
-        case loaded
-        case failed(String)
-    }
+    enum State { case idle, loading, loaded, failed(String) }
 
     @Published private(set) var state: State = .idle
     @Published private(set) var stats = Stats()
     @Published private(set) var months: [MonthBar] = []
-    @Published private(set) var payouts: [Payout] = []
+    @Published private(set) var transactions: [Txn] = []
 
-    private let payoutsRepo: any PayoutRepository
+    private let dashboard: any DashboardRepository
+    private let applications: any ApplicationRepository
+    private let employeeId: String
 
-    init(payouts: any PayoutRepository) {
-        self.payoutsRepo = payouts
+    init(dashboard: any DashboardRepository, applications: any ApplicationRepository, employeeId: String) {
+        self.dashboard = dashboard
+        self.applications = applications
+        self.employeeId = employeeId
     }
 
     func load() async {
         state = .loading
         do {
-            let page = try await IosHelpersKt.getHistoryOrThrow(payoutsRepo, status: nil, limit: 100, offset: 0)
-            let rows = page.payouts
-            payouts = rows.sorted { ($0.createdAt ?? "") > ($1.createdAt ?? "") }
-            stats = Self.computeStats(summary: page.summary, payouts: rows)
-            months = Self.computeMonths(rows)
+            // Headline stats (best-effort; falls back to computed-from-txns).
+            let statsRow = try? await IosHelpersKt.getEmployeeStatsOrThrow(dashboard, userId: employeeId)
+
+            // Earning applications → transactions (COMPLETED + PAYMENT_PENDING).
+            let apps = try await IosHelpersKt.getEmployeeApplicationsOrThrow(applications, employeeId: employeeId)
+            let earning = apps.filter { $0.status == .completed || $0.status == .paymentPending }
+            let txns = earning.map { app -> Txn in
+                Txn(
+                    id: app.id,
+                    title: app.job?.title ?? "Job Payment",
+                    employer: app.job?.employerProfile?.companyName,
+                    amount: Self.resolveAmount(paymentAmount: app.paymentAmount?.doubleValue,
+                                               salaryRange: app.job?.salaryRange),
+                    date: app.paymentDate ?? app.updatedAt ?? app.createdAt ?? "",
+                    completed: app.status == .completed
+                )
+            }.sorted { $0.date > $1.date }
+            transactions = txns
+
+            stats = Self.computeStats(stats: statsRow, txns: txns)
+            months = Self.computeMonths(txns)
             state = .loaded
         } catch {
             state = .failed((error as NSError).localizedDescription)
         }
     }
 
-    /// Total successful earnings within the selected period (drives the hero).
+    // MARK: - Period hero amount
+
     var periodEarnings: Double {
-        guard period != .allTime else { return stats.total }
-        let now = Date()
-        let cal = Calendar.current
-        let cutoff: Date? = {
-            switch period {
-            case .thisWeek: return cal.date(byAdding: .day, value: -7, to: now)
-            case .thisMonth: return cal.dateInterval(of: .month, for: now)?.start
-            case .lastMonth: return cal.date(byAdding: .month, value: -1, to: now)
-            case .last3Months: return cal.date(byAdding: .month, value: -3, to: now)
-            case .allTime: return nil
-            }
-        }()
-        guard let cutoff else { return stats.total }
-        return payouts
-            .filter { $0.status == .success }
-            .filter { (Self.parseDate($0.completedAt ?? $0.createdAt) ?? .distantPast) >= cutoff }
-            .reduce(0.0) { $0 + $1.amount }
+        switch period {
+        case .allTime: return stats.total
+        case .thisMonth: return stats.thisMonth > 0 ? stats.thisMonth : sumCompleted(since: startOfMonth())
+        case .lastMonth: return stats.lastMonth
+        case .thisWeek: return sumCompleted(since: Calendar.current.date(byAdding: .day, value: -7, to: Date()))
+        case .last3Months: return sumCompleted(since: Calendar.current.date(byAdding: .month, value: -3, to: Date()))
+        }
     }
 
-    private static func computeStats(summary: PayoutSummary, payouts: [Payout]) -> Stats {
-        var s = Stats()
-        s.total = summary.totalAmount
-        s.pending = summary.pendingAmount
-        s.pendingCount = Int(summary.scheduledCount) + Int(summary.processingCount)
-        s.completedCount = Int(summary.successCount)
-        s.avgPerJob = s.completedCount > 0 ? s.total / Double(s.completedCount) : 0
+    private func sumCompleted(since cutoff: Date?) -> Double {
+        guard let cutoff else { return stats.total }
+        return transactions
+            .filter { $0.completed }
+            .filter { (Self.parseDate($0.date) ?? .distantPast) >= cutoff }
+            .reduce(0) { $0 + $1.amount }
+    }
 
-        let now = Date()
-        let cal = Calendar.current
-        let thisMonthKey = monthKey(now)
-        let lastMonthKey = monthKey(cal.date(byAdding: .month, value: -1, to: now) ?? now)
-        for p in payouts where p.status == .success {
-            guard let d = parseDate(p.completedAt ?? p.createdAt) else { continue }
-            let k = monthKey(d)
-            if k == thisMonthKey { s.thisMonth += p.amount }
-            if k == lastMonthKey { s.lastMonth += p.amount }
+    private func startOfMonth() -> Date? {
+        Calendar.current.dateInterval(of: .month, for: Date())?.start
+    }
+
+    // MARK: - Derivations
+
+    private static func computeStats(stats: EmployeeDashboardStats?, txns: [Txn]) -> Stats {
+        var s = Stats()
+        let completed = txns.filter { $0.completed }
+        let pending = txns.filter { !$0.completed }
+        // Trust the server stats when present; else compute from transactions.
+        s.total = stats.map { Double($0.totalEarnings) } ?? completed.reduce(0) { $0 + $1.amount }
+        s.pending = stats.map { Double($0.pendingPayments) } ?? pending.reduce(0) { $0 + $1.amount }
+        s.thisMonth = stats.map { Double($0.thisMonthEarnings) } ?? 0
+        s.completedCount = stats.map { Int($0.completedJobs) } ?? completed.count
+        s.pendingCount = pending.count
+        s.avgPerJob = s.completedCount > 0 ? (s.total / Double(s.completedCount)).rounded() : 0
+        // Last month, computed from transactions.
+        if let lmStart = Calendar.current.date(byAdding: .month, value: -1, to: Date()).flatMap({
+            Calendar.current.dateInterval(of: .month, for: $0)?.start
+        }), let lmEnd = Calendar.current.dateInterval(of: .month, for: Date())?.start {
+            s.lastMonth = completed
+                .filter {
+                    guard let d = parseDate($0.date) else { return false }
+                    return d >= lmStart && d < lmEnd
+                }
+                .reduce(0) { $0 + $1.amount }
         }
         return s
     }
 
-    /// Last 6 months of successful-payout totals, oldest → newest.
-    private static func computeMonths(_ payouts: [Payout]) -> [MonthBar] {
+    private static func computeMonths(_ txns: [Txn]) -> [MonthBar] {
         let cal = Calendar.current
         let now = Date()
-        var bars: [MonthBar] = []
-        let monthFmt = DateFormatter(); monthFmt.dateFormat = "MMM"
-        for offset in stride(from: 5, through: 0, by: -1) {
-            guard let monthDate = cal.date(byAdding: .month, value: -offset, to: now) else { continue }
+        let fmt = DateFormatter(); fmt.dateFormat = "MMM"
+        let completed = txns.filter { $0.completed }
+        return stride(from: 5, through: 0, by: -1).compactMap { offset in
+            guard let monthDate = cal.date(byAdding: .month, value: -offset, to: now) else { return nil }
             let key = monthKey(monthDate)
-            let total = payouts
-                .filter { $0.status == .success }
-                .filter { parseDate($0.completedAt ?? $0.createdAt).map(monthKey) == key }
+            let total = completed
+                .filter { parseDate($0.date).map(monthKey) == key }
                 .reduce(0.0) { $0 + $1.amount }
-            bars.append(MonthBar(label: monthFmt.string(from: monthDate), amount: total))
+            return MonthBar(label: fmt.string(from: monthDate), amount: total)
         }
-        return bars
+    }
+
+    /// resolveAmount (Android): paymentAmount → parsed salaryRange tail.
+    private static func resolveAmount(paymentAmount: Double?, salaryRange: String?) -> Double {
+        if let a = paymentAmount, a > 0 { return a }
+        if let sr = salaryRange, !sr.isEmpty {
+            let cleaned = sr.replacingOccurrences(of: "₹", with: "")
+                .replacingOccurrences(of: ",", with: "")
+                .replacingOccurrences(of: " ", with: "")
+            let tail = cleaned.split(separator: "-").last.map(String.init) ?? cleaned
+            let digits = tail.prefix { $0.isNumber }
+            if let v = Double(digits) { return v }
+        }
+        return 0
     }
 
     private static func monthKey(_ date: Date) -> String {
