@@ -30,6 +30,7 @@ struct DashboardView: View {
     @State private var employerDetailApp: Application?
     @State private var showPayments = false
     @State private var showAnalytics = false
+    @State private var showPostJob = false
 
     init(dashboard: any DashboardRepository,
          referralRepo: any ReferralRepository,
@@ -119,6 +120,13 @@ struct DashboardView: View {
                                   dashboard: dashboardRepo, employerId: employeeId)
                 }
             }
+            .sheet(isPresented: $showPostJob) {
+                if let swipeJobs {
+                    PostJobView(jobs: swipeJobs, employerId: employeeId) {
+                        Task { await viewModel.load() }
+                    }
+                }
+            }
             .task { await viewModel.load() }
             .refreshable { await viewModel.load() }
         }
@@ -150,7 +158,7 @@ struct DashboardView: View {
             Text(L("quick_actions")).font(.headline)
             let cols = [GridItem(.flexible()), GridItem(.flexible())]
             LazyVGrid(columns: cols, spacing: 12) {
-                quickAction("plus", L("post_job"), L("create_new_listing"), GHTheme.hex(0xECFDF5), GHTheme.hex(0x059669)) { onSelectTab?(1) }
+                quickAction("plus", L("post_job"), L("create_new_listing"), GHTheme.hex(0xECFDF5), GHTheme.hex(0x059669)) { showPostJob = true }
                 quickAction("person.2.fill", L("applicants"), L("review_applications"), GHTheme.hex(0xEFF6FF), GHTheme.hex(0x2563EB)) { onSelectTab?(2) }
                 quickAction("creditcard.fill", L("payments"), L("manage_payments"), GHTheme.hex(0xFEF3C7), GHTheme.hex(0xD97706)) { onSelectTab?(3) }
                 quickAction("chart.line.uptrend.xyaxis", L("nav_analytics"), L("view_insights"), GHTheme.hex(0xF5F3FF), GHTheme.hex(0x7C3AED)) { showAnalytics = true }
