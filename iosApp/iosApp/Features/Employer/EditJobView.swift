@@ -25,6 +25,7 @@ struct EditJobView: View {
     @State private var endTime: String
     @State private var positions: Int
     @State private var skills: String
+    @State private var mapLocation: String
     @State private var busy = false
     @State private var error: String?
 
@@ -43,6 +44,7 @@ struct EditJobView: View {
         _endTime = State(initialValue: job.endTime ?? "")
         _positions = State(initialValue: Int(job.numPositions))
         _skills = State(initialValue: job.skillsRequired.joined(separator: ", "))
+        _mapLocation = State(initialValue: job.workGoogleMapLocation ?? "")
     }
 
     private var accent: Color { GHTheme.tertiary }
@@ -64,6 +66,10 @@ struct EditJobView: View {
                     TextField("Start (HH:mm)", text: $startTime)
                     TextField("End (HH:mm)", text: $endTime)
                     Stepper("Positions: \(positions)", value: $positions, in: 1...50)
+                }
+                Section(L("work_location")) {
+                    LocationPickerMap(locationString: $mapLocation)
+                        .listRowInsets(EdgeInsets(top: 8, leading: 12, bottom: 8, trailing: 12))
                 }
                 Section(L("ios_skills_comma_separated")) {
                     TextField("e.g. lifting, packing", text: $skills)
@@ -106,7 +112,8 @@ struct EditJobView: View {
                 skillsRequired: skillList,
                 state: state.isEmpty ? nil : state,
                 district: district.isEmpty ? nil : district,
-                jobCategory: job.jobCategory
+                jobCategory: job.jobCategory,
+                mapLocation: mapLocation.isEmpty ? nil : mapLocation
             )
             onSaved()
             dismiss()

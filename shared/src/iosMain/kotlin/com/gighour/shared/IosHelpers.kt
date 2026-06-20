@@ -277,6 +277,7 @@ suspend fun JobRepository.createJobOrThrow(
     skillsRequired: List<String>,
     state: String?,
     district: String?,
+    mapLocation: String?,
 ): Job = createJob(
     Job(
         id = "",
@@ -292,6 +293,7 @@ suspend fun JobRepository.createJobOrThrow(
         numPositions = numPositions,
         state = state,
         district = district,
+        workGoogleMapLocation = mapLocation,
     ),
 ).getOrThrow()
 
@@ -320,6 +322,7 @@ suspend fun JobRepository.updateJobOrThrow(
     state: String?,
     district: String?,
     jobCategory: String?,
+    mapLocation: String?,
 ): Job = updateJob(
     Job(
         id = jobId,
@@ -336,6 +339,7 @@ suspend fun JobRepository.updateJobOrThrow(
         state = state,
         district = district,
         jobCategory = jobCategory,
+        workGoogleMapLocation = mapLocation,
     ),
 ).getOrThrow()
 

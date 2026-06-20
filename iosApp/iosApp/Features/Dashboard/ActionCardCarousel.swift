@@ -69,12 +69,11 @@ struct ActionCardCarousel: View {
             } label: { EmptyView() }
             .hidden()
         )
-        // SELECTED: confirm before accepting (Android pendingAcceptId dialog).
-        .alert(L("ios_accept_offer"), isPresented: acceptBinding, presenting: acceptTarget) { app in
-            Button(L("ios_accept_offer")) { Task { await viewModel.accept(app) } }
-            Button(L("cancel_filter"), role: .cancel) { }
-        } message: { app in
-            Text("\(app.job?.title ?? "this job") — accept this job offer?")
+        // SELECTED: confirm before accepting (Android's accept dialog with map).
+        .sheet(item: $acceptTarget) { app in
+            AcceptOfferSheet(application: app,
+                             onAccept: { Task { await viewModel.accept(app); acceptTarget = nil } },
+                             onCancel: { acceptTarget = nil })
         }
         // OTP_REQUESTED: enter the start OTP (Android enter_otp dialog).
         .alert(L("ios_enter_start_otp"), isPresented: otpBinding, presenting: otpTarget) { app in
@@ -201,9 +200,6 @@ struct ActionCardCarousel: View {
 
     private var detailBinding: Binding<Bool> {
         Binding(get: { detailTarget != nil }, set: { if !$0 { detailTarget = nil } })
-    }
-    private var acceptBinding: Binding<Bool> {
-        Binding(get: { acceptTarget != nil }, set: { if !$0 { acceptTarget = nil } })
     }
     private var otpBinding: Binding<Bool> {
         Binding(get: { otpTarget != nil }, set: { if !$0 { otpTarget = nil } })
@@ -681,4 +677,45 @@ private struct TicketShape: Shape {
 
 private extension Comparable {
     func clamped(to range: ClosedRange<Self>) -> Self { min(max(self, range.lowerBound), range.upperBound) }
+}
+
+/// Accept-offer confirmation with the job's map pin (Android's
+/// AcceptJobConfirmationDialog). Falls back to title-only when no coordinate.
+private struct AcceptOfferSheet: View {
+    let application: Application
+    let onAccept: () -> Void
+    let onCancel: () -> Void
+
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 16) {
+                    Text(application.job?.title ?? "This job")
+                        .font(.title3.weight(.bold)).foregroundStyle(GHTheme.onBackground)
+                    if let loc = application.job?.district ?? application.job?.location, !loc.isEmpty {
+                        Label(loc, systemImage: "mappin").font(.subheadline)
+                            .foregroundStyle(GHTheme.onSurfaceVariant)
+                    }
+                    JobLocationMap(location: application.job?.workGoogleMapLocation,
+                                   addressFallback: application.job?.workAddress ?? application.job?.location,
+                                   height: 200)
+                    Text(L("ios_accept_this_offer_to_confirm_you_ll_work"))
+                        .font(.subheadline).foregroundStyle(GHTheme.onSurfaceVariant)
+                    Button(action: onAccept) {
+                        Text(L("ios_accept_offer")).fontWeight(.semibold).frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(.borderedProminent).tint(GHTheme.tertiary).controlSize(.large)
+                }
+                .padding(16)
+            }
+            .navigationTitle(L("ios_accept_offer"))
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button(L("cancel_filter"), action: onCancel)
+                }
+            }
+        }
+        .presentationDetents([.medium, .large])
+    }
 }

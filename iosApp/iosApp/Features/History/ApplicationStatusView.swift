@@ -227,6 +227,10 @@ struct ApplicationStatusView: View {
                 detailRow(icon: "calendar", label: "Date & Time", value: dateTimeLine)
                 detailRow(icon: "indianrupeesign", label: "Salary",
                           value: job?.salaryRange ?? "—", valueColor: GHTheme.tertiaryVariant)
+                if JobLocation.parse(job?.workGoogleMapLocation) != nil {
+                    JobLocationMap(location: job?.workGoogleMapLocation,
+                                   addressFallback: job?.workAddress ?? job?.location)
+                }
             }
         }
     }

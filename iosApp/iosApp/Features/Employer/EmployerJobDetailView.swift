@@ -40,7 +40,9 @@ struct EmployerJobDetailView: View {
                     if !job.description_.isEmpty { card(L("job_description")) { paragraph(job.description_) } }
                     if !job.skillsRequired.isEmpty { card(L("skills_required_label")) { skillChips(job.skillsRequired) } }
                     if hasTimes { card(L("work_timing")) { timingRow } }
-                    if !locationLines.isEmpty { card(L("work_location")) { locationBlock } }
+                    if !locationLines.isEmpty || JobLocation.parse(job.workGoogleMapLocation) != nil {
+                        card(L("work_location")) { locationBlock }
+                    }
                     if hasPreferences { card(L("preferences_label")) { preferencesBlock } }
                 }
                 .padding(16)
@@ -181,6 +183,11 @@ struct EmployerJobDetailView: View {
                 Text(line)
                     .font(idx == 0 ? .subheadline.weight(.medium) : .caption)
                     .foregroundStyle(idx == 0 ? GHTheme.onBackground : GHTheme.onSurfaceVariant)
+            }
+            if JobLocation.parse(job.workGoogleMapLocation) != nil {
+                JobLocationMap(location: job.workGoogleMapLocation,
+                               addressFallback: job.workAddress ?? job.location)
+                    .padding(.top, 4)
             }
         }
     }

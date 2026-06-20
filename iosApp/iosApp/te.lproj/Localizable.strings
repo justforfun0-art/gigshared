@@ -425,3 +425,8 @@
 "ios_withdraw_confirm" = "Are you sure you want to withdraw this application? This cannot be undone.";
 
 "ios_enter_otp_to_start_work" = "Enter the OTP to start work";
+
+"open_in_maps" = "Open in Maps";
+"work_location" = "Work Location";
+"ios_set_pin_here" = "Set pin here";
+"ios_pan_then_set_pin" = "Pan the map, then set the pin";

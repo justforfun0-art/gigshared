@@ -29,6 +29,15 @@ struct JobDetailView: View {
                 Text(job.location).foregroundStyle(.secondary)
             }
 
+            // Map preview (only when the job carries a lat,lng).
+            if JobLocation.parse(job.workGoogleMapLocation) != nil {
+                Section(L("work_location")) {
+                    JobLocationMap(location: job.workGoogleMapLocation,
+                                   addressFallback: job.workAddress ?? job.location)
+                        .listRowInsets(EdgeInsets(top: 8, leading: 0, bottom: 8, trailing: 0))
+                }
+            }
+
             // Pre-apply intelligence (hidden once applied).
             if !hasApplied {
                 if let conflict {

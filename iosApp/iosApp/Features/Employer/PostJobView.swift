@@ -15,6 +15,7 @@ struct PostJobView: View {
     @State private var salary = ""
     @State private var state = ""
     @State private var district = ""
+    @State private var mapLocation = ""
     @State private var jobDate = Date()
     @State private var startTime = ""
     @State private var endTime = ""
@@ -39,6 +40,10 @@ struct PostJobView: View {
                     TextField("Start (HH:mm)", text: $startTime)
                     TextField("End (HH:mm)", text: $endTime)
                     Stepper("Positions: \(positions)", value: $positions, in: 1...50)
+                }
+                Section(L("work_location")) {
+                    LocationPickerMap(locationString: $mapLocation)
+                        .listRowInsets(EdgeInsets(top: 8, leading: 12, bottom: 8, trailing: 12))
                 }
                 Section(L("ios_skills_comma_separated")) {
                     TextField("e.g. lifting, packing", text: $skills)
@@ -75,7 +80,8 @@ struct PostJobView: View {
                 numPositions: Int32(positions),
                 skillsRequired: skillList,
                 state: state.isEmpty ? nil : state,
-                district: district.isEmpty ? nil : district
+                district: district.isEmpty ? nil : district,
+                mapLocation: mapLocation.isEmpty ? nil : mapLocation
             )
             onPosted()
             dismiss()
