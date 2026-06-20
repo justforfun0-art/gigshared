@@ -114,8 +114,9 @@ struct MyJobsView: View {
             List {
                 ForEach(jobs, id: \.id) { job in
                     NavigationLink {
-                        ApplicantsView(applications: container.applications, job: job,
-                                       profileRepo: container.profile)
+                        EmployerJobDetailView(jobs: container.jobs,
+                                              applications: container.applications, job: job,
+                                              profileRepo: container.profile)
                     } label: {
                         MyJobRow(job: job, status: viewModel.statusLabel(job))
                     }

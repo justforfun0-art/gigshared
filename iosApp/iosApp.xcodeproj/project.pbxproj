@@ -25,6 +25,8 @@
 		F0000063 /* SavedSearchesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0000062 /* SavedSearchesView.swift */; };
 		F0000065 /* EditJobView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0000064 /* EditJobView.swift */; };
 		F0000067 /* WorkerProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0000066 /* WorkerProfileView.swift */; };
+		F0000069 /* EmployerJobDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0000068 /* EmployerJobDetailView.swift */; };
+		F000006B /* PaymentHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F000006A /* PaymentHistoryView.swift */; };
 		A100001C /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0000021 /* ProfileViewModel.swift */; };
 		A100001D /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000022 /* ProfileView.swift */; };
 		A100001E /* NotificationsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000023 /* NotificationsViewModel.swift */; };
@@ -151,6 +153,8 @@
 		F0000062 /* SavedSearchesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedSearchesView.swift; sourceTree = "<group>"; };
 		F0000064 /* EditJobView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditJobView.swift; sourceTree = "<group>"; };
 		F0000066 /* WorkerProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkerProfileView.swift; sourceTree = "<group>"; };
+		F0000068 /* EmployerJobDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmployerJobDetailView.swift; sourceTree = "<group>"; };
+		F000006A /* PaymentHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentHistoryView.swift; sourceTree = "<group>"; };
 		B0000021 /* ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
 		B0000040 /* MyJobsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyJobsViewModel.swift; sourceTree = "<group>"; };
 		B0000041 /* MyJobsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyJobsView.swift; sourceTree = "<group>"; };
@@ -370,6 +374,7 @@
 				F0000056 /* ActivitiesView.swift */,
 				F0000064 /* EditJobView.swift */,
 				F0000066 /* WorkerProfileView.swift */,
+				F0000068 /* EmployerJobDetailView.swift */,
 				F0000042 /* ExpiringJobsView.swift */,
 			);
 			path = Employer;
@@ -438,6 +443,7 @@
 				C0000006 /* PaymentsView.swift */,
 				C0000007 /* SafariSheet.swift */,
 				F0000030 /* SpendingView.swift */,
+				F000006A /* PaymentHistoryView.swift */,
 				F0000032 /* SpendingViewModel.swift */,
 			);
 			path = Payments;
@@ -638,6 +644,8 @@
 				F0000063 /* SavedSearchesView.swift in Sources */,
 				F0000065 /* EditJobView.swift in Sources */,
 				F0000067 /* WorkerProfileView.swift in Sources */,
+				F0000069 /* EmployerJobDetailView.swift in Sources */,
+				F000006B /* PaymentHistoryView.swift in Sources */,
 				A100001C /* ProfileViewModel.swift in Sources */,
 				A100001D /* ProfileView.swift in Sources */,
 				A100001E /* NotificationsViewModel.swift in Sources */,

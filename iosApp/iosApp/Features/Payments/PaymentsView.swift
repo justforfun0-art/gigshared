@@ -7,8 +7,12 @@ import Shared
 struct PaymentsView: View {
 
     @StateObject private var viewModel: PaymentsViewModel
+    private let payments: any PaymentRepository
+    private let employerId: String
 
     init(payments: any PaymentRepository, employerId: String, employerPhone: String, employerName: String) {
+        self.payments = payments
+        self.employerId = employerId
         _viewModel = StateObject(wrappedValue: PaymentsViewModel(
             payments: payments,
             employerId: employerId,
@@ -27,6 +31,13 @@ struct PaymentsView: View {
             }
                 .navigationTitle(L("notification_channel_payments"))
                 .drawerToolbar()
+                .toolbar {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        NavigationLink {
+                            PaymentHistoryView(payments: payments, employerId: employerId)
+                        } label: { Image(systemName: "clock.arrow.circlepath") }
+                    }
+                }
                 .task { await viewModel.load() }
                 .refreshable { await viewModel.load() }
                 .alert("Payment error", isPresented: errorBinding) {
