@@ -30,6 +30,7 @@ final class AppContainer {
     let referral: any ReferralRepository
     let messages: any MessageRepository
     let savedSearches: any SavedSearchesRepository
+    let pushTokens: any PushTokenRepository
     let assistant: AssistantEngine
 
     init(config: BackendConfig) {
@@ -75,6 +76,7 @@ final class AppContainer {
         self.referral = ReferralRepositoryImpl(supabaseClient: supabase)
         self.messages = MessageRepositoryImpl(supabaseClient: supabase, messagesApi: MessagesApi(client: api))
         self.savedSearches = SavedSearchesRepositoryImpl(api: SavedSearchesApi(client: api))
+        self.pushTokens = PushTokenRepositoryImpl(supabaseClient: supabase)
         self.assistant = AssistantEngine(
             jobs: jobs,
             applications: applications,

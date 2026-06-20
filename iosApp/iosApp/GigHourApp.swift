@@ -4,6 +4,7 @@ import Shared
 @main
 struct GigHourApp: App {
 
+    @UIApplicationDelegateAdaptor(PushAppDelegate.self) private var appDelegate
     private let container: AppContainer
 
     init() {
@@ -18,6 +19,11 @@ struct GigHourApp: App {
         container.startServerTimeSync()
         container.backfillSecureTokensFromSession()
         self.container = container
+
+        // Push: configure Firebase (if linked) + ask permission. Inert without
+        // the Firebase SDK — see PushManager.
+        PushManager.shared.configure(pushTokens: container.pushTokens)
+        PushManager.shared.requestAuthorization()
     }
 
     var body: some Scene {

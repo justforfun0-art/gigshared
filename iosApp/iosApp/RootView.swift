@@ -37,8 +37,12 @@ struct RootView: View {
             if auth.isSignedIn, let session = auth.session {
                 let isEmployer = session.userType?.lowercased() == "employer"
                 mainShell(session: session, isEmployer: isEmployer)
+                    // Bind the push token to the signed-in user (Android parity:
+                    // a token that arrived pre-login is uploaded after sign-in).
+                    .task(id: session.userId) { PushManager.shared.setUserId(session.userId) }
             } else {
                 AuthView(viewModel: auth)
+                    .task { PushManager.shared.setUserId(nil) }
             }
         }
         // Re-render the whole tree when the in-app language changes, and align

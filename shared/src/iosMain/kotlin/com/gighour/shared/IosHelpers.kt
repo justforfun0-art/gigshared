@@ -162,6 +162,15 @@ suspend fun ProfileRepository.getEmployerProfileOrThrow(userId: String): com.gig
 suspend fun ProfileRepository.getEmployeeRatingOrThrow(userId: String): UserRating =
     getEmployeeRating(userId).getOrThrow()
 
+/** [PushTokenRepository.registerToken] as a throwing suspend (platform = "ios"). */
+@Throws(Throwable::class)
+suspend fun com.gighour.shared.domain.repository.PushTokenRepository.registerTokenOrThrow(
+    userId: String,
+    token: String,
+) {
+    registerToken(userId, token, "ios").getOrThrow()
+}
+
 /** [SavedSearchesRepository.list] as a throwing suspend. */
 @Throws(Throwable::class)
 suspend fun com.gighour.shared.domain.repository.SavedSearchesRepository.listSavedSearchesOrThrow(): List<com.gighour.shared.domain.repository.SavedSearch> =

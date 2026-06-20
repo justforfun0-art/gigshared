@@ -14,5 +14,10 @@
 	<array>
 		<string>com.gighour.iosApp</string>
 	</array>
+	<!-- APNs environment. Required for remote notifications on a signed build
+	     ("development" for debug; switch to "production" for App Store/TestFlight).
+	     Harmless on unsigned simulator builds. -->
+	<key>aps-environment</key>
+	<string>development</string>
 </dict>
 </plist>
