@@ -435,8 +435,9 @@ private struct FlowLayout: Layout {
     }
 }
 
-/// Edit sheet for the user-facing profile fields (name/email/bio/skills).
-/// Immutable identity fields (dob, gender, state, district) are shown read-only.
+/// Profile edit — card-sectioned form matching Android's EmployeeProfileEditScreen:
+/// a photo picker, Personal Information (name / DOB / gender), Email, Location
+/// (cascading state → district menus), About (bio), and Skills. Violet-accented.
 private struct EditProfileSheet: View {
     let profile: EmployeeProfile
     @ObservedObject var viewModel: ProfileViewModel
@@ -446,7 +447,14 @@ private struct EditProfileSheet: View {
     @State private var email: String
     @State private var bio: String
     @State private var skillsText: String
+    @State private var dob: String
+    @State private var gender: String
+    @State private var state: String
+    @State private var district: String
+    @State private var photoItem: PhotosPickerItem?
     @State private var isSaving = false
+
+    private var accent: Color { GHTheme.hex(0x7C3AED) }
 
     init(profile: EmployeeProfile, viewModel: ProfileViewModel) {
         self.profile = profile
@@ -455,53 +463,155 @@ private struct EditProfileSheet: View {
         _email = State(initialValue: profile.email ?? "")
         _bio = State(initialValue: profile.bio ?? "")
         _skillsText = State(initialValue: (profile.skills ?? []).joined(separator: ", "))
+        _dob = State(initialValue: profile.dob)
+        _gender = State(initialValue: profile.gender.name)
+        _state = State(initialValue: profile.state)
+        _district = State(initialValue: profile.district)
     }
 
     var body: some View {
         NavigationStack {
-            Form {
-                Section(L("details")) {
-                    TextField("Name", text: $name)
-                    TextField("Email", text: $email)
-                        .keyboardType(.emailAddress)
-                        .textInputAutocapitalization(.never)
-                }
-                Section(L("bio")) {
-                    TextField("Tell employers about yourself", text: $bio, axis: .vertical)
-                        .lineLimit(2...5)
-                }
-                Section(L("skills")) {
-                    TextField("Comma-separated (e.g. Cooking, Driving)", text: $skillsText, axis: .vertical)
-                        .lineLimit(1...3)
-                }
-                Section(L("ios_not_editable_here")) {
-                    LabeledContent("Gender", value: profile.gender.toDisplayString())
-                    LabeledContent("District", value: profile.district)
-                    LabeledContent("State", value: profile.state)
+            ZStack {
+                GHTheme.pageGradient.ignoresSafeArea()
+                ScrollView {
+                    VStack(spacing: 16) {
+                        photoPicker
+                        card(L("personal_information")) {
+                            field(L("full_name_required"), "person", text: $name)
+                            field(L("dob_required"), "calendar", text: $dob)
+                            menuPicker(L("gender_required"), selection: $gender,
+                                       options: ["MALE", "FEMALE", "OTHER"],
+                                       display: { Gender.companion.fromString(value: $0).toDisplayString() })
+                            field(L("email"), "envelope", text: $email,
+                                  keyboard: .emailAddress, autocap: false)
+                        }
+                        card(L("location_label")) {
+                            menuPicker(L("state_required"), selection: $state,
+                                       options: IndiaData.states) { district = "" }
+                            menuPicker(L("district_required"), selection: $district,
+                                       options: IndiaData.districts(for: state),
+                                       disabled: state.isEmpty)
+                        }
+                        card(L("about")) {
+                            TextField(L("bio_placeholder"), text: $bio, axis: .vertical)
+                                .lineLimit(3...6)
+                                .textFieldStyle(.roundedBorder)
+                        }
+                        card(L("skills")) {
+                            TextField("Comma-separated (e.g. Cooking, Driving)", text: $skillsText, axis: .vertical)
+                                .lineLimit(1...3)
+                                .textFieldStyle(.roundedBorder)
+                        }
+                        if let err = viewModel.actionError {
+                            Text(err).font(.footnote).foregroundStyle(.red)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                    }
+                    .padding(16)
                 }
             }
             .navigationTitle(L("edit_profile"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button(L("cancel_filter")) { dismiss() }
-                }
+                ToolbarItem(placement: .cancellationAction) { Button(L("cancel_filter")) { dismiss() } }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button(L("save")) { Task { await save() } }
-                        .disabled(isSaving || name.trimmingCharacters(in: .whitespaces).isEmpty)
+                    if isSaving { ProgressView() }
+                    else {
+                        Button(L("save")) { Task { await save() } }
+                            .disabled(name.trimmingCharacters(in: .whitespaces).isEmpty)
+                            .tint(accent)
+                    }
+                }
+            }
+            .onChange(of: photoItem) { item in
+                guard let item else { return }
+                Task {
+                    if let data = try? await item.loadTransferable(type: Data.self) {
+                        await viewModel.uploadPhoto(jpegData: data)
+                    }
+                    photoItem = nil
                 }
             }
         }
     }
 
+    private var photoPicker: some View {
+        PhotosPicker(selection: $photoItem, matching: .images) {
+            ZStack(alignment: .bottomTrailing) {
+                Group {
+                    if let url = profile.profilePhotoUrl, let parsed = URL(string: url), !url.isEmpty {
+                        AsyncImage(url: parsed) { $0.resizable().scaledToFill() } placeholder: { ProgressView() }
+                    } else {
+                        Circle().fill(LinearGradient(colors: [accent, GHTheme.hex(0x8B5CF6)],
+                                                     startPoint: .topLeading, endPoint: .bottomTrailing))
+                            .overlay(Image(systemName: "person.fill").font(.system(size: 34)).foregroundStyle(.white))
+                    }
+                }
+                .frame(width: 84, height: 84).clipShape(Circle())
+                .overlay(Circle().stroke(accent, lineWidth: 2))
+                Circle().fill(accent).frame(width: 26, height: 26)
+                    .overlay(Image(systemName: "camera.fill").font(.system(size: 12)).foregroundStyle(.white))
+                    .overlay(Circle().stroke(.white, lineWidth: 2))
+            }
+        }
+        .buttonStyle(.plain)
+    }
+
+    @ViewBuilder
+    private func card<C: View>(_ title: String, @ViewBuilder _ content: () -> C) -> some View {
+        VStack(alignment: .leading, spacing: 14) {
+            Text(title).font(.headline.weight(.semibold)).foregroundStyle(GHTheme.onBackground)
+            content()
+        }
+        .padding(16)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color.white, in: RoundedRectangle(cornerRadius: 16))
+        .overlay(RoundedRectangle(cornerRadius: 16).stroke(GHTheme.outline, lineWidth: 1))
+    }
+
+    private func field(_ label: String, _ icon: String, text: Binding<String>,
+                       keyboard: UIKeyboardType = .default, autocap: Bool = true) -> some View {
+        HStack(spacing: 10) {
+            Image(systemName: icon).foregroundStyle(accent).frame(width: 20)
+            TextField(label, text: text)
+                .keyboardType(keyboard)
+                .textInputAutocapitalization(autocap ? .sentences : .never)
+                .autocorrectionDisabled(!autocap)
+        }
+        .padding(12)
+        .background(Color(.secondarySystemBackground), in: RoundedRectangle(cornerRadius: 12))
+    }
+
+    @ViewBuilder
+    private func menuPicker(_ label: String, selection: Binding<String>, options: [String],
+                            disabled: Bool = false, display: ((String) -> String)? = nil,
+                            onChange: (() -> Void)? = nil) -> some View {
+        Menu {
+            ForEach(options, id: \.self) { opt in
+                Button(display?(opt) ?? opt) { selection.wrappedValue = opt; onChange?() }
+            }
+        } label: {
+            HStack {
+                Text(label).font(.caption).foregroundStyle(GHTheme.onSurfaceVariant)
+                Spacer()
+                Text(selection.wrappedValue.isEmpty ? L("ios_select") : (display?(selection.wrappedValue) ?? selection.wrappedValue))
+                    .foregroundStyle(selection.wrappedValue.isEmpty ? GHTheme.onSurfaceVariant : accent).lineLimit(1)
+                Image(systemName: "chevron.up.chevron.down").font(.caption2).foregroundStyle(GHTheme.onSurfaceVariant)
+            }
+            .padding(12)
+            .background(Color(.secondarySystemBackground), in: RoundedRectangle(cornerRadius: 12))
+            .contentShape(Rectangle())
+        }
+        .disabled(disabled)
+    }
+
     private func save() async {
         isSaving = true
         defer { isSaving = false }
-        let skills = skillsText
-            .split(separator: ",")
-            .map { $0.trimmingCharacters(in: .whitespaces) }
-            .filter { !$0.isEmpty }
-        let ok = await viewModel.save(name: name, email: email, bio: bio, skills: skills)
+        let skills = skillsText.split(separator: ",")
+            .map { $0.trimmingCharacters(in: .whitespaces) }.filter { !$0.isEmpty }
+        let ok = await viewModel.save(name: name, email: email, bio: bio, skills: skills,
+                                      dob: dob, gender: gender, stateName: state, district: district)
         if ok { dismiss() }
     }
 }

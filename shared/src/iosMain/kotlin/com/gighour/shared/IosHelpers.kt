@@ -428,12 +428,21 @@ suspend fun ProfileRepository.editEmployeeProfileOrThrow(
     email: String?,
     bio: String?,
     skills: List<String>,
+    dob: String?,
+    gender: String?,
+    state: String?,
+    district: String?,
 ): EmployeeProfile {
     val updated = existing.copy(
         name = name,
         email = email?.takeIf { it.isNotBlank() },
         bio = bio?.takeIf { it.isNotBlank() },
         skills = skills.takeIf { it.isNotEmpty() },
+        dob = dob?.takeIf { it.isNotBlank() } ?: existing.dob,
+        gender = gender?.takeIf { it.isNotBlank() }
+            ?.let { com.gighour.shared.domain.model.Gender.fromString(it) } ?: existing.gender,
+        state = state?.takeIf { it.isNotBlank() } ?: existing.state,
+        district = district?.takeIf { it.isNotBlank() } ?: existing.district,
     )
     return updateEmployeeProfile(updated).getOrThrow()
 }

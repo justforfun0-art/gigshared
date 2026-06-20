@@ -430,3 +430,12 @@
 "work_location" = "कार्य स्थान";
 "ios_set_pin_here" = "यहाँ पिन सेट करें";
 "ios_pan_then_set_pin" = "मानचित्र घुमाएँ, फिर पिन सेट करें";
+
+"personal_information" = "व्यक्तिगत जानकारी";
+"full_name_required" = "पूरा नाम *";
+"dob_required" = "जन्म तिथि *";
+"gender_required" = "लिंग *";
+"state_required" = "राज्य *";
+"district_required" = "ज़िला *";
+"about" = "परिचय";
+"bio_placeholder" = "नियोक्ताओं को अपने बारे में बताएं";

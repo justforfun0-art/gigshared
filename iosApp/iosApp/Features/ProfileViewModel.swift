@@ -69,7 +69,9 @@ final class ProfileViewModel: ObservableObject {
     }
 
     /// Persist edited fields against the loaded profile, then refresh.
-    func save(name: String, email: String, bio: String, skills: [String]) async -> Bool {
+    func save(name: String, email: String, bio: String, skills: [String],
+              dob: String? = nil, gender: String? = nil,
+              stateName: String? = nil, district: String? = nil) async -> Bool {
         guard let existing = currentProfile else { return false }
         actionError = nil
         do {
@@ -79,7 +81,11 @@ final class ProfileViewModel: ObservableObject {
                 name: name.trimmingCharacters(in: .whitespaces),
                 email: email,
                 bio: bio,
-                skills: skills
+                skills: skills,
+                dob: dob,
+                gender: gender,
+                state: stateName,
+                district: district
             )
             state = .loaded(saved)
             return true
