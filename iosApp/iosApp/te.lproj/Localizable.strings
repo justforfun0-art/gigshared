@@ -418,3 +418,8 @@
 "no_jobs_nearby" = "No jobs nearby right now";
 "empty_jobs_desc" = "New gigs drop all the time — check back soon and you'll be first in line.";
 "empty_search_no_results_generic" = "No matches found";
+
+"enter_otp_btn" = "Enter Start OTP";
+"withdraw_application" = "Withdraw Application";
+"browse_jobs_action" = "Browse Jobs";
+"ios_withdraw_confirm" = "Are you sure you want to withdraw this application? This cannot be undone.";

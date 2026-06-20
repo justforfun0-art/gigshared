@@ -14,10 +14,17 @@ struct ApplicationStatusView: View {
     /// Needed for the WORK_IN_PROGRESS live card (timer + complete). Optional so
     /// older call sites still compile; the WIP card only shows when present.
     var applications: (any ApplicationRepository)? = nil
+    /// Tapped from the "Browse Jobs" CTA on terminal statuses (rejected/withdrawn).
+    var onBrowseJobs: (() -> Void)? = nil
 
+    @Environment(\.dismiss) private var dismiss
     @State private var openingChat = false
     @State private var chat: ChatTarget? = nil
     @State private var completionCode: String? = nil
+    @State private var openSession = false
+    @State private var showWithdrawConfirm = false
+    @State private var withdrawing = false
+    @State private var actionError: String?
 
     private var job: Job? { application.job }
 
@@ -42,6 +49,7 @@ struct ApplicationStatusView: View {
                             onCompleted: { completionCode = $0 }
                         )
                     }
+                    actionSection
                     jobDetailsCard
                     ApplicationProgressTimeline(status: application.status)
                     contextBanner
@@ -78,6 +86,81 @@ struct ApplicationStatusView: View {
                     onDone: { completionCode = nil }
                 )
             }
+        }
+        // The action-loop screen (accept / enter start OTP / complete / read code),
+        // reached from the per-status primary action button.
+        .background(
+            NavigationLink(isActive: $openSession) {
+                if let applications {
+                    WorkSessionView(applications: applications, application: application)
+                }
+            } label: { EmptyView() }.hidden()
+        )
+        .alert(L("withdraw_application"), isPresented: $showWithdrawConfirm) {
+            Button(L("cancel_filter"), role: .cancel) {}
+            Button(L("withdraw_application"), role: .destructive) { Task { await withdraw() } }
+        } message: { Text(L("ios_withdraw_confirm")) }
+        .alert("Action failed", isPresented: actionErrorBinding) {
+            Button(L("ok"), role: .cancel) { actionError = nil }
+        } message: { Text(actionError ?? "") }
+    }
+
+    private var actionErrorBinding: Binding<Bool> {
+        Binding(get: { actionError != nil }, set: { if !$0 { actionError = nil } })
+    }
+
+    /// Per-status primary action — Android's ApplicationDetails action block.
+    /// Lifecycle actions reuse WorkSessionView (which has the right stage UI);
+    /// APPLIED withdraws inline; terminal statuses offer "Browse Jobs".
+    @ViewBuilder
+    private var actionSection: some View {
+        switch application.status {
+        case .selected:
+            primaryAction(L("accept_job"), "checkmark.circle.fill") { openSession = true }
+        case .accepted:
+            primaryAction(L("start_work"), "play.fill") { openSession = true }
+        case .otpRequested:
+            primaryAction(L("enter_otp_btn"), "key.fill") { openSession = true }
+        case .completionPending:
+            primaryAction(L("ios_read_this_code_to_your_employer"), "qrcode") { openSession = true }
+        case .applied, .shortlisted:
+            if applications != nil {
+                Button { showWithdrawConfirm = true } label: {
+                    if withdrawing { ProgressView().frame(maxWidth: .infinity) }
+                    else { Label(L("withdraw_application"), systemImage: "xmark.circle").frame(maxWidth: .infinity) }
+                }
+                .buttonStyle(.bordered).tint(GHTheme.error).controlSize(.large)
+                .disabled(withdrawing)
+            }
+        case .rejected, .rejectedOnce, .rejectedAndReshown, .noShow, .withdrawn, .notInterested, .expired, .positionFilled:
+            primaryAction(L("browse_jobs_action"), "magnifyingglass") { browseJobs() }
+        default:
+            EmptyView()
+        }
+    }
+
+    /// Switch to the jobs feed if a handler was supplied; otherwise just pop back
+    /// to the list (where the user can pick the Jobs tab).
+    private func browseJobs() {
+        if let onBrowseJobs { onBrowseJobs() } else { dismiss() }
+    }
+
+    private func primaryAction(_ title: String, _ icon: String, _ action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Label(title, systemImage: icon).frame(maxWidth: .infinity)
+        }
+        .buttonStyle(.borderedProminent).tint(GHTheme.primary).controlSize(.large)
+    }
+
+    private func withdraw() async {
+        guard let applications else { return }
+        withdrawing = true
+        defer { withdrawing = false }
+        do {
+            _ = try await IosHelpersKt.withdrawApplicationOrThrow(applications, applicationId: application.id)
+            browseJobs()   // bounce back to the feed after a successful withdraw
+        } catch {
+            actionError = (error as NSError).localizedDescription
         }
     }
 

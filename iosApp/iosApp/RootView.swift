@@ -162,7 +162,8 @@ struct RootView: View {
                 ApplicationStatusView(application: app,
                                       messages: container.messages,
                                       myUserId: session.userId,
-                                      applications: container.applications)
+                                      applications: container.applications,
+                                      onBrowseJobs: { activeJobApp = nil; selected = 1 })
             }
         }
     }
