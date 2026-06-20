@@ -23,9 +23,14 @@ final class PaymentsViewModel: ObservableObject {
         var pendingCount = 0
         var paidAmount = 0.0
         var pendingAmount = 0.0
+        var thisMonthPaid = 0.0
+        var totalCount = 0
     }
 
+    enum Filter: String, CaseIterable, Identifiable { case all = "All", pending = "Pending", completed = "Completed"; var id: String { rawValue } }
+
     @Published private(set) var state: State = .idle
+    @Published var filter: Filter = .all
     @Published var actionError: String?
     /// A hosted Cashfree payment link to open after `payNow` succeeds.
     @Published var paymentLink: URL?
@@ -60,18 +65,34 @@ final class PaymentsViewModel: ObservableObject {
     var totals: Totals {
         guard case let .loaded(rows) = state else { return Totals() }
         var t = Totals()
+        t.totalCount = rows.count
+        let cal = Calendar.current
+        let thisMonth = cal.dateComponents([.year, .month], from: Date())
         for row in rows {
             let amount = row.paymentAmount?.doubleValue
                 ?? row.totalWagesCalculated?.doubleValue ?? 0
             if Self.isPaid(row) {
                 t.paidCount += 1
                 t.paidAmount += amount
+                if let d = (row.paymentDate ?? row.completedAt).flatMap(ActiveJobBarViewModel.parseISO),
+                   cal.dateComponents([.year, .month], from: d) == thisMonth {
+                    t.thisMonthPaid += amount
+                }
             } else {
                 t.pendingCount += 1
                 t.pendingAmount += amount
             }
         }
         return t
+    }
+
+    /// Rows filtered by the All / Pending / Completed chip.
+    func filtered(_ rows: [EmployerPaymentSummary]) -> [EmployerPaymentSummary] {
+        switch filter {
+        case .all: return rows
+        case .pending: return rows.filter { !Self.isPaid($0) }
+        case .completed: return rows.filter { Self.isPaid($0) }
+        }
     }
 
     static func isPaid(_ row: EmployerPaymentSummary) -> Bool {

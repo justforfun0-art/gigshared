@@ -27,6 +27,8 @@ struct JobFeedView: View {
             }
             .navigationTitle(navTitle)
             .drawerToolbar()
+            .searchable(text: $viewModel.query, placement: .navigationBarDrawer(displayMode: .always),
+                        prompt: L("ios_search_jobs"))
             .task { await viewModel.load() }
             .refreshable { await viewModel.load() }
         }
@@ -42,9 +44,13 @@ struct JobFeedView: View {
         switch viewModel.state {
         case .idle, .loading:
             ProgressView("Loading jobs…")
-        case .loaded(let jobs):
-            if jobs.isEmpty {
+        case .loaded(let allJobs):
+            let jobs = viewModel.filtered(allJobs)
+            if allJobs.isEmpty {
                 emptyState(title: "No jobs", systemImage: "tray", message: "Check back later.")
+            } else if jobs.isEmpty {
+                emptyState(title: "No matches", systemImage: "magnifyingglass",
+                           message: "No jobs match “\(viewModel.query)”.")
             } else {
                 ScrollView {
                     LazyVStack(spacing: 12) {

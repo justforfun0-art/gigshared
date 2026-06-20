@@ -3,9 +3,12 @@ package com.gighour.shared.data.repository
 import com.gighour.shared.data.ServerClock
 import com.gighour.shared.data.remote.MarkReadRequest
 import com.gighour.shared.data.remote.NotificationDto
+import com.gighour.shared.data.remote.NotificationPreferencesApi
+import com.gighour.shared.data.remote.NotificationPreferencesRequest
 import com.gighour.shared.data.remote.NotificationsApi
 import com.gighour.shared.domain.model.NotificationItem
 import com.gighour.shared.domain.model.NotificationType
+import com.gighour.shared.domain.repository.NotificationPreferences
 import com.gighour.shared.domain.repository.NotificationRepository
 import com.gighour.shared.domain.repository.NotificationsPage
 import kotlinx.datetime.Clock
@@ -28,7 +31,39 @@ import kotlinx.datetime.Instant
 class NotificationRepositoryImpl(
     private val api: NotificationsApi,
     private val serverClock: ServerClock,
+    private val prefsApi: NotificationPreferencesApi,
 ) : NotificationRepository {
+
+    override suspend fun saveNotificationPreferences(
+        prefs: NotificationPreferences,
+    ): Result<NotificationPreferences> = runCatching {
+        val response = prefsApi.upsert(
+            NotificationPreferencesRequest(
+                pushEnabled = prefs.pushEnabled,
+                inAppEnabled = prefs.inAppEnabled,
+                whatsappEnabled = prefs.whatsappEnabled,
+                emailEnabled = prefs.emailEnabled,
+                jobAlertsEnabled = prefs.jobAlertsEnabled,
+                applicationUpdatesEnabled = prefs.applicationUpdatesEnabled,
+                paymentUpdatesEnabled = prefs.paymentUpdatesEnabled,
+                messagesEnabled = prefs.messagesEnabled,
+                marketingEnabled = prefs.marketingEnabled,
+            )
+        )
+        response.error?.let { error(it) }
+        val saved = response.preferences ?: return@runCatching prefs
+        NotificationPreferences(
+            pushEnabled = saved.pushEnabled,
+            inAppEnabled = saved.inAppEnabled,
+            whatsappEnabled = saved.whatsappEnabled,
+            emailEnabled = saved.emailEnabled,
+            jobAlertsEnabled = saved.jobAlertsEnabled,
+            applicationUpdatesEnabled = saved.applicationUpdatesEnabled,
+            paymentUpdatesEnabled = saved.paymentUpdatesEnabled,
+            messagesEnabled = saved.messagesEnabled,
+            marketingEnabled = saved.marketingEnabled,
+        )
+    }
 
     override suspend fun getNotifications(limit: Int, offset: Int): Result<NotificationsPage> = runCatching {
         // formatTimeAgo() reads the clock; block on sync rather than fall back to

@@ -112,3 +112,277 @@
 "verify" = "सत्यापित करें";
 "withdraw" = "वापस लें";
 "youve_been_selected" = "आपको चुना गया है!";
+
+/* Home action-card carousel */
+"ios_needs_your_attention" = "आपके ध्यान की आवश्यकता है";
+"show_code" = "कोड दिखाएं";
+"view_details" = "विवरण देखें";
+"ios_job_offer_received" = "नौकरी का प्रस्ताव मिला";
+"ios_ready_to_start" = "शुरू करने के लिए तैयार";
+"ios_work_in_progress" = "काम जारी है";
+"ios_awaiting_verification" = "सत्यापन की प्रतीक्षा";
+"ios_payment_being_processed" = "भुगतान संसाधित हो रहा है";
+
+/* Action-card voucher cards */
+"view_action" = "देखें";
+"action_card_show_code_hint" = "भुगतान की पुष्टि और प्राप्ति के लिए यह कोड अपने नियोक्ता के साथ साझा करें।";
+"payment_pending_instruction" = "नियोक्ता के पास भुगतान लंबित है। जाने से पहले पुष्टि की प्रतीक्षा करें।";
+"estimated_payment_label" = "अनुमानित भुगतान";
+
+/* Profile screen */
+"profile_about" = "परिचय";
+"profile_dob" = "जन्म तिथि";
+"profile_gender" = "लिंग";
+"profile_email" = "ईमेल";
+"profile_member_since" = "सदस्य बने";
+"profile_languages" = "भाषाएँ";
+"profile_work_preferences" = "कार्य प्राथमिकताएँ";
+"profile_settings" = "सेटिंग्स";
+"profile_help" = "सहायता";
+"active_stat_label" = "सक्रिय";
+"applications_stat_label" = "आवेदन";
+"jobs_completed" = "पूर्ण कार्य";
+"total_earned" = "कुल कमाई";
+
+/* Settings sheet */
+"nav_settings" = "सेटिंग्स";
+"settings_preferences" = "प्राथमिकताएँ";
+"settings_support" = "सहायता";
+"privacy_policy" = "गोपनीयता नीति";
+"terms_of_service" = "सेवा की शर्तें";
+"about_gighour" = "GigHour के बारे में";
+"close" = "बंद करें";
+
+/* Action cards — per-status content + CTAs */
+"accept_to_confirm" = "अपनी भागीदारी की पुष्टि के लिए स्वीकार करें";
+"accept_job" = "नौकरी स्वीकारें";
+"action_hint_tap_accept_job" = "आगे बढ़ने के लिए नौकरी स्वीकारें";
+"ready_to_start" = "शुरू करने के लिए तैयार";
+"ios_waiting_for_employer_otp" = "नियोक्ता द्वारा OTP साझा करने की प्रतीक्षा";
+"tap_start_work_to_proceed" = "आगे बढ़ने के लिए काम शुरू करें";
+"complete_and_verify" = "पूरा करें और सत्यापन OTP प्राप्त करें";
+"complete_work" = "काम पूरा करें";
+"action_hint_tap_complete_work" = "आगे बढ़ने के लिए काम पूरा करें";
+"call" = "कॉल करें";
+
+/* Completion-code sheet */
+"completion_code_title" = "पूर्णता कोड";
+"completion_code_share_subtitle" = "पूर्णता सत्यापित करने के लिए यह कोड अपने नियोक्ता के साथ साझा करें";
+"valid_for_30_minutes" = "जनरेट होने के 30 मिनट तक मान्य";
+"employer_enters_code_msg" = "जब आपका नियोक्ता यह कोड दर्ज करेगा, तो आपका भुगतान संसाधित होगा।";
+"completion_code_regen_failed" = "नया कोड जनरेट नहीं हो सका। पुनः प्रयास करें।";
+"new_code" = "नया कोड";
+
+"earnings_label" = "कमाई";
+
+/* Work-in-progress detail card */
+"earned_so_far" = "अब तक कमाया";
+"tap_to_complete" = "पूरा करने के लिए टैप करें";
+"completing_ellipsis" = "पूरा हो रहा है…";
+
+/* Job-detail pre-apply intelligence */
+"hire_odds_title" = "यहाँ चयन की संभावना: ~%1$d%%";
+"hire_odds_competition" = "%1$d ने आवेदन किया · %2$d पद";
+"hire_odds_apply_early" = "जल्दी आवेदन करें — और लोगों के आवेदन से संभावना घटती है";
+"schedule_conflict_title" = "समय टकराव";
+"schedule_conflict_detail" = "यह नौकरी \"%1$@\" (%2$@) से टकराती है, जिसके लिए आप पहले से प्रतिबद्ध हैं। यहाँ आवेदन करने से दोहरी बुकिंग हो सकती है।";
+"another_job" = "कोई अन्य नौकरी";
+
+"ios_search_jobs" = "नौकरी खोजें";
+
+/* Wallet + Withdrawals */
+"wallet_title" = "वॉलेट";
+"withdrawals_title" = "निकासी";
+"withdrawals_empty" = "अभी तक कोई निकासी नहीं";
+"wallet_pending_balance" = "लंबित राशि";
+"wallet_pending_hint" = "हर काम सत्यापित होने के बाद आपके UPI पर भेजा जाता है";
+"wallet_upi_label" = "UPI आईडी";
+"wallet_upi_saved" = "UPI सहेजा गया";
+"this_month_label" = "इस माह";
+"filter_all" = "सभी";
+
+/* Payment Methods + Notification Preferences */
+"payment_methods_title" = "भुगतान विधियाँ";
+"payment_methods_empty" = "अभी तक कोई भुगतान विधि नहीं";
+"payment_methods_add" = "भुगतान विधि जोड़ें";
+"payment_methods_holder" = "खाताधारक का नाम";
+"payment_methods_bank" = "बैंक खाता";
+"payment_methods_bank_name" = "बैंक का नाम";
+"payment_methods_account_no" = "खाता संख्या";
+"payment_methods_primary" = "प्राथमिक";
+"payment_methods_make_primary" = "प्राथमिक बनाएं";
+"notif_prefs_title" = "सूचना प्राथमिकताएँ";
+"notif_prefs_channels" = "चैनल";
+"notif_prefs_categories" = "श्रेणियाँ";
+"notif_prefs_push" = "पुश सूचनाएं";
+"notif_prefs_inapp" = "इन-ऐप सूचनाएं";
+"notif_prefs_whatsapp" = "व्हाट्सएप";
+"notif_prefs_email" = "ईमेल";
+"notif_prefs_job_alerts" = "नौकरी अलर्ट";
+"notif_prefs_application_updates" = "आवेदन अपडेट";
+"notif_prefs_payment_updates" = "भुगतान अपडेट";
+"notif_prefs_messages" = "संदेश";
+"notif_prefs_marketing" = "ऑफ़र और मार्केटिंग";
+
+/* Employer action cards */
+"emp_worker_accepted" = "वर्कर ने स्वीकारा";
+"emp_otp_ready" = "OTP तैयार";
+"emp_generate_otp" = "काम शुरू करने के लिए OTP बनाएं";
+"emp_share_otp" = "यह OTP वर्कर के साथ साझा करें";
+"emp_generate_otp_cta" = "OTP बनाएं";
+"emp_regenerate_otp" = "नया OTP";
+"emp_read_otp_hint" = "वर्कर को यह OTP पढ़कर सुनाएं";
+"emp_tap_generate_hint" = "आगे बढ़ने के लिए OTP बनाएं";
+"emp_in_progress" = "काम जारी है";
+"emp_worker_working" = "वर्कर अभी काम कर रहा है";
+"emp_work_completed" = "काम पूरा हुआ";
+"emp_enter_code_sub" = "सत्यापन हेतु वर्कर से कोड दर्ज करें";
+"emp_view_progress" = "प्रगति देखें";
+"emp_enter_code" = "कोड दर्ज करें";
+"emp_tap_view_progress_hint" = "काम ट्रैक करने के लिए प्रगति देखें";
+"emp_tap_enter_code_hint" = "सत्यापन के लिए कोड दर्ज करें";
+"emp_payment_pending" = "भुगतान लंबित";
+"emp_process_payment_sub" = "कोड सत्यापित — वर्कर को भुगतान करें";
+"emp_process_payment" = "भुगतान करें";
+"emp_tap_process_payment_hint" = "आगे बढ़ने के लिए भुगतान करें";
+
+/* Employer applicant intelligence */
+"top_match" = "सर्वोत्तम मेल";
+"no_show_risk_high" = "अधिक नॉ-शो जोखिम";
+"no_show_risk_medium" = "कुछ नॉ-शो जोखिम";
+"no_show_risk_history" = "%2$d में से %1$d प्रतिबद्धताएँ छूटीं";
+"no_show_risk_new" = "सीमित इतिहास";
+"signal_reliability" = "विश्वसनीयता";
+"signal_skill_match" = "कौशल मेल";
+"signal_proximity" = "नज़दीक";
+"signal_rating" = "रेटिंग";
+"signal_track_record" = "आपके साथ काम किया";
+"signal_responsiveness" = "जल्दी आवेदन";
+"signal_no_show" = "हाल के नॉ-शो";
+
+/* Employer Hiring Health */
+"hiring_health_label" = "हायरिंग हेल्थ";
+"fill_rate_label" = "फिल रेट";
+"fill_rate_desc" = "%2$d में से %1$d नौकरियाँ भरीं";
+"time_to_fill_label" = "औसत भरने का समय";
+"time_to_fill_desc" = "पोस्ट से स्वीकृति तक";
+"hire_no_show_label" = "हायर नॉ-शो दर";
+"hire_no_show_desc" = "%2$d में से %1$d हायर नहीं आए";
+"top_district_label" = "शीर्ष जिला";
+"top_district_desc" = "जहाँ आप सबसे अधिक हायर करते हैं";
+
+/* Employer Spending */
+"spending" = "खर्च";
+"total_spending_label" = "कुल खर्च";
+"last_month_label" = "पिछला माह";
+"spending_avg_per_hire" = "प्रति हायर औसत";
+"spending_by_category" = "श्रेणी अनुसार खर्च";
+"spending_recent_payments" = "हाल के भुगतान";
+
+/* Employer profile + Expiring jobs */
+"expiring_jobs_title" = "समाप्त होती नौकरियाँ";
+"expiring_jobs_empty" = "जल्द कोई नौकरी समाप्त नहीं हो रही";
+"expiring_jobs_expired" = "समाप्त";
+"expiring_jobs_today" = "आज बंद";
+"expiring_jobs_in_days" = "%1$d दिनों में";
+"company_details" = "कंपनी विवरण";
+"about_section_label" = "परिचय";
+"industry_label" = "उद्योग";
+"company_size_label" = "कंपनी का आकार";
+"website_label" = "वेबसाइट";
+"jobs_stat_label" = "नौकरियाँ";
+"hires_label" = "हायर";
+"applicants_label" = "%1$d आवेदक";
+"work_location_label" = "पता";
+
+/* Employer dashboard Quick Actions + Recent Jobs */
+"quick_actions" = "त्वरित क्रियाएँ";
+"post_job" = "नौकरी पोस्ट करें";
+"create_new_listing" = "नई लिस्टिंग बनाएं";
+"applicants" = "आवेदक";
+"review_applications" = "आवेदन समीक्षा करें";
+"payments" = "भुगतान";
+"manage_payments" = "भुगतान प्रबंधित करें";
+"nav_analytics" = "एनालिटिक्स";
+"view_insights" = "अंतर्दृष्टि देखें";
+"your_recent_jobs" = "आपकी हाल की नौकरियाँ";
+"view_all" = "सभी देखें";
+"status_active" = "सक्रिय";
+"status_expired" = "समाप्त";
+"ios_no_jobs_yet" = "अभी तक कोई नौकरी पोस्ट नहीं";
+
+/* Employer My Jobs */
+"my_jobs_search" = "नौकरियाँ खोजें";
+"status_total" = "कुल";
+"status_pending" = "लंबित";
+"cannot_delete_job_title" = "यह नौकरी हटाई नहीं जा सकती";
+"cannot_delete_job_msg" = "इस नौकरी के आवेदक हैं, इसलिए इसे हटाया नहीं जा सकता।";
+"ios_no_jobs_match" = "आपकी खोज से कोई नौकरी मेल नहीं खाती";
+"delete" = "हटाएं";
+
+"search_applications" = "आवेदन खोजें";
+
+"payment_summary" = "भुगतान सारांश";
+"payment_total_paid" = "कुल भुगतान";
+"payment_this_month" = "इस माह";
+"payment_total_txns" = "कुल लेनदेन";
+"status_completed" = "पूर्ण";
+"ios_no_payments_in_filter" = "इस फ़िल्टर से कोई भुगतान मेल नहीं खाता।";
+
+"total_spent_label" = "कुल खर्च";
+"quick_actions_label" = "त्वरित कार्य";
+"post_job_label" = "नौकरी पोस्ट करें";
+"member_since_info_label" = "सदस्य बने";
+
+"company_information" = "कंपनी जानकारी";
+"company_name_required" = "कंपनी का नाम *";
+"industry_required" = "उद्योग *";
+"company_size" = "कंपनी का आकार";
+"website" = "वेबसाइट";
+"company_description" = "कंपनी विवरण";
+"location_label" = "स्थान";
+"state" = "राज्य";
+"district" = "ज़िला";
+"full_address" = "पूरा पता";
+"ios_select" = "चुनें";
+
+"analytics_title" = "विश्लेषण";
+"performance_label" = "प्रदर्शन";
+"avg_response_time" = "औसत प्रतिक्रिया समय";
+"application_rate" = "आवेदन दर";
+"completion_rate_label" = "पूर्णता दर";
+"avg_rating_given" = "औसत रेटिंग दी गई";
+"spending_label" = "खर्च";
+"total_spent_this_month" = "इस माह कुल खर्च";
+"avg_per_job_label" = "प्रति नौकरी औसत";
+"top_job_categories" = "शीर्ष नौकरी श्रेणियाँ";
+
+"activities_title" = "गतिविधियाँ";
+"drawer_activities" = "गतिविधियाँ";
+"no_activities_yet" = "अभी तक कोई गतिविधि नहीं";
+"no_activities_desc" = "आपकी भर्ती गतिविधि यहाँ दिखाई देगी";
+
+"hawkeye_analytics" = "मेरा विश्लेषण";
+"drawer_my_analytics" = "मेरा विश्लेषण";
+
+"search_jobs" = "नौकरियाँ खोजें";
+"search_for_jobs_title" = "नौकरियाँ खोजें";
+"search_hint_subtitle" = "शीर्षक, कौशल या स्थान से काम खोजें";
+"popular_searches_label" = "लोकप्रिय खोजें";
+"saved_searches_title" = "सहेजी गई खोजें";
+"no_saved_searches" = "कोई सहेजी गई खोज नहीं";
+"no_saved_searches_desc" = "बाद में जल्दी खोजने के लिए अपनी खोजें सहेजें।";
+"edit_job_title" = "नौकरी संपादित करें";
+"worker_profile" = "कर्मचारी प्रोफ़ाइल";
+"reviews" = "समीक्षाएँ";
+"jobs_done" = "पूर्ण नौकरियाँ";
+"completion_label" = "पूर्णता";
+"personal_details_label" = "व्यक्तिगत विवरण";
+"gender_label" = "लिंग";
+"languages_label" = "भाषाएँ";
+"preferred_hours" = "पसंदीदा घंटे";
+"fitness_level" = "फिटनेस स्तर";
+"computer_skills" = "कंप्यूटर कौशल";
+"yes" = "हाँ";
+"no" = "नहीं";
+"skills_required_label" = "कौशल";

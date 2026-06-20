@@ -112,3 +112,277 @@
 "verify" = "ధృవీకరించండి";
 "withdraw" = "ఉపసంహరించుకోండి";
 "youve_been_selected" = "మీరు ఎంపికయ్యారు!";
+
+/* Home action-card carousel (English fallback — pending native review) */
+"ios_needs_your_attention" = "Needs your attention";
+"show_code" = "Show Code";
+"view_details" = "View Details";
+"ios_job_offer_received" = "Job offer received";
+"ios_ready_to_start" = "Ready to start";
+"ios_work_in_progress" = "Work in progress";
+"ios_awaiting_verification" = "Awaiting verification";
+"ios_payment_being_processed" = "Payment being processed";
+
+/* Action-card voucher cards (English fallback — pending native review) */
+"view_action" = "View";
+"action_card_show_code_hint" = "Share this code with your employer to confirm and receive payment.";
+"payment_pending_instruction" = "Payment pending with employer. Please wait for confirmation before leaving.";
+"estimated_payment_label" = "Estimated Payment";
+
+/* Profile screen (English fallback — pending native review) */
+"profile_about" = "About";
+"profile_dob" = "Date of Birth";
+"profile_gender" = "Gender";
+"profile_email" = "Email";
+"profile_member_since" = "Member Since";
+"profile_languages" = "Languages";
+"profile_work_preferences" = "Work Preferences";
+"profile_settings" = "Settings";
+"profile_help" = "Help";
+"active_stat_label" = "Active";
+"applications_stat_label" = "Applications";
+"jobs_completed" = "Jobs Completed";
+"total_earned" = "Total Earned";
+
+/* Settings sheet (English fallback — pending native review) */
+"nav_settings" = "Settings";
+"settings_preferences" = "Preferences";
+"settings_support" = "Support";
+"privacy_policy" = "Privacy Policy";
+"terms_of_service" = "Terms of Service";
+"about_gighour" = "About GigHour";
+"close" = "Close";
+
+/* Action cards — per-status content + CTAs (English fallback — pending native review) */
+"accept_to_confirm" = "Accept to confirm your participation";
+"accept_job" = "Accept Job";
+"action_hint_tap_accept_job" = "Tap accept job to proceed";
+"ready_to_start" = "Ready to Start";
+"ios_waiting_for_employer_otp" = "Waiting for employer to share OTP";
+"tap_start_work_to_proceed" = "Tap start work to proceed";
+"complete_and_verify" = "Complete and get verification OTP";
+"complete_work" = "Complete Work";
+"action_hint_tap_complete_work" = "Tap complete work to proceed";
+"call" = "Call";
+
+/* Completion-code sheet (English fallback — pending native review) */
+"completion_code_title" = "Completion Code";
+"completion_code_share_subtitle" = "Share this code with your employer to verify completion";
+"valid_for_30_minutes" = "Valid for 30 minutes from generation";
+"employer_enters_code_msg" = "When your employer enters this code, your payment will be processed.";
+"completion_code_regen_failed" = "Couldn't generate a new code. Try again.";
+"new_code" = "New Code";
+
+"earnings_label" = "Earnings";
+
+/* Work-in-progress detail card (English fallback — pending native review) */
+"earned_so_far" = "Earned so far";
+"tap_to_complete" = "Tap to complete";
+"completing_ellipsis" = "Completing…";
+
+/* Job-detail pre-apply intelligence (English fallback — pending native review) */
+"hire_odds_title" = "Hire odds here: ~%1$d%%";
+"hire_odds_competition" = "%1$d applied · %2$d spot(s)";
+"hire_odds_apply_early" = "Apply early — odds drop as more apply";
+"schedule_conflict_title" = "Schedule conflict";
+"schedule_conflict_detail" = "This job overlaps with \"%1$@\" (%2$@), which you're already committed to. Applying here could double-book you.";
+"another_job" = "another job";
+
+"ios_search_jobs" = "Search jobs";
+
+/* Wallet + Withdrawals (English fallback — pending native review) */
+"wallet_title" = "Wallet";
+"withdrawals_title" = "Withdrawals";
+"withdrawals_empty" = "No withdrawals yet";
+"wallet_pending_balance" = "Pending balance";
+"wallet_pending_hint" = "Paid out to your UPI after each job is verified";
+"wallet_upi_label" = "UPI ID";
+"wallet_upi_saved" = "UPI saved";
+"this_month_label" = "This month";
+"filter_all" = "All";
+
+/* Payment Methods + Notification Preferences (English fallback — pending native review) */
+"payment_methods_title" = "Payment Methods";
+"payment_methods_empty" = "No payment methods yet";
+"payment_methods_add" = "Add payment method";
+"payment_methods_holder" = "Account holder name";
+"payment_methods_bank" = "Bank account";
+"payment_methods_bank_name" = "Bank name";
+"payment_methods_account_no" = "Account number";
+"payment_methods_primary" = "Primary";
+"payment_methods_make_primary" = "Make primary";
+"notif_prefs_title" = "Notification Preferences";
+"notif_prefs_channels" = "Channels";
+"notif_prefs_categories" = "Categories";
+"notif_prefs_push" = "Push notifications";
+"notif_prefs_inapp" = "In-app notifications";
+"notif_prefs_whatsapp" = "WhatsApp";
+"notif_prefs_email" = "Email";
+"notif_prefs_job_alerts" = "Job alerts";
+"notif_prefs_application_updates" = "Application updates";
+"notif_prefs_payment_updates" = "Payment updates";
+"notif_prefs_messages" = "Messages";
+"notif_prefs_marketing" = "Offers & marketing";
+
+/* Employer action cards (English fallback — pending native review) */
+"emp_worker_accepted" = "Worker Accepted";
+"emp_otp_ready" = "OTP Ready";
+"emp_generate_otp" = "Generate OTP to start work";
+"emp_share_otp" = "Share this OTP with the worker";
+"emp_generate_otp_cta" = "Generate OTP";
+"emp_regenerate_otp" = "New OTP";
+"emp_read_otp_hint" = "Read this OTP to the worker";
+"emp_tap_generate_hint" = "Tap generate OTP to proceed";
+"emp_in_progress" = "In Progress";
+"emp_worker_working" = "Worker is currently working";
+"emp_work_completed" = "Work Completed";
+"emp_enter_code_sub" = "Enter code from worker to verify";
+"emp_view_progress" = "View Progress";
+"emp_enter_code" = "Enter Code";
+"emp_tap_view_progress_hint" = "Tap view progress to track work";
+"emp_tap_enter_code_hint" = "Tap enter code to verify";
+"emp_payment_pending" = "Payment Pending";
+"emp_process_payment_sub" = "Code verified — pay the worker";
+"emp_process_payment" = "Process Payment";
+"emp_tap_process_payment_hint" = "Tap process payment to proceed";
+
+/* Employer applicant intelligence (English fallback — pending native review) */
+"top_match" = "Top match";
+"no_show_risk_high" = "High no-show risk";
+"no_show_risk_medium" = "Some no-show risk";
+"no_show_risk_history" = "%1$d of %2$d past commitments missed";
+"no_show_risk_new" = "limited history";
+"signal_reliability" = "Reliability";
+"signal_skill_match" = "Skill match";
+"signal_proximity" = "Nearby";
+"signal_rating" = "Rating";
+"signal_track_record" = "Worked with you";
+"signal_responsiveness" = "Quick to apply";
+"signal_no_show" = "Recent no-shows";
+
+/* Employer Hiring Health (English fallback — pending native review) */
+"hiring_health_label" = "Hiring Health";
+"fill_rate_label" = "Fill Rate";
+"fill_rate_desc" = "%1$d of %2$d jobs filled";
+"time_to_fill_label" = "Avg Time to Fill";
+"time_to_fill_desc" = "From posting to accepted";
+"hire_no_show_label" = "Hire No-Show Rate";
+"hire_no_show_desc" = "%1$d of %2$d hires didn't show";
+"top_district_label" = "Top District";
+"top_district_desc" = "Where you hire most";
+
+/* Employer Spending (English fallback — pending native review) */
+"spending" = "Spending";
+"total_spending_label" = "Total spending";
+"last_month_label" = "Last month";
+"spending_avg_per_hire" = "Avg per hire";
+"spending_by_category" = "Spending by category";
+"spending_recent_payments" = "Recent payments";
+
+/* Employer profile + Expiring jobs (English fallback — pending native review) */
+"expiring_jobs_title" = "Expiring Jobs";
+"expiring_jobs_empty" = "No jobs expiring soon";
+"expiring_jobs_expired" = "Expired";
+"expiring_jobs_today" = "Closes today";
+"expiring_jobs_in_days" = "in %1$d days";
+"company_details" = "Company Details";
+"about_section_label" = "About";
+"industry_label" = "Industry";
+"company_size_label" = "Company Size";
+"website_label" = "Website";
+"jobs_stat_label" = "Jobs";
+"hires_label" = "Hires";
+"applicants_label" = "%1$d applicants";
+"work_location_label" = "Address";
+
+/* Employer dashboard Quick Actions + Recent Jobs (English fallback — pending native review) */
+"quick_actions" = "Quick Actions";
+"post_job" = "Post Job";
+"create_new_listing" = "Create new listing";
+"applicants" = "Applicants";
+"review_applications" = "Review applications";
+"payments" = "Payments";
+"manage_payments" = "Manage payments";
+"nav_analytics" = "Analytics";
+"view_insights" = "View insights";
+"your_recent_jobs" = "Your Recent Jobs";
+"view_all" = "View All";
+"status_active" = "Active";
+"status_expired" = "Expired";
+"ios_no_jobs_yet" = "No jobs posted yet";
+
+/* Employer My Jobs (English fallback — pending native review) */
+"my_jobs_search" = "Search jobs";
+"status_total" = "Total";
+"status_pending" = "Pending";
+"cannot_delete_job_title" = "Can't delete this job";
+"cannot_delete_job_msg" = "This job has applicants, so it can't be deleted.";
+"ios_no_jobs_match" = "No jobs match your search";
+"delete" = "Delete";
+
+"search_applications" = "Search applications";
+
+"payment_summary" = "Payment Summary";
+"payment_total_paid" = "Total Paid";
+"payment_this_month" = "This Month";
+"payment_total_txns" = "Total Txns";
+"status_completed" = "Completed";
+"ios_no_payments_in_filter" = "No payments match this filter.";
+
+"total_spent_label" = "Total Spent";
+"quick_actions_label" = "Quick Actions";
+"post_job_label" = "Post Job";
+"member_since_info_label" = "Member Since";
+
+"company_information" = "Company Information";
+"company_name_required" = "Company Name *";
+"industry_required" = "Industry *";
+"company_size" = "Company Size";
+"website" = "Website";
+"company_description" = "Company Description";
+"location_label" = "Location";
+"state" = "State";
+"district" = "District";
+"full_address" = "Full Address";
+"ios_select" = "Select";
+
+"analytics_title" = "Analytics";
+"performance_label" = "Performance";
+"avg_response_time" = "Avg Response Time";
+"application_rate" = "Application Rate";
+"completion_rate_label" = "Completion Rate";
+"avg_rating_given" = "Avg Rating Given";
+"spending_label" = "Spending";
+"total_spent_this_month" = "Total Spent This Month";
+"avg_per_job_label" = "Avg per Job";
+"top_job_categories" = "Top Job Categories";
+
+"activities_title" = "Activities";
+"drawer_activities" = "Activities";
+"no_activities_yet" = "No activity yet";
+"no_activities_desc" = "Your hiring activity will appear here";
+
+"hawkeye_analytics" = "My Analytics";
+"drawer_my_analytics" = "My Analytics";
+
+"search_jobs" = "Search Jobs";
+"search_for_jobs_title" = "Search for jobs";
+"search_hint_subtitle" = "Find work by title, skill or location";
+"popular_searches_label" = "Popular Searches";
+"saved_searches_title" = "Saved Searches";
+"no_saved_searches" = "No saved searches";
+"no_saved_searches_desc" = "Save your job searches to find them quickly later.";
+"edit_job_title" = "Edit Job";
+"worker_profile" = "Worker Profile";
+"reviews" = "reviews";
+"jobs_done" = "Jobs Done";
+"completion_label" = "Completion";
+"personal_details_label" = "Personal Details";
+"gender_label" = "Gender";
+"languages_label" = "Languages";
+"preferred_hours" = "Preferred Hours";
+"fitness_level" = "Fitness Level";
+"computer_skills" = "Computer Skills";
+"yes" = "Yes";
+"no" = "No";
+"skills_required_label" = "Skills";

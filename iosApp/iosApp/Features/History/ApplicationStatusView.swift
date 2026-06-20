@@ -11,9 +11,13 @@ struct ApplicationStatusView: View {
     /// Messaging deps (optional so previews/older call sites still compile).
     var messages: (any MessageRepository)? = nil
     var myUserId: String? = nil
+    /// Needed for the WORK_IN_PROGRESS live card (timer + complete). Optional so
+    /// older call sites still compile; the WIP card only shows when present.
+    var applications: (any ApplicationRepository)? = nil
 
     @State private var openingChat = false
     @State private var chat: ChatTarget? = nil
+    @State private var completionCode: String? = nil
 
     private var job: Job? { application.job }
 
@@ -29,6 +33,15 @@ struct ApplicationStatusView: View {
             VStack(spacing: 16) {
                 hero
                 VStack(spacing: 16) {
+                    // Live work-in-progress card (timer + earnings + complete),
+                    // mirroring Android's WorkTimerDisplay. Only while working.
+                    if application.status == .workInProgress, let applications {
+                        WorkInProgressDetailCard(
+                            applications: applications,
+                            application: application,
+                            onCompleted: { completionCode = $0 }
+                        )
+                    }
                     jobDetailsCard
                     ApplicationProgressTimeline(status: application.status)
                     contextBanner
@@ -55,6 +68,21 @@ struct ApplicationStatusView: View {
             } label: { EmptyView() }
             .hidden()
         )
+        // After "Tap to complete", show the completion code to read to the
+        // employer (reuses the FOB/carousel sheet).
+        .sheet(isPresented: completionActive) {
+            if let code = completionCode, let applications {
+                WorkerCompletionCodeSheet(
+                    code: code,
+                    onRegenerate: { try? await IosHelpersKt.regenerateCompletionOtpOrThrow(applications, applicationId: application.id) },
+                    onDone: { completionCode = nil }
+                )
+            }
+        }
+    }
+
+    private var completionActive: Binding<Bool> {
+        Binding(get: { completionCode != nil }, set: { if !$0 { completionCode = nil } })
     }
 
     private var chatActive: Binding<Bool> {

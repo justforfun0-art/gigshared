@@ -33,6 +33,11 @@ interface ApplicationRepository {
      * its nested job/employer rows on each home-screen load.
      */
     suspend fun getActiveEmployeeApplications(employeeId: String): Result<List<Application>>
+
+    /** In-flight applicants to the employer's jobs (server-filtered to the
+     *  active dashboard statuses), for the employer Home action carousel. */
+    suspend fun getActiveEmployerApplications(employerId: String): Result<List<Application>>
+
     suspend fun getEmployeeApplicationsPage(employeeId: String, limit: Int = 50, offset: Int = 0): Result<ApplicationsPage>
 
     /**

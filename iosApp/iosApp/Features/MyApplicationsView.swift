@@ -33,6 +33,15 @@ struct MyApplicationsView: View {
         var id: String { rawValue }
     }
 
+    /// Employer applications use a different filter set (Android EmployerApplicationsScreen).
+    enum EmployerFilter: String, CaseIterable, Identifiable {
+        case active = "Active", all = "All", pending = "Pending"
+        case selected = "Selected", inProgress = "In Progress", completed = "Completed"
+        var id: String { rawValue }
+    }
+    @State private var employerFilter: EmployerFilter = .active
+    @State private var query: String = ""
+
     var body: some View {
         NavigationStack {
             ZStack {
@@ -42,8 +51,9 @@ struct MyApplicationsView: View {
                     content
                 }
             }
-            .navigationTitle(L("cd_history"))
+            .navigationTitle(isEmployer ? L("nav_employer_applications") : L("cd_history"))
             .drawerToolbar()
+            .if(isEmployer) { $0.searchable(text: $query, placement: .navigationBarDrawer(displayMode: .always), prompt: L("search_applications")) }
             .task { await viewModel.load() }
             .refreshable { await viewModel.load() }
             .alert("Couldn’t withdraw", isPresented: errorBinding) {
@@ -59,25 +69,72 @@ struct MyApplicationsView: View {
 
     // MARK: - Filter tabs
 
+    @ViewBuilder
     private var filterTabs: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 24) {
-                ForEach(HistoryFilter.allCases) { f in
-                    let selected = f == filter
-                    VStack(spacing: 6) {
-                        Text(f.rawValue)
-                            .font(.system(size: 15, weight: selected ? .semibold : .regular))
-                            .foregroundStyle(selected ? accent : GHTheme.onSurfaceVariant)
-                        Rectangle()
-                            .fill(selected ? accent : .clear)
-                            .frame(height: 2)
+        if isEmployer {
+            employerFilterTabs
+        } else {
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 24) {
+                    ForEach(HistoryFilter.allCases) { f in
+                        let selected = f == filter
+                        VStack(spacing: 6) {
+                            Text(f.rawValue)
+                                .font(.system(size: 15, weight: selected ? .semibold : .regular))
+                                .foregroundStyle(selected ? accent : GHTheme.onSurfaceVariant)
+                            Rectangle().fill(selected ? accent : .clear).frame(height: 2)
+                        }
+                        .onTapGesture { withAnimation(.easeInOut(duration: 0.2)) { filter = f } }
                     }
-                    .onTapGesture { withAnimation(.easeInOut(duration: 0.2)) { filter = f } }
+                }
+                .padding(.horizontal)
+            }
+            .padding(.vertical, 8)
+        }
+    }
+
+    /// Employer filter tabs with live counts in the label, e.g. "Active (3)".
+    private func employerCount(_ f: EmployerFilter, _ apps: [Application]) -> Int {
+        apps.filter { employerMatches(f, $0) }.count
+    }
+    private func employerMatches(_ f: EmployerFilter, _ app: Application) -> Bool {
+        switch f {
+        case .all: return true
+        case .active: return app.status.isActive()
+        case .pending: return app.status == .applied
+        case .selected: return app.status == .selected
+        case .inProgress:
+            return [.accepted, .otpRequested, .workInProgress, .completionPending, .paymentPending].contains(app.status)
+        case .completed: return app.status == .completed
+        }
+    }
+
+    @ViewBuilder
+    private var employerFilterTabs: some View {
+        let apps = currentApps
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 22) {
+                ForEach(EmployerFilter.allCases) { f in
+                    let selected = f == employerFilter
+                    let n = employerCount(f, apps)
+                    VStack(spacing: 6) {
+                        Text(n > 0 ? "\(f.rawValue) (\(n))" : f.rawValue)
+                            .font(.system(size: 14, weight: selected ? .semibold : .regular))
+                            .foregroundStyle(selected ? accent : GHTheme.onSurfaceVariant)
+                        Rectangle().fill(selected ? accent : .clear).frame(height: 2)
+                    }
+                    .onTapGesture { withAnimation(.easeInOut(duration: 0.2)) { employerFilter = f } }
                 }
             }
             .padding(.horizontal)
         }
         .padding(.vertical, 8)
+    }
+
+    /// The raw application list from the loaded state (for count computation).
+    private var currentApps: [Application] {
+        if case .loaded(let apps) = viewModel.state { return apps }
+        return []
     }
 
     private func matches(_ app: Application) -> Bool {
@@ -112,6 +169,20 @@ struct MyApplicationsView: View {
             .map(\.element)
     }
 
+    /// Employer applications filtered by the selected tab + search, recency-sorted.
+    private func employerFiltered(_ apps: [Application]) -> [Application] {
+        let byTab = apps.filter { employerMatches(employerFilter, $0) }
+        let q = query.trimmingCharacters(in: .whitespaces).lowercased()
+        let bySearch = q.isEmpty ? byTab : byTab.filter { app in
+            let hay = [app.job?.title, app.employeeProfile?.name, app.status.toDisplayString()]
+                .compactMap { $0 }.joined(separator: " ").lowercased()
+            return hay.contains(q)
+        }
+        return bySearch.sorted {
+            ($0.updatedAt ?? $0.appliedAt ?? "") > ($1.updatedAt ?? $1.appliedAt ?? "")
+        }
+    }
+
     // MARK: - Content
 
     @ViewBuilder
@@ -120,7 +191,7 @@ struct MyApplicationsView: View {
         case .idle, .loading:
             Spacer(); ProgressView("Loading…"); Spacer()
         case .loaded(let apps):
-            let filtered = sorted(apps.filter(matches))
+            let filtered = isEmployer ? employerFiltered(apps) : sorted(apps.filter(matches))
             if filtered.isEmpty {
                 placeholder(title: "Nothing here yet", icon: "clock.arrow.circlepath",
                             message: "Applications in this category will show up here.")
@@ -129,7 +200,7 @@ struct MyApplicationsView: View {
                     LazyVStack(spacing: 14) {
                         ForEach(filtered, id: \.id) { app in
                             NavigationLink {
-                                ApplicationStatusView(application: app, messages: messages, myUserId: employeeId)
+                                ApplicationStatusView(application: app, messages: messages, myUserId: employeeId, applications: applications)
                             } label: {
                                 HistoryCard(application: app, isEmployer: isEmployer)
                             }
@@ -273,5 +344,12 @@ private struct Chip: View {
         .foregroundStyle(accent)
         .padding(.horizontal, 8).padding(.vertical, 4)
         .background(tint, in: Capsule())
+    }
+}
+
+private extension View {
+    /// Conditionally apply a modifier (used to add `.searchable` for employers only).
+    @ViewBuilder func `if`<T: View>(_ condition: Bool, _ transform: (Self) -> T) -> some View {
+        if condition { transform(self) } else { self }
     }
 }

@@ -4,8 +4,10 @@ import com.gighour.shared.data.local.JobCache
 import com.gighour.shared.data.local.db.DriverFactory
 import com.gighour.shared.data.local.db.SqlDelightJobCache
 import com.gighour.shared.data.local.db.createGighourDb
+import com.gighour.shared.domain.model.AccountType
 import com.gighour.shared.domain.model.Application
 import com.gighour.shared.domain.model.AuthData
+import com.gighour.shared.domain.model.Beneficiary
 import com.gighour.shared.domain.model.ConversationRow
 import com.gighour.shared.domain.model.ConversationSummary
 import com.gighour.shared.domain.model.EmployeeProfile
@@ -18,8 +20,12 @@ import com.gighour.shared.domain.model.PaymentVerifyResult
 import com.gighour.shared.domain.model.PayoutPage
 import com.gighour.shared.domain.model.PayoutStatus
 import com.gighour.shared.domain.model.WorkSession
+import com.gighour.shared.domain.repository.ApplicationOdds
 import com.gighour.shared.domain.repository.ApplicationRepository
 import com.gighour.shared.domain.repository.AuthRepository
+import com.gighour.shared.domain.repository.BeneficiaryRepository
+import com.gighour.shared.domain.repository.CandidateRank
+import com.gighour.shared.domain.repository.NoShowRisk
 import com.gighour.shared.domain.repository.DashboardRepository
 import com.gighour.shared.domain.repository.EmployeeDashboardStats
 import com.gighour.shared.domain.repository.EmployerDashboardStats
@@ -33,6 +39,8 @@ import com.gighour.shared.domain.repository.PayoutRepository
 import com.gighour.shared.domain.repository.ProfileRepository
 import com.gighour.shared.domain.repository.ReferralInfo
 import com.gighour.shared.domain.repository.ReferralRepository
+import com.gighour.shared.domain.repository.ScheduleConflict
+import com.gighour.shared.domain.repository.UserRating
 import kotlinx.coroutines.Dispatchers
 
 /**
@@ -97,6 +105,15 @@ suspend fun AuthRepository.verifyOtpOrThrow(phone: String, otp: String): AuthDat
 suspend fun ApplicationRepository.getEmployeeApplicationsOrThrow(employeeId: String): List<Application> =
     getEmployeeApplications(employeeId).getOrThrow()
 
+/**
+ * [ApplicationRepository.getActiveEmployeeApplications] as a throwing suspend —
+ * the worker's in-flight applications (SELECTED → PAYMENT_PENDING), filtered
+ * server-side. Backs the Home dashboard's action-card carousel.
+ */
+@Throws(Throwable::class)
+suspend fun ApplicationRepository.getActiveEmployeeApplicationsOrThrow(employeeId: String): List<Application> =
+    getActiveEmployeeApplications(employeeId).getOrThrow()
+
 /** [ApplicationRepository.getEmployerApplications] as a throwing suspend (applicants to the employer's jobs). */
 @Throws(Throwable::class)
 suspend fun ApplicationRepository.getEmployerApplicationsOrThrow(employerId: String): List<Application> =
@@ -112,6 +129,16 @@ suspend fun ApplicationRepository.withdrawApplicationOrThrow(applicationId: Stri
 suspend fun ApplicationRepository.applyToJobOrThrow(jobId: String, employeeId: String): Application =
     applyToJob(jobId, employeeId).getOrThrow()
 
+/** [ApplicationRepository.predictApplicationSuccess] as a throwing suspend (pre-apply hire odds). */
+@Throws(Throwable::class)
+suspend fun ApplicationRepository.predictApplicationSuccessOrThrow(jobId: String, workerId: String): ApplicationOdds =
+    predictApplicationSuccess(jobId, workerId).getOrThrow()
+
+/** [ApplicationRepository.checkScheduleConflict] as a throwing suspend (nullable). */
+@Throws(Throwable::class)
+suspend fun ApplicationRepository.checkScheduleConflictOrThrow(jobId: String, workerId: String): ScheduleConflict? =
+    checkScheduleConflict(jobId, workerId).getOrThrow()
+
 /** [PayoutRepository.getHistory] as a throwing suspend (default = all statuses). */
 @Throws(Throwable::class)
 suspend fun PayoutRepository.getHistoryOrThrow(
@@ -124,6 +151,48 @@ suspend fun PayoutRepository.getHistoryOrThrow(
 @Throws(Throwable::class)
 suspend fun ProfileRepository.getEmployeeProfileOrThrow(userId: String): EmployeeProfile? =
     getEmployeeProfile(userId).getOrThrow()
+
+/** [ProfileRepository.getEmployerProfile] as a throwing suspend (nullable result). */
+@Throws(Throwable::class)
+suspend fun ProfileRepository.getEmployerProfileOrThrow(userId: String): com.gighour.shared.domain.model.EmployerProfile? =
+    getEmployerProfile(userId).getOrThrow()
+
+/** [ProfileRepository.getEmployeeRating] as a throwing suspend (average + count). */
+@Throws(Throwable::class)
+suspend fun ProfileRepository.getEmployeeRatingOrThrow(userId: String): UserRating =
+    getEmployeeRating(userId).getOrThrow()
+
+/** [SavedSearchesRepository.list] as a throwing suspend. */
+@Throws(Throwable::class)
+suspend fun com.gighour.shared.domain.repository.SavedSearchesRepository.listSavedSearchesOrThrow(): List<com.gighour.shared.domain.repository.SavedSearch> =
+    list().getOrThrow()
+
+/** [SavedSearchesRepository.delete] as a throwing suspend. */
+@Throws(Throwable::class)
+suspend fun com.gighour.shared.domain.repository.SavedSearchesRepository.deleteSavedSearchOrThrow(id: String) {
+    delete(id).getOrThrow()
+}
+
+/** [ProfileRepository.getEmployeeReviews] as a throwing suspend (newest-first, ≤10). */
+@Throws(Throwable::class)
+suspend fun ProfileRepository.getEmployeeReviewsOrThrow(
+    userId: String
+): List<com.gighour.shared.domain.repository.EmployeeReview> =
+    getEmployeeReviews(userId).getOrThrow()
+
+/** [ProfileRepository.createEmployerProfile] as a throwing suspend. */
+@Throws(Throwable::class)
+suspend fun ProfileRepository.createEmployerProfileOrThrow(
+    profile: com.gighour.shared.domain.model.EmployerProfile
+): com.gighour.shared.domain.model.EmployerProfile =
+    createEmployerProfile(profile).getOrThrow()
+
+/** [ProfileRepository.updateEmployerProfile] as a throwing suspend. */
+@Throws(Throwable::class)
+suspend fun ProfileRepository.updateEmployerProfileOrThrow(
+    profile: com.gighour.shared.domain.model.EmployerProfile
+): com.gighour.shared.domain.model.EmployerProfile =
+    updateEmployerProfile(profile).getOrThrow()
 
 /** [NotificationRepository.getNotifications] as a throwing suspend. */
 @Throws(Throwable::class)
@@ -156,6 +225,29 @@ suspend fun JobRepository.getJobsForSwipeOrThrow(
 @Throws(Throwable::class)
 suspend fun JobRepository.getEmployerJobsOrThrow(employerId: String): List<Job> =
     getEmployerJobs(employerId).getOrThrow()
+
+/**
+ * [JobRepository.deleteJob] as a throwing suspend. Throws
+ * [com.gighour.shared.domain.repository.JobHasApplicantsException] when the job
+ * has applicants — Swift catches it to show the "can't delete" message.
+ */
+@Throws(Throwable::class)
+suspend fun JobRepository.deleteJobOrThrow(jobId: String) {
+    deleteJob(jobId).getOrThrow()
+}
+
+/** True if the deletion failure was the has-applicants guard (Swift can't match Kotlin types). */
+fun isJobHasApplicantsError(error: Throwable): Boolean =
+    error is com.gighour.shared.domain.repository.JobHasApplicantsException
+
+/**
+ * [JobRepository.rankJobsForWorker] as a throwing suspend — the smart-feed
+ * ordering (job ids best-first from the rank_jobs RPC). Empty on failure so the
+ * feed falls back to its default order.
+ */
+@Throws(Throwable::class)
+suspend fun JobRepository.rankJobsForWorkerOrThrow(workerId: String, limit: Int = 100): List<String> =
+    rankJobsForWorker(workerId, limit).getOrThrow()
 
 /**
  * Post a new job from just the form fields — builds the (37-arg) [Job]
@@ -191,6 +283,50 @@ suspend fun JobRepository.createJobOrThrow(
         numPositions = numPositions,
         state = state,
         district = district,
+    ),
+).getOrThrow()
+
+/** [JobRepository.searchJobs] as a throwing suspend (free-text, no filter). */
+@Throws(Throwable::class)
+suspend fun JobRepository.searchJobsOrThrow(query: String): List<Job> =
+    searchJobs(query, null).getOrThrow()
+
+/**
+ * [JobRepository.updateJob] as a throwing suspend. Carries the editable fields
+ * from the iOS edit form onto the existing [Job] (id required) and persists.
+ */
+@Throws(Throwable::class)
+suspend fun JobRepository.updateJobOrThrow(
+    jobId: String,
+    employerId: String,
+    title: String,
+    description: String,
+    location: String,
+    salaryRange: String?,
+    jobDate: String?,
+    startTime: String?,
+    endTime: String?,
+    numPositions: Int,
+    skillsRequired: List<String>,
+    state: String?,
+    district: String?,
+    jobCategory: String?,
+): Job = updateJob(
+    Job(
+        id = jobId,
+        employerId = employerId,
+        title = title,
+        description = description,
+        location = location,
+        salaryRange = salaryRange,
+        skillsRequired = skillsRequired,
+        jobDate = jobDate,
+        startTime = startTime,
+        endTime = endTime,
+        numPositions = numPositions,
+        state = state,
+        district = district,
+        jobCategory = jobCategory,
     ),
 ).getOrThrow()
 
@@ -289,6 +425,11 @@ suspend fun ProfileRepository.editEmployeeProfileOrThrow(
     return updateEmployeeProfile(updated).getOrThrow()
 }
 
+/** Save just the worker's UPI id (Wallet screen). Copies the existing profile. */
+@Throws(Throwable::class)
+suspend fun ProfileRepository.setUpiIdOrThrow(existing: EmployeeProfile, upiId: String): EmployeeProfile =
+    updateEmployeeProfile(existing.copy(upiId = upiId.takeIf { it.isNotBlank() })).getOrThrow()
+
 /**
  * [ProfileRepository.uploadProfilePhoto] as a throwing suspend, taking the image
  * as a **base64 string** rather than [ByteArray]. Kotlin/Native exports
@@ -314,6 +455,11 @@ suspend fun DashboardRepository.getEmployeeStatsOrThrow(userId: String): Employe
 @Throws(Throwable::class)
 suspend fun DashboardRepository.getEmployerStatsOrThrow(employerId: String): EmployerDashboardStats =
     getEmployerStats(employerId).getOrThrow()
+
+/** [DashboardRepository.getEmployerInsights] as a throwing suspend (hiring health). */
+@Throws(Throwable::class)
+suspend fun DashboardRepository.getEmployerInsightsOrThrow(employerId: String): com.gighour.shared.domain.repository.EmployerInsights =
+    getEmployerInsights(employerId).getOrThrow()
 
 /** [ReferralRepository.getReferralInfo] as a throwing suspend. */
 @Throws(Throwable::class)
@@ -411,3 +557,67 @@ suspend fun MessageRepository.participantInfoOrNull(userId: String): Participant
 @Throws(Throwable::class)
 suspend fun MessageRepository.contactAdminOrThrow(message: String): String =
     contactAdmin(message).getOrThrow()
+
+// --- Beneficiaries (Payment Methods) ---
+
+/** [BeneficiaryRepository.listBeneficiaries] as a throwing suspend. */
+@Throws(Throwable::class)
+suspend fun BeneficiaryRepository.listBeneficiariesOrThrow(): List<Beneficiary> =
+    listBeneficiaries().getOrThrow()
+
+/** [BeneficiaryRepository.addBeneficiary] as a throwing suspend. */
+@Throws(Throwable::class)
+suspend fun BeneficiaryRepository.addBeneficiaryOrThrow(
+    accountHolderName: String,
+    accountType: AccountType,
+    accountNumber: String?,
+    ifscCode: String?,
+    bankName: String?,
+    upiId: String?,
+    phoneNumber: String?,
+    isPrimary: Boolean,
+): Beneficiary = addBeneficiary(
+    accountHolderName, accountType, accountNumber, ifscCode, bankName, upiId, phoneNumber, isPrimary
+).getOrThrow()
+
+/** [BeneficiaryRepository.setPrimary] as a throwing suspend. */
+@Throws(Throwable::class)
+suspend fun BeneficiaryRepository.setPrimaryBeneficiaryOrThrow(beneficiaryId: String) {
+    setPrimary(beneficiaryId).getOrThrow()
+}
+
+/** [BeneficiaryRepository.deleteBeneficiary] as a throwing suspend. */
+@Throws(Throwable::class)
+suspend fun BeneficiaryRepository.deleteBeneficiaryOrThrow(beneficiaryId: String) {
+    deleteBeneficiary(beneficiaryId).getOrThrow()
+}
+
+// --- Notification preferences ---
+
+/** [NotificationRepository.saveNotificationPreferences] as a throwing suspend. */
+@Throws(Throwable::class)
+suspend fun NotificationRepository.saveNotificationPreferencesOrThrow(
+    prefs: com.gighour.shared.domain.repository.NotificationPreferences,
+): com.gighour.shared.domain.repository.NotificationPreferences =
+    saveNotificationPreferences(prefs).getOrThrow()
+
+/**
+ * [ApplicationRepository.getActiveEmployerApplications] as a throwing suspend —
+ * in-flight applicants to the employer's jobs (server-filtered), for the
+ * employer Home action carousel.
+ */
+@Throws(Throwable::class)
+suspend fun ApplicationRepository.getActiveEmployerApplicationsOrThrow(employerId: String): List<Application> =
+    getActiveEmployerApplications(employerId).getOrThrow()
+
+// --- Employer applicant intelligence ---
+
+/** [ApplicationRepository.rankCandidates] as a throwing suspend (mutual-fit ranking). */
+@Throws(Throwable::class)
+suspend fun ApplicationRepository.rankCandidatesOrThrow(jobId: String, employerId: String): List<CandidateRank> =
+    rankCandidates(jobId, employerId).getOrThrow()
+
+/** [ApplicationRepository.computeNoShowRisk] as a throwing suspend (nullable). */
+@Throws(Throwable::class)
+suspend fun ApplicationRepository.computeNoShowRiskOrThrow(applicationId: String): NoShowRisk? =
+    computeNoShowRisk(applicationId).getOrThrow()

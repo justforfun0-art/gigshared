@@ -17,18 +17,26 @@ final class DashboardViewModel: ObservableObject {
 
     @Published private(set) var stats: Stats = .idle
     @Published private(set) var referral: ReferralInfo?
+    /// Employer hiring-health metrics (employer_insights); nil for employees / on failure.
+    @Published private(set) var insights: EmployerInsights?
+    /// Employer's most recent jobs (for the "Your Recent Jobs" dashboard section).
+    @Published private(set) var recentJobs: [Job] = []
 
     private let dashboard: any DashboardRepository
     private let referralRepo: any ReferralRepository
     private let userId: String
     let isEmployer: Bool
 
+    private let jobs: (any JobRepository)?
+
     init(dashboard: any DashboardRepository,
          referralRepo: any ReferralRepository,
+         jobs: (any JobRepository)? = nil,
          userId: String,
          userType: String?) {
         self.dashboard = dashboard
         self.referralRepo = referralRepo
+        self.jobs = jobs
         self.userId = userId
         self.isEmployer = (userType?.lowercased() == "employer")
     }
@@ -38,6 +46,24 @@ final class DashboardViewModel: ObservableObject {
         await withTaskGroup(of: Void.self) { group in
             group.addTask { await self.loadStats() }
             group.addTask { await self.loadReferral() }
+            if self.isEmployer {
+                group.addTask { await self.loadInsights() }
+                group.addTask { await self.loadRecentJobs() }
+            }
+        }
+    }
+
+    /// Employer hiring-health (best-effort; getEmployerInsightsOrThrow is a
+    /// SKIE-relocated instance method like the other Dashboard shims).
+    private func loadInsights() async {
+        insights = try? await dashboard.getEmployerInsightsOrThrow(employerId: userId)
+    }
+
+    /// Employer's recent jobs (newest first), for the dashboard section.
+    private func loadRecentJobs() async {
+        guard let jobs else { return }
+        if let list = try? await IosHelpersKt.getEmployerJobsOrThrow(jobs, employerId: userId) {
+            recentJobs = Array(list.prefix(3))
         }
     }
 

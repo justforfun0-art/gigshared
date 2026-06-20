@@ -89,17 +89,19 @@ internal class IosKeychain(private val service: String) {
         val q = baseQuery(account)
         q.setObject(data, forKey = cfValueData)
         val status = SecItemAdd(q.asCF(), null)
+        // ALWAYS mirror to NSUserDefaults — never clear the fallback on a
+        // keychain-write success. On the simulator we have seen SecItemAdd
+        // *succeed* (status 0) while the later SecItemCopyMatching read fails
+        // with errSecParam (-50); if we trusted the write and cleared the
+        // fallback, the value became unreadable and the session was lost after
+        // logout/login (the "values are empty" bug). Keeping a defaults mirror
+        // makes reads recoverable regardless of the read query's -50. On a
+        // properly-signed device the keychain read succeeds and the mirror is
+        // simply unused (read() prefers the keychain).
         if (status != 0) {
-            // Keychain unavailable (e.g. errSecMissingEntitlement -34018 on an
-            // unsigned simulator build). Fall back to NSUserDefaults so the
-            // session still persists; on a properly-signed device the keychain
-            // succeeds and this fallback is never reached.
             Logger.e(TAG, "SecItemAdd($account) failed: OSStatus=$status — using NSUserDefaults fallback")
-            defaults.setObject(value, forKey = fallbackKey(account))
-        } else {
-            // Keychain is authoritative — clear any stale fallback copy.
-            defaults.removeObjectForKey(fallbackKey(account))
         }
+        defaults.setObject(value, forKey = fallbackKey(account))
     }
 
     fun read(account: String): String? {

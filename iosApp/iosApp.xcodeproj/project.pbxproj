@@ -20,6 +20,11 @@
 		A1000019 /* MyApplicationsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100000E /* MyApplicationsView.swift */; };
 		A100001A /* EarningsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100000F /* EarningsViewModel.swift */; };
 		A100001B /* EarningsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0000020 /* EarningsView.swift */; };
+		F0000059 /* HawkeyeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0000058 /* HawkeyeView.swift */; };
+		F0000061 /* JobSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0000060 /* JobSearchView.swift */; };
+		F0000063 /* SavedSearchesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0000062 /* SavedSearchesView.swift */; };
+		F0000065 /* EditJobView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0000064 /* EditJobView.swift */; };
+		F0000067 /* WorkerProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0000066 /* WorkerProfileView.swift */; };
 		A100001C /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0000021 /* ProfileViewModel.swift */; };
 		A100001D /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000022 /* ProfileView.swift */; };
 		A100001E /* NotificationsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000023 /* NotificationsViewModel.swift */; };
@@ -32,13 +37,27 @@
 		B0000032 /* PostJobView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0000042 /* PostJobView.swift */; };
 		B0000033 /* ApplicantsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0000043 /* ApplicantsViewModel.swift */; };
 		B0000034 /* ApplicantsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0000044 /* ApplicantsView.swift */; };
+		F0000041 /* EmployerProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0000040 /* EmployerProfileView.swift */; };
+		F0000051 /* EmployerProfileEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0000050 /* EmployerProfileEditView.swift */; };
+		F0000053 /* IndiaData.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0000052 /* IndiaData.swift */; };
+		F0000055 /* AnalyticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0000054 /* AnalyticsView.swift */; };
+		F0000057 /* ActivitiesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0000056 /* ActivitiesView.swift */; };
+		F0000043 /* ExpiringJobsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0000042 /* ExpiringJobsView.swift */; };
 		C0000031 /* WorkSessionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000001 /* WorkSessionViewModel.swift */; };
 		C0000032 /* WorkSessionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000002 /* WorkSessionView.swift */; };
 		C0000033 /* DashboardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000003 /* DashboardViewModel.swift */; };
 		C0000034 /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000004 /* DashboardView.swift */; };
+		D0000032 /* ActionCarouselViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0000030 /* ActionCarouselViewModel.swift */; };
+		D0000033 /* ActionCardCarousel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0000031 /* ActionCardCarousel.swift */; };
+		D0000051 /* CompletionCodeSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0000050 /* CompletionCodeSheet.swift */; };
+		D0000061 /* ActiveJobBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0000060 /* ActiveJobBar.swift */; };
+		D0000063 /* ActiveJobBarViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0000062 /* ActiveJobBarViewModel.swift */; };
+		D0000040 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0000041 /* SettingsView.swift */; };
 		C0000035 /* PaymentsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000005 /* PaymentsViewModel.swift */; };
 		C0000036 /* PaymentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000006 /* PaymentsView.swift */; };
 		C0000037 /* SafariSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000007 /* SafariSheet.swift */; };
+		F0000031 /* SpendingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0000030 /* SpendingView.swift */; };
+		F0000033 /* SpendingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0000032 /* SpendingViewModel.swift */; };
 		C0000038 /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000008 /* SplashView.swift */; };
 		C0000039 /* JobSwipeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000009 /* JobSwipeViewModel.swift */; };
 		C000003A /* JobSwipeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C000000A /* JobSwipeView.swift */; };
@@ -54,6 +73,22 @@
 		C000004B /* Localization.swift in Sources */ = {isa = PBXBuildFile; fileRef = C000001B /* Localization.swift */; };
 		C000003F /* DetailedHistoryCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = C000000F /* DetailedHistoryCard.swift */; };
 		C0000040 /* ApplicationStatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000010 /* ApplicationStatusView.swift */; };
+		D0000071 /* WorkInProgressDetailCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0000070 /* WorkInProgressDetailCard.swift */; };
+		D0000081 /* WalletView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0000080 /* WalletView.swift */; };
+		D0000083 /* WalletViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0000082 /* WalletViewModel.swift */; };
+		D0000085 /* WithdrawalsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0000084 /* WithdrawalsView.swift */; };
+		D0000087 /* WithdrawalsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0000086 /* WithdrawalsViewModel.swift */; };
+		D0000091 /* WorkActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0000090 /* WorkActivityAttributes.swift */; };
+		D0000093 /* LiveWorkActivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0000092 /* LiveWorkActivityManager.swift */; };
+		F0000001 /* PaymentMethodsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0000010 /* PaymentMethodsView.swift */; };
+		F0000002 /* PaymentMethodsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0000011 /* PaymentMethodsViewModel.swift */; };
+		F0000003 /* NotificationPreferencesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0000012 /* NotificationPreferencesView.swift */; };
+		F0000021 /* EmployerActionCardCarousel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0000020 /* EmployerActionCardCarousel.swift */; };
+		F0000023 /* EmployerActionCarouselViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0000022 /* EmployerActionCarouselViewModel.swift */; };
+		E0000001 /* GigHourWidgetsBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0000010 /* GigHourWidgetsBundle.swift */; };
+		E0000002 /* WorkLiveActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0000011 /* WorkLiveActivity.swift */; };
+		E0000003 /* WorkActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0000090 /* WorkActivityAttributes.swift */; };
+		E0000004 /* GigHourWidgetsExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = E0000020 /* GigHourWidgetsExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		C0000041 /* ConversationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000011 /* ConversationViewModel.swift */; };
 		C0000042 /* ConversationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000012 /* ConversationView.swift */; };
 		C0000043 /* MessagesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000013 /* MessagesViewModel.swift */; };
@@ -70,6 +105,17 @@
 				A1000021 /* Shared.xcframework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E0000070 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				E0000004 /* GigHourWidgetsExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -100,19 +146,38 @@
 		A1000024 /* NotificationsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsView.swift; sourceTree = "<group>"; };
 		A1000025 /* JobDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobDetailView.swift; sourceTree = "<group>"; };
 		B0000020 /* EarningsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EarningsView.swift; sourceTree = "<group>"; };
+		F0000058 /* HawkeyeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HawkeyeView.swift; sourceTree = "<group>"; };
+		F0000060 /* JobSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobSearchView.swift; sourceTree = "<group>"; };
+		F0000062 /* SavedSearchesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedSearchesView.swift; sourceTree = "<group>"; };
+		F0000064 /* EditJobView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditJobView.swift; sourceTree = "<group>"; };
+		F0000066 /* WorkerProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkerProfileView.swift; sourceTree = "<group>"; };
 		B0000021 /* ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
 		B0000040 /* MyJobsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyJobsViewModel.swift; sourceTree = "<group>"; };
 		B0000041 /* MyJobsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyJobsView.swift; sourceTree = "<group>"; };
 		B0000042 /* PostJobView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostJobView.swift; sourceTree = "<group>"; };
 		B0000043 /* ApplicantsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicantsViewModel.swift; sourceTree = "<group>"; };
 		B0000044 /* ApplicantsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicantsView.swift; sourceTree = "<group>"; };
+		F0000040 /* EmployerProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmployerProfileView.swift; sourceTree = "<group>"; };
+		F0000050 /* EmployerProfileEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmployerProfileEditView.swift; sourceTree = "<group>"; };
+		F0000052 /* IndiaData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndiaData.swift; sourceTree = "<group>"; };
+		F0000054 /* AnalyticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsView.swift; sourceTree = "<group>"; };
+		F0000056 /* ActivitiesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivitiesView.swift; sourceTree = "<group>"; };
+		F0000042 /* ExpiringJobsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpiringJobsView.swift; sourceTree = "<group>"; };
 		C0000001 /* WorkSessionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkSessionViewModel.swift; sourceTree = "<group>"; };
 		C0000002 /* WorkSessionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkSessionView.swift; sourceTree = "<group>"; };
 		C0000003 /* DashboardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardViewModel.swift; sourceTree = "<group>"; };
 		C0000004 /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
+		D0000030 /* ActionCarouselViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionCarouselViewModel.swift; sourceTree = "<group>"; };
+		D0000031 /* ActionCardCarousel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionCardCarousel.swift; sourceTree = "<group>"; };
+		D0000050 /* CompletionCodeSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompletionCodeSheet.swift; sourceTree = "<group>"; };
+		D0000060 /* ActiveJobBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveJobBar.swift; sourceTree = "<group>"; };
+		D0000062 /* ActiveJobBarViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveJobBarViewModel.swift; sourceTree = "<group>"; };
+		D0000041 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		C0000005 /* PaymentsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentsViewModel.swift; sourceTree = "<group>"; };
 		C0000006 /* PaymentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentsView.swift; sourceTree = "<group>"; };
 		C0000007 /* SafariSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariSheet.swift; sourceTree = "<group>"; };
+		F0000030 /* SpendingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpendingView.swift; sourceTree = "<group>"; };
+		F0000032 /* SpendingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpendingViewModel.swift; sourceTree = "<group>"; };
 		C0000008 /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
 		C0000009 /* JobSwipeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobSwipeViewModel.swift; sourceTree = "<group>"; };
 		C000000A /* JobSwipeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobSwipeView.swift; sourceTree = "<group>"; };
@@ -128,6 +193,22 @@
 		C000001B /* Localization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Localization.swift; sourceTree = "<group>"; };
 		C000000F /* DetailedHistoryCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailedHistoryCard.swift; sourceTree = "<group>"; };
 		C0000010 /* ApplicationStatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationStatusView.swift; sourceTree = "<group>"; };
+		D0000070 /* WorkInProgressDetailCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkInProgressDetailCard.swift; sourceTree = "<group>"; };
+		D0000080 /* WalletView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletView.swift; sourceTree = "<group>"; };
+		D0000082 /* WalletViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletViewModel.swift; sourceTree = "<group>"; };
+		D0000084 /* WithdrawalsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WithdrawalsView.swift; sourceTree = "<group>"; };
+		D0000086 /* WithdrawalsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WithdrawalsViewModel.swift; sourceTree = "<group>"; };
+		D0000090 /* WorkActivityAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkActivityAttributes.swift; sourceTree = "<group>"; };
+		D0000092 /* LiveWorkActivityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveWorkActivityManager.swift; sourceTree = "<group>"; };
+		F0000010 /* PaymentMethodsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentMethodsView.swift; sourceTree = "<group>"; };
+		F0000011 /* PaymentMethodsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentMethodsViewModel.swift; sourceTree = "<group>"; };
+		F0000012 /* NotificationPreferencesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationPreferencesView.swift; sourceTree = "<group>"; };
+		F0000020 /* EmployerActionCardCarousel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmployerActionCardCarousel.swift; sourceTree = "<group>"; };
+		F0000022 /* EmployerActionCarouselViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmployerActionCarouselViewModel.swift; sourceTree = "<group>"; };
+		E0000010 /* GigHourWidgetsBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GigHourWidgetsBundle.swift; sourceTree = "<group>"; };
+		E0000011 /* WorkLiveActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkLiveActivity.swift; sourceTree = "<group>"; };
+		E0000012 /* GigHourWidgets-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		E0000020 /* GigHourWidgetsExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = GigHourWidgetsExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		C0000011 /* ConversationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationViewModel.swift; sourceTree = "<group>"; };
 		C0000012 /* ConversationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationView.swift; sourceTree = "<group>"; };
 		C0000013 /* MessagesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagesViewModel.swift; sourceTree = "<group>"; };
@@ -151,9 +232,20 @@
 			children = (
 				A1000008 /* Config.xcconfig */,
 				A1000051 /* iosApp */,
+				E0000050 /* GigHourWidgets */,
 				A1000052 /* Frameworks */,
 				A1000053 /* Products */,
 			);
+			sourceTree = "<group>";
+		};
+		E0000050 /* GigHourWidgets */ = {
+			isa = PBXGroup;
+			children = (
+				E0000010 /* GigHourWidgetsBundle.swift */,
+				E0000011 /* WorkLiveActivity.swift */,
+				E0000012 /* GigHourWidgets-Info.plist */,
+			);
+			path = GigHourWidgets;
 			sourceTree = "<group>";
 		};
 		A1000051 /* iosApp */ = {
@@ -183,6 +275,7 @@
 			isa = PBXGroup;
 			children = (
 				A1000009 /* iosApp.app */,
+				E0000020 /* GigHourWidgetsExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -198,6 +291,9 @@
 				A100000E /* MyApplicationsView.swift */,
 				A100000F /* EarningsViewModel.swift */,
 				B0000020 /* EarningsView.swift */,
+				F0000058 /* HawkeyeView.swift */,
+				F0000060 /* JobSearchView.swift */,
+				F0000062 /* SavedSearchesView.swift */,
 				B0000021 /* ProfileViewModel.swift */,
 				A1000022 /* ProfileView.swift */,
 				A1000023 /* NotificationsViewModel.swift */,
@@ -206,6 +302,9 @@
 				B0000050 /* Employer */,
 				C0000050 /* WorkSession */,
 				C0000051 /* Dashboard */,
+				D0000042 /* Settings */,
+				D0000088 /* Wallet */,
+				D0000094 /* LiveActivity */,
 				C0000052 /* Payments */,
 				C0000053 /* Splash */,
 				C0000054 /* Swipe */,
@@ -251,6 +350,7 @@
 			children = (
 				C000000F /* DetailedHistoryCard.swift */,
 				C0000010 /* ApplicationStatusView.swift */,
+				D0000070 /* WorkInProgressDetailCard.swift */,
 			);
 			path = History;
 			sourceTree = "<group>";
@@ -263,6 +363,14 @@
 				B0000042 /* PostJobView.swift */,
 				B0000043 /* ApplicantsViewModel.swift */,
 				B0000044 /* ApplicantsView.swift */,
+				F0000040 /* EmployerProfileView.swift */,
+				F0000050 /* EmployerProfileEditView.swift */,
+				F0000052 /* IndiaData.swift */,
+				F0000054 /* AnalyticsView.swift */,
+				F0000056 /* ActivitiesView.swift */,
+				F0000064 /* EditJobView.swift */,
+				F0000066 /* WorkerProfileView.swift */,
+				F0000042 /* ExpiringJobsView.swift */,
 			);
 			path = Employer;
 			sourceTree = "<group>";
@@ -281,8 +389,46 @@
 			children = (
 				C0000003 /* DashboardViewModel.swift */,
 				C0000004 /* DashboardView.swift */,
+				F0000020 /* EmployerActionCardCarousel.swift */,
+				F0000022 /* EmployerActionCarouselViewModel.swift */,
+				D0000030 /* ActionCarouselViewModel.swift */,
+				D0000031 /* ActionCardCarousel.swift */,
+				D0000050 /* CompletionCodeSheet.swift */,
+				D0000060 /* ActiveJobBar.swift */,
+				D0000062 /* ActiveJobBarViewModel.swift */,
 			);
 			path = Dashboard;
+			sourceTree = "<group>";
+		};
+		D0000042 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				D0000041 /* SettingsView.swift */,
+				F0000010 /* PaymentMethodsView.swift */,
+				F0000011 /* PaymentMethodsViewModel.swift */,
+				F0000012 /* NotificationPreferencesView.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		D0000088 /* Wallet */ = {
+			isa = PBXGroup;
+			children = (
+				D0000080 /* WalletView.swift */,
+				D0000082 /* WalletViewModel.swift */,
+				D0000084 /* WithdrawalsView.swift */,
+				D0000086 /* WithdrawalsViewModel.swift */,
+			);
+			path = Wallet;
+			sourceTree = "<group>";
+		};
+		D0000094 /* LiveActivity */ = {
+			isa = PBXGroup;
+			children = (
+				D0000090 /* WorkActivityAttributes.swift */,
+				D0000092 /* LiveWorkActivityManager.swift */,
+			);
+			path = LiveActivity;
 			sourceTree = "<group>";
 		};
 		C0000052 /* Payments */ = {
@@ -291,6 +437,8 @@
 				C0000005 /* PaymentsViewModel.swift */,
 				C0000006 /* PaymentsView.swift */,
 				C0000007 /* SafariSheet.swift */,
+				F0000030 /* SpendingView.swift */,
+				F0000032 /* SpendingViewModel.swift */,
 			);
 			path = Payments;
 			sourceTree = "<group>";
@@ -337,15 +485,32 @@
 				A1000040 /* Frameworks */,
 				A1000062 /* Resources */,
 				A1000030 /* Embed Frameworks */,
+				E0000070 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				E0000031 /* PBXTargetDependency */,
 			);
 			name = iosApp;
 			productName = iosApp;
 			productReference = A1000009 /* iosApp.app */;
 			productType = "com.apple.product-type.application";
+		};
+		E0000080 /* GigHourWidgetsExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E0000090 /* Build configuration list for PBXNativeTarget "GigHourWidgetsExtension" */;
+			buildPhases = (
+				E0000060 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = GigHourWidgetsExtension;
+			productName = GigHourWidgetsExtension;
+			productReference = E0000020 /* GigHourWidgetsExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -380,6 +545,7 @@
 			projectRoot = "";
 			targets = (
 				A1000060 /* iosApp */,
+				E0000080 /* GigHourWidgetsExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -433,6 +599,24 @@
 		};
 /* End PBXShellScriptBuildPhase section */
 
+/* Begin PBXContainerItemProxy section */
+		E0000030 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A1000090 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E0000080;
+			remoteInfo = GigHourWidgetsExtension;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXTargetDependency section */
+		E0000031 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E0000080 /* GigHourWidgetsExtension */;
+			targetProxy = E0000030 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin PBXSourcesBuildPhase section */
 		A1000061 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -449,6 +633,11 @@
 				A1000019 /* MyApplicationsView.swift in Sources */,
 				A100001A /* EarningsViewModel.swift in Sources */,
 				A100001B /* EarningsView.swift in Sources */,
+				F0000059 /* HawkeyeView.swift in Sources */,
+				F0000061 /* JobSearchView.swift in Sources */,
+				F0000063 /* SavedSearchesView.swift in Sources */,
+				F0000065 /* EditJobView.swift in Sources */,
+				F0000067 /* WorkerProfileView.swift in Sources */,
 				A100001C /* ProfileViewModel.swift in Sources */,
 				A100001D /* ProfileView.swift in Sources */,
 				A100001E /* NotificationsViewModel.swift in Sources */,
@@ -459,13 +648,27 @@
 				B0000032 /* PostJobView.swift in Sources */,
 				B0000033 /* ApplicantsViewModel.swift in Sources */,
 				B0000034 /* ApplicantsView.swift in Sources */,
+				F0000041 /* EmployerProfileView.swift in Sources */,
+				F0000051 /* EmployerProfileEditView.swift in Sources */,
+				F0000053 /* IndiaData.swift in Sources */,
+				F0000055 /* AnalyticsView.swift in Sources */,
+				F0000057 /* ActivitiesView.swift in Sources */,
+				F0000043 /* ExpiringJobsView.swift in Sources */,
 				C0000031 /* WorkSessionViewModel.swift in Sources */,
 				C0000032 /* WorkSessionView.swift in Sources */,
 				C0000033 /* DashboardViewModel.swift in Sources */,
 				C0000034 /* DashboardView.swift in Sources */,
+				D0000032 /* ActionCarouselViewModel.swift in Sources */,
+				D0000033 /* ActionCardCarousel.swift in Sources */,
+				D0000051 /* CompletionCodeSheet.swift in Sources */,
+				D0000061 /* ActiveJobBar.swift in Sources */,
+				D0000063 /* ActiveJobBarViewModel.swift in Sources */,
+				D0000040 /* SettingsView.swift in Sources */,
 				C0000035 /* PaymentsViewModel.swift in Sources */,
 				C0000036 /* PaymentsView.swift in Sources */,
 				C0000037 /* SafariSheet.swift in Sources */,
+				F0000031 /* SpendingView.swift in Sources */,
+				F0000033 /* SpendingViewModel.swift in Sources */,
 				C0000038 /* SplashView.swift in Sources */,
 				C0000039 /* JobSwipeViewModel.swift in Sources */,
 				C000003A /* JobSwipeView.swift in Sources */,
@@ -481,10 +684,32 @@
 				C000004B /* Localization.swift in Sources */,
 				C000003F /* DetailedHistoryCard.swift in Sources */,
 				C0000040 /* ApplicationStatusView.swift in Sources */,
+				D0000071 /* WorkInProgressDetailCard.swift in Sources */,
+				D0000081 /* WalletView.swift in Sources */,
+				D0000083 /* WalletViewModel.swift in Sources */,
+				D0000085 /* WithdrawalsView.swift in Sources */,
+				D0000087 /* WithdrawalsViewModel.swift in Sources */,
+				D0000091 /* WorkActivityAttributes.swift in Sources */,
+				D0000093 /* LiveWorkActivityManager.swift in Sources */,
+				F0000001 /* PaymentMethodsView.swift in Sources */,
+				F0000002 /* PaymentMethodsViewModel.swift in Sources */,
+				F0000003 /* NotificationPreferencesView.swift in Sources */,
+				F0000021 /* EmployerActionCardCarousel.swift in Sources */,
+				F0000023 /* EmployerActionCarouselViewModel.swift in Sources */,
 				C0000041 /* ConversationViewModel.swift in Sources */,
 				C0000042 /* ConversationView.swift in Sources */,
 				C0000043 /* MessagesViewModel.swift in Sources */,
 				C0000044 /* MessagesView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E0000060 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E0000001 /* GigHourWidgetsBundle.swift in Sources */,
+				E0000002 /* WorkLiveActivity.swift in Sources */,
+				E0000003 /* WorkActivityAttributes.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -640,6 +865,57 @@
 			};
 			name = Release;
 		};
+		E0000091 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = A1000008 /* Config.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = GigHourWidgets/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = GigHour;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "$(PRODUCT_BUNDLE_IDENTIFIER).GigHourWidgets";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		E0000092 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = A1000008 /* Config.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = GigHourWidgets/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = GigHour;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "$(PRODUCT_BUNDLE_IDENTIFIER).GigHourWidgets";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -657,6 +933,15 @@
 			buildConfigurations = (
 				A1000100 /* Debug */,
 				A1000101 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E0000090 /* Build configuration list for PBXNativeTarget "GigHourWidgetsExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E0000091 /* Debug */,
+				E0000092 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

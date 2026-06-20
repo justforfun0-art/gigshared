@@ -14,6 +14,14 @@ enum DrawerAction {
     case tab(Int)
     case messages
     case assistant
+    case wallet
+    case spending
+    case expiringJobs
+    case activities
+    case analytics
+    case hawkeye
+    case jobSearch
+    case savedSearches
     case help
     case logout
 }
@@ -28,6 +36,14 @@ struct SideMenuDrawer: View {
     let onSelectTab: (Int) -> Void
     let onMessages: () -> Void
     let onAssistant: () -> Void
+    var onWallet: () -> Void = {}
+    var onSpending: () -> Void = {}
+    var onExpiringJobs: () -> Void = {}
+    var onActivities: () -> Void = {}
+    var onAnalytics: () -> Void = {}
+    var onHawkeye: () -> Void = {}
+    var onJobSearch: () -> Void = {}
+    var onSavedSearches: () -> Void = {}
     let onHelp: () -> Void
     let onLogout: () -> Void
     let onClose: () -> Void
@@ -46,6 +62,10 @@ struct SideMenuDrawer: View {
                 DrawerItem(label: L("nav_my_jobs"), icon: "briefcase", action: .tab(1)),
                 DrawerItem(label: L("nav_employer_applications"), icon: "person.2", action: .tab(2)),
                 DrawerItem(label: L("nav_payments"), icon: "creditcard", action: .tab(3)),
+                DrawerItem(label: L("nav_analytics"), icon: "chart.line.uptrend.xyaxis", action: .analytics),
+                DrawerItem(label: L("drawer_activities"), icon: "clock.arrow.circlepath", action: .activities),
+                DrawerItem(label: L("spending"), icon: "chart.pie", action: .spending),
+                DrawerItem(label: L("expiring_jobs_title"), icon: "clock.badge.exclamationmark", action: .expiringJobs),
                 DrawerItem(label: L("nav_messages"), icon: "bubble.left.and.bubble.right", action: .messages),
                 DrawerItem(label: L("assistant_title"), icon: "sparkles", action: .assistant),
                 DrawerItem(label: L("nav_profile"), icon: "person.crop.circle", action: .tab(4)),
@@ -55,8 +75,12 @@ struct SideMenuDrawer: View {
             return [
                 DrawerItem(label: L("nav_dashboard"), icon: "house", action: .tab(0)),
                 DrawerItem(label: L("nav_jobs"), icon: "briefcase", action: .tab(1)),
+                DrawerItem(label: L("search_jobs"), icon: "magnifyingglass", action: .jobSearch),
+                DrawerItem(label: L("saved_searches_title"), icon: "bookmark", action: .savedSearches),
                 DrawerItem(label: L("nav_applications"), icon: "clock.arrow.circlepath", action: .tab(2)),
                 DrawerItem(label: L("nav_earnings"), icon: "creditcard", action: .tab(3)),
+                DrawerItem(label: L("drawer_my_analytics"), icon: "chart.line.uptrend.xyaxis", action: .hawkeye),
+                DrawerItem(label: L("wallet_title"), icon: "wallet.pass", action: .wallet),
                 DrawerItem(label: L("nav_messages"), icon: "bubble.left.and.bubble.right", action: .messages),
                 DrawerItem(label: L("assistant_title"), icon: "sparkles", action: .assistant),
                 DrawerItem(label: L("nav_profile"), icon: "person.crop.circle", action: .tab(4)),
@@ -154,6 +178,14 @@ struct SideMenuDrawer: View {
         case .tab(let i): onSelectTab(i)
         case .messages: onMessages()
         case .assistant: onAssistant()
+        case .wallet: onWallet()
+        case .spending: onSpending()
+        case .expiringJobs: onExpiringJobs()
+        case .activities: onActivities()
+        case .analytics: onAnalytics()
+        case .hawkeye: onHawkeye()
+        case .jobSearch: onJobSearch()
+        case .savedSearches: onSavedSearches()
         case .help: onHelp()
         case .logout: onLogout()
         }

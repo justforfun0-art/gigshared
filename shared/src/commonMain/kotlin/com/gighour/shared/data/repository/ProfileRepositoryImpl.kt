@@ -5,13 +5,24 @@ import com.gighour.shared.data.remote.EmployerProfileRequest
 import com.gighour.shared.data.remote.ProfileApi
 import com.gighour.shared.domain.model.EmployeeProfile
 import com.gighour.shared.domain.model.EmployerProfile
+import com.gighour.shared.domain.repository.EmployeeReview
 import com.gighour.shared.domain.repository.ProfileRepository
+import com.gighour.shared.domain.repository.UserRating
 import com.gighour.shared.util.Logger
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.postgrest.from
+import io.github.jan.supabase.postgrest.postgrest
+import io.github.jan.supabase.postgrest.query.Columns
+import io.github.jan.supabase.postgrest.query.Order
+import io.github.jan.supabase.postgrest.rpc
 import io.github.jan.supabase.storage.storage
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
 
 /**
  * KMP port of Gigand's ProfileRepositoryImpl. Supabase-first reads + Ktor
@@ -155,6 +166,108 @@ class ProfileRepositoryImpl(
             Result.failure(e)
         }
     }
+
+    override suspend fun getEmployeeRating(userId: String): Result<UserRating> {
+        return try {
+            // Composite GigHour Score from the read-only compute_worker_rating
+            // RPC (completion quality + reviews + experience + tenure − no-show).
+            // NOT a raw review average. The fn returns NULL rating for
+            // provisional workers (no completed jobs AND no reviews).
+            val result = supabaseClient.postgrest.rpc(
+                function = "compute_worker_rating",
+                parameters = buildJsonObject { put("p_worker_id", userId) },
+            )
+            val row = rpcJson.decodeFromString<List<WorkerRatingRow>>(result.data).firstOrNull()
+            if (row?.rating == null) {
+                // Provisional / no track record → no stars.
+                Result.success(
+                    UserRating(
+                        hasRating = false,
+                        reviewCount = row?.reviewCount ?: 0,
+                        sampleCount = row?.sampleCount ?: 0,
+                    )
+                )
+            } else {
+                Result.success(
+                    UserRating(
+                        average = row.rating,
+                        stars = row.stars ?: row.rating,
+                        hasRating = true,
+                        reviewCount = row.reviewCount ?: 0,
+                        sampleCount = row.sampleCount ?: 0,
+                        completionRate = row.completionRate,
+                    )
+                )
+            }
+        } catch (e: Exception) {
+            Logger.e(TAG, "getEmployeeRating failed", e)
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun getEmployeeReviews(userId: String): Result<List<EmployeeReview>> {
+        return try {
+            val rows = supabaseClient.from("reviews")
+                .select(Columns.raw("id, rating, comment, created_at, reviewer_id")) {
+                    filter { eq("reviewee_id", userId) }
+                    order("created_at", Order.DESCENDING)
+                    limit(10)
+                }
+                .decodeList<ReviewRow>()
+
+            if (rows.isEmpty()) return Result.success(emptyList())
+
+            // Resolve reviewer (employer) company names in one batch query.
+            val reviewerIds = rows.map { it.reviewerId }.distinct()
+            val names: Map<String, String> = if (reviewerIds.isNotEmpty()) {
+                supabaseClient.from("employer_profiles")
+                    .select(Columns.raw("user_id, company_name")) {
+                        filter { isIn("user_id", reviewerIds) }
+                    }
+                    .decodeList<EmployerNameRow>()
+                    .associate { it.userId to (it.companyName ?: "Employer") }
+            } else emptyMap()
+
+            Result.success(
+                rows.map {
+                    EmployeeReview(
+                        reviewerName = names[it.reviewerId] ?: "Employer",
+                        rating = it.rating,
+                        comment = it.comment.orEmpty(),
+                        createdAt = it.createdAt,
+                    )
+                }
+            )
+        } catch (e: Exception) {
+            Logger.e(TAG, "getEmployeeReviews failed", e)
+            Result.failure(e)
+        }
+    }
+
+    @Serializable
+    private data class ReviewRow(
+        val rating: Int,
+        val comment: String? = null,
+        @SerialName("created_at") val createdAt: String? = null,
+        @SerialName("reviewer_id") val reviewerId: String,
+    )
+
+    @Serializable
+    private data class EmployerNameRow(
+        @SerialName("user_id") val userId: String,
+        @SerialName("company_name") val companyName: String? = null,
+    )
+
+    @Serializable
+    private data class WorkerRatingRow(
+        val rating: Double? = null,
+        val stars: Double? = null,
+        @SerialName("sample_count") val sampleCount: Int? = null,
+        @SerialName("review_count") val reviewCount: Int? = null,
+        @SerialName("completion_rate") val completionRate: Double? = null,
+    )
+
+    private val rpcJson = Json { ignoreUnknownKeys = true; isLenient = true }
 
     private fun isNoRowsFound(statusCode: Int, errorBody: String?): Boolean {
         if (statusCode == 404) return true

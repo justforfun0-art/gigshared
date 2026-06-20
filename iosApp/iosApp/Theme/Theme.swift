@@ -120,3 +120,28 @@ struct StatusBadgeView: View {
             .background(s.background, in: Capsule())
     }
 }
+
+// MARK: - Currency formatting
+
+/// Formats a rupee amount with grouping + 2 decimals, e.g. "₹1,234.50".
+/// NOTE: Swift's String(format: "%,.2f", …) does NOT support the ',' grouping
+/// flag (that's a Java/Kotlin printf feature) — it emits the literal ",.2f".
+/// Use this NumberFormatter-based helper instead.
+enum Money {
+    private static let formatter: NumberFormatter = {
+        let f = NumberFormatter()
+        f.numberStyle = .decimal
+        f.minimumFractionDigits = 2
+        f.maximumFractionDigits = 2
+        f.locale = Locale(identifier: "en_IN")   // Indian digit grouping
+        return f
+    }()
+
+    /// "₹1,234.50". `decimals: 0` for whole rupees ("₹1,234").
+    static func rupees(_ amount: Double, decimals: Int = 2) -> String {
+        formatter.minimumFractionDigits = decimals
+        formatter.maximumFractionDigits = decimals
+        let n = formatter.string(from: NSNumber(value: amount)) ?? String(format: "%.\(decimals)f", amount)
+        return "₹" + n
+    }
+}

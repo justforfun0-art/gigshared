@@ -197,6 +197,35 @@ class ApplicationRepositoryImpl(
         }
     }
 
+    override suspend fun getActiveEmployerApplications(employerId: String): Result<List<Application>> {
+        return try {
+            val results = supabaseClient.from("applications")
+                .select(Columns.raw("*, job:jobs!inner(*, employer_profiles(*)), employee_profiles(*)")) {
+                    filter {
+                        eq("jobs.employer_id", employerId)
+                        isIn("status", ACTIVE_DASHBOARD_STATUSES)
+                    }
+                    order("created_at", Order.DESCENDING)
+                }
+                .decodeList<Application>()
+            Result.success(results)
+        } catch (e: Exception) {
+            Logger.e(TAG, "getActiveEmployerApplications: Supabase failed, trying REST", e)
+            try {
+                val response = applicationsApi.getApplications(employerId = employerId)
+                if (response.success) {
+                    val filtered = response.applications.filter { it.status.name in ACTIVE_DASHBOARD_STATUSES }
+                    Result.success(filtered)
+                } else {
+                    Result.failure(Exception(response.error ?: "Failed to fetch applications"))
+                }
+            } catch (restError: Exception) {
+                Logger.e(TAG, "getActiveEmployerApplications: REST also failed", restError)
+                Result.failure(e)
+            }
+        }
+    }
+
     override suspend fun getEmployeeApplicationsPage(
         employeeId: String,
         limit: Int,

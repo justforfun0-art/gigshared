@@ -29,6 +29,7 @@ final class AppContainer {
     let notifications: any NotificationRepository
     let referral: any ReferralRepository
     let messages: any MessageRepository
+    let savedSearches: any SavedSearchesRepository
     let assistant: AssistantEngine
 
     init(config: BackendConfig) {
@@ -70,9 +71,10 @@ final class AppContainer {
         self.payouts = PayoutRepositoryImpl(payoutsHistoryApi: PayoutsHistoryApi(client: api))
         self.beneficiaries = BeneficiaryRepositoryImpl(beneficiariesApi: BeneficiariesApi(client: api))
         self.dashboard = DashboardRepositoryImpl(supabaseClient: supabase, tokenStore: tokenStore)
-        self.notifications = NotificationRepositoryImpl(api: NotificationsApi(client: api), serverClock: serverClock)
+        self.notifications = NotificationRepositoryImpl(api: NotificationsApi(client: api), serverClock: serverClock, prefsApi: NotificationPreferencesApi(client: api))
         self.referral = ReferralRepositoryImpl(supabaseClient: supabase)
         self.messages = MessageRepositoryImpl(supabaseClient: supabase, messagesApi: MessagesApi(client: api))
+        self.savedSearches = SavedSearchesRepositoryImpl(api: SavedSearchesApi(client: api))
         self.assistant = AssistantEngine(
             jobs: jobs,
             applications: applications,

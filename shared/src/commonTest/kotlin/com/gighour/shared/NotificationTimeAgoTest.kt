@@ -46,7 +46,10 @@ class NotificationTimeAgoTest {
                 ),
             ),
         )
-        val repo = NotificationRepositoryImpl(stubApi, clock)
+        val repo = NotificationRepositoryImpl(
+            stubApi, clock,
+            com.gighour.shared.data.remote.NotificationPreferencesApi(stubClient()),
+        )
         val page = repo.getNotifications(50, 0).getOrThrow()
         val items = page.items
 

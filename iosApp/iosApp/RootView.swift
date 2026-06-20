@@ -16,6 +16,16 @@ struct RootView: View {
     @State private var showAssistant = false
     @State private var showMessages = false
     @State private var showDrawer = false
+    @State private var showWallet = false
+    @State private var showSpending = false
+    @State private var showExpiringJobs = false
+    @State private var showActivities = false
+    @State private var showAnalytics = false
+    @State private var showHawkeye = false
+    @State private var showJobSearch = false
+    @State private var showSavedSearches = false
+    /// Active WORK_IN_PROGRESS application opened from the floating job bar.
+    @State private var activeJobApp: Application?
 
     init(container: AppContainer) {
         self.container = container
@@ -65,6 +75,16 @@ struct RootView: View {
                 )
             }
 
+            // Floating live work-timer widget (employee only) — Android
+            // FloatingWorkTimer parity. Draggable, collapsible; floats over
+            // every tab while a WORK_IN_PROGRESS shift is active.
+            if !isEmployer {
+                ActiveJobBar(applications: container.applications,
+                             employeeId: session.userId,
+                             onOpen: { activeJobApp = $0 })
+                    .zIndex(1)
+            }
+
             // Side menu drawer (Android NavigationDrawer), slides in from the
             // left over a scrim when the nav-bar hamburger is tapped.
             if showDrawer {
@@ -75,6 +95,14 @@ struct RootView: View {
                     onSelectTab: { selected = $0 },
                     onMessages: { showMessages = true },
                     onAssistant: { showAssistant = true },
+                    onWallet: { showDrawer = false; showWallet = true },
+                    onSpending: { showDrawer = false; showSpending = true },
+                    onExpiringJobs: { showDrawer = false; showExpiringJobs = true },
+                    onActivities: { showDrawer = false; showActivities = true },
+                    onAnalytics: { showDrawer = false; showAnalytics = true },
+                    onHawkeye: { showDrawer = false; showHawkeye = true },
+                    onJobSearch: { showDrawer = false; showJobSearch = true },
+                    onSavedSearches: { showDrawer = false; showSavedSearches = true },
                     onHelp: { showAssistant = true },   // route Help to the assistant for now
                     onLogout: { Task { await auth.signOut() } },
                     onClose: { withAnimation(.easeInOut(duration: 0.25)) { showDrawer = false } }
@@ -90,6 +118,48 @@ struct RootView: View {
         }
         .sheet(isPresented: $showMessages) {
             MessagesView(repo: container.messages, myUserId: session.userId)
+        }
+        .sheet(isPresented: $showWallet) {
+            WalletView(dashboard: container.dashboard,
+                       profileRepo: container.profile,
+                       payouts: container.payouts,
+                       userId: session.userId)
+        }
+        .sheet(isPresented: $showSpending) {
+            SpendingView(applications: container.applications, employerId: session.userId)
+        }
+        .sheet(isPresented: $showExpiringJobs) {
+            ExpiringJobsView(jobs: container.jobs, employerId: session.userId)
+        }
+        .sheet(isPresented: $showActivities) {
+            ActivitiesView(jobs: container.jobs, applications: container.applications,
+                           employerId: session.userId)
+        }
+        .sheet(isPresented: $showAnalytics) {
+            AnalyticsView(jobs: container.jobs, applications: container.applications,
+                          dashboard: container.dashboard, employerId: session.userId)
+        }
+        .sheet(isPresented: $showHawkeye) {
+            HawkeyeView(applications: container.applications, employeeId: session.userId)
+        }
+        .sheet(isPresented: $showJobSearch) {
+            JobSearchView(jobs: container.jobs, applications: container.applications,
+                          employeeId: session.userId)
+        }
+        .sheet(isPresented: $showSavedSearches) {
+            SavedSearchesView(savedSearches: container.savedSearches) { _ in
+                // Re-run a saved search: close this sheet and open JobSearch.
+                showSavedSearches = false
+                showJobSearch = true
+            }
+        }
+        .sheet(item: $activeJobApp) { app in
+            NavigationStack {
+                ApplicationStatusView(application: app,
+                                      messages: container.messages,
+                                      myUserId: session.userId,
+                                      applications: container.applications)
+            }
         }
     }
 
@@ -125,6 +195,11 @@ struct RootView: View {
                 DashboardView(dashboard: container.dashboard,
                               referralRepo: container.referral,
                               notifications: container.notifications,
+                              swipeJobs: container.jobs,
+                              applications: container.applications,
+                              messages: container.messages,
+                              payments: container.payments,
+                              onSelectTab: { selected = $0 },
                               session: session)
             case 1:
                 MyJobsView(container: container, employerId: session.userId)
@@ -153,6 +228,7 @@ struct RootView: View {
                               swipeJobs: container.jobs,
                               applications: container.applications,
                               profile: container.profile,
+                              messages: container.messages,
                               session: session)
             case 1:
                 JobFeedView(jobs: container.jobs,
@@ -173,8 +249,24 @@ struct RootView: View {
 
     @ViewBuilder
     private func profileScreen(session: AuthData) -> some View {
-        ProfileView(profileRepo: container.profile, session: session) {
-            Task { await auth.signOut() }
+        if session.userType?.lowercased() == "employer" {
+            EmployerProfileView(profileRepo: container.profile,
+                                dashboard: container.dashboard,
+                                jobs: container.jobs,
+                                notifications: container.notifications,
+                                session: session,
+                                onHelp: { showAssistant = true },
+                                onSignOut: { Task { await auth.signOut() } },
+                                onSelectTab: { selected = $0 })
+        } else {
+            ProfileView(profileRepo: container.profile,
+                        dashboard: container.dashboard,
+                        notifications: container.notifications,
+                        beneficiaries: container.beneficiaries,
+                        onHelp: { showAssistant = true },
+                        session: session) {
+                Task { await auth.signOut() }
+            }
         }
     }
 }

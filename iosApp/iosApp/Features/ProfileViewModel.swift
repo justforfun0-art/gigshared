@@ -16,14 +16,28 @@ final class ProfileViewModel: ObservableObject {
     @Published var isEditing = false
     @Published var actionError: String?
     @Published private(set) var isSavingPhoto = false
+    /// Headline stats for the profile (metric tiles + earnings + level), pulled
+    /// from the dashboard aggregate — matches Android's EmployeeProfileViewModel.
+    @Published private(set) var stats: EmployeeDashboardStats?
 
     private let profileRepo: any ProfileRepository
+    /// Optional so the profile still works if stats can't be fetched.
+    private let dashboard: (any DashboardRepository)?
     private let userId: String
 
-    init(profileRepo: any ProfileRepository, userId: String) {
+    init(profileRepo: any ProfileRepository,
+         dashboard: (any DashboardRepository)? = nil,
+         userId: String) {
         self.profileRepo = profileRepo
+        self.dashboard = dashboard
         self.userId = userId
     }
+
+    /// Real worker rating, averaged from the `reviews` table (reviewee_id =
+    /// userId). 0 with ratingCount == 0 means "no reviews yet" → the UI hides
+    /// the star row.
+    @Published private(set) var rating: Double = 0
+    @Published private(set) var ratingCount: Int = 0
 
     /// The currently loaded profile, if any (convenience for the edit sheet).
     var currentProfile: EmployeeProfile? {
@@ -38,6 +52,19 @@ final class ProfileViewModel: ObservableObject {
             state = .loaded(profile)
         } catch {
             state = .failed((error as NSError).localizedDescription)
+        }
+        // Stats are best-effort — a failure here shouldn't blank the profile.
+        if let dashboard {
+            stats = try? await dashboard.getEmployeeStatsOrThrow(userId: userId)
+        }
+        // Composite GigHour Score (best-effort). hasRating==false → provisional
+        // worker with no track record → keep rating 0 so the star row hides.
+        if let r = try? await IosHelpersKt.getEmployeeRatingOrThrow(profileRepo, userId: userId), r.hasRating {
+            rating = r.average
+            ratingCount = Int(r.reviewCount)
+        } else {
+            rating = 0
+            ratingCount = 0
         }
     }
 
