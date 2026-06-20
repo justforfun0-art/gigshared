@@ -86,16 +86,8 @@ struct DashboardView: View {
                 .padding()
             }
             .navigationTitle(viewModel.isEmployer ? L("ios_hiring_overview") : L("ios_your_dashboard"))
+            // Bell/messages/language now live in the global top bar (drawerToolbar).
             .drawerToolbar()
-            .toolbar {
-                if notifications != nil {
-                    ToolbarItem(placement: .topBarTrailing) {
-                        Button { showNotifications = true } label: {
-                            Image(systemName: "bell")
-                        }
-                    }
-                }
-            }
             .sheet(isPresented: $showNotifications) {
                 if let notifications {
                     // NotificationsView brings its own NavigationStack; present it

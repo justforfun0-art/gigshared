@@ -15,6 +15,7 @@ struct RootView: View {
     @State private var selected = 0
     @State private var showAssistant = false
     @State private var showMessages = false
+    @State private var showNotifications = false
     @State private var showDrawer = false
     @State private var showWallet = false
     @State private var showSpending = false
@@ -114,14 +115,19 @@ struct RootView: View {
                 .zIndex(2)
             }
         }
-        // Publish the "open drawer" action so each tab screen can show the
-        // hamburger leading nav-bar button via `.drawerToolbar()`.
+        // Publish the top-bar actions so every `.drawerToolbar()` screen shows
+        // the Android-style bar (hamburger + language/messages/notifications).
         .environment(\.openDrawer, { withAnimation(.easeInOut(duration: 0.25)) { showDrawer = true } })
+        .environment(\.topBarMessages, { showMessages = true })
+        .environment(\.topBarNotifications, { showNotifications = true })
         .sheet(isPresented: $showAssistant) {
             AssistantView(engine: container.assistant, userId: session.userId, isEmployer: isEmployer)
         }
         .sheet(isPresented: $showMessages) {
             MessagesView(repo: container.messages, myUserId: session.userId)
+        }
+        .sheet(isPresented: $showNotifications) {
+            NotificationsView(notifications: container.notifications)
         }
         .sheet(isPresented: $showWallet) {
             WalletView(dashboard: container.dashboard,

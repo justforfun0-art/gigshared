@@ -70,11 +70,7 @@ struct EmployerProfileView: View {
                     Button { showEdit = true } label: { Image(systemName: "pencil") }
                         .tint(accent)
                 }
-                if notifications != nil {
-                    ToolbarItem(placement: .topBarTrailing) {
-                        Button { showNotifications = true } label: { Image(systemName: "bell") }
-                    }
-                }
+                // Bell now lives in the global top bar (drawerToolbar).
             }
             .sheet(isPresented: $showNotifications) {
                 if let notifications { NotificationsView(notifications: notifications) }
