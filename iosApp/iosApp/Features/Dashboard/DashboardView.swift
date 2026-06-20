@@ -239,22 +239,24 @@ struct DashboardView: View {
         case .idle, .loading:
             ProgressView().frame(maxWidth: .infinity).padding(.top, 40)
         case .employee(let s):
+            // Tiles navigate like Android (employee tabs: 2=Applications, 3=Earnings).
             LazyVGrid(columns: columns, spacing: 12) {
-                StatTile(title: "Applications", value: "\(s.totalApplications)", icon: "doc.text", tint: .blue)
-                StatTile(title: "Active jobs", value: "\(s.activeJobs)", icon: "bolt", tint: .orange)
-                StatTile(title: "Completed", value: "\(s.completedJobs)", icon: "checkmark.seal", tint: .green)
-                StatTile(title: "Earnings", value: "₹\(s.totalEarnings)", icon: "indianrupeesign.circle", tint: .green)
-                StatTile(title: "Pending pay", value: "₹\(s.pendingPayments)", icon: "hourglass", tint: .amber)
-                StatTile(title: "This month", value: "₹\(s.thisMonthEarnings)", icon: "calendar", tint: .purple)
+                StatTile(title: "Applications", value: "\(s.totalApplications)", icon: "doc.text", tint: .blue) { onSelectTab?(2) }
+                StatTile(title: "Active jobs", value: "\(s.activeJobs)", icon: "bolt", tint: .orange) { onSelectTab?(2) }
+                StatTile(title: "Completed", value: "\(s.completedJobs)", icon: "checkmark.seal", tint: .green) { onSelectTab?(2) }
+                StatTile(title: "Earnings", value: "₹\(s.totalEarnings)", icon: "indianrupeesign.circle", tint: .green) { onSelectTab?(3) }
+                StatTile(title: "Pending pay", value: "₹\(s.pendingPayments)", icon: "hourglass", tint: .amber) { onSelectTab?(3) }
+                StatTile(title: "This month", value: "₹\(s.thisMonthEarnings)", icon: "calendar", tint: .purple) { onSelectTab?(3) }
             }
         case .employer(let s):
+            // Tiles navigate like Android (employer tabs: 1=My Jobs, 2=Applications, 3=Payments).
             LazyVGrid(columns: columns, spacing: 12) {
-                StatTile(title: "Active jobs", value: "\(s.activeJobs)", icon: "bolt", tint: .orange)
-                StatTile(title: "All jobs", value: "\(s.totalJobs)", icon: "briefcase", tint: .blue)
-                StatTile(title: "Applications", value: "\(s.totalApplications)", icon: "doc.text", tint: .blue)
-                StatTile(title: "Pending review", value: "\(s.pendingReview)", icon: "person.crop.circle.badge.questionmark", tint: .amber)
-                StatTile(title: "Hired", value: "\(s.hiredWorkers)", icon: "person.2", tint: .green)
-                StatTile(title: "This month", value: "₹\(s.thisMonthSpent)", icon: "calendar", tint: .purple)
+                StatTile(title: "Active jobs", value: "\(s.activeJobs)", icon: "bolt", tint: .orange) { onSelectTab?(1) }
+                StatTile(title: "All jobs", value: "\(s.totalJobs)", icon: "briefcase", tint: .blue) { onSelectTab?(1) }
+                StatTile(title: "Applications", value: "\(s.totalApplications)", icon: "doc.text", tint: .blue) { onSelectTab?(2) }
+                StatTile(title: "Pending review", value: "\(s.pendingReview)", icon: "person.crop.circle.badge.questionmark", tint: .amber) { onSelectTab?(2) }
+                StatTile(title: "Hired", value: "\(s.hiredWorkers)", icon: "person.2", tint: .green) { onSelectTab?(2) }
+                StatTile(title: "This month", value: "₹\(s.thisMonthSpent)", icon: "calendar", tint: .purple) { onSelectTab?(3) }
             }
         case .failed(let message):
             VStack(spacing: 12) {
@@ -272,16 +274,29 @@ private struct StatTile: View {
     let value: String
     let icon: String
     let tint: Color
+    /// Tapping navigates to the related tab (Android StatCard onClick). Optional.
+    var onTap: (() -> Void)? = nil
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Image(systemName: icon).font(.title3).foregroundStyle(tint)
-            Text(value).font(.title2.weight(.bold)).lineLimit(1).minimumScaleFactor(0.6)
-            Text(title).font(.caption).foregroundStyle(.secondary)
+        Button { onTap?() } label: {
+            VStack(alignment: .leading, spacing: 8) {
+                HStack {
+                    Image(systemName: icon).font(.title3).foregroundStyle(tint)
+                    Spacer()
+                    if onTap != nil {
+                        Image(systemName: "chevron.right").font(.caption2).foregroundStyle(tint.opacity(0.6))
+                    }
+                }
+                Text(value).font(.title2.weight(.bold)).lineLimit(1).minimumScaleFactor(0.6)
+                Text(title).font(.caption).foregroundStyle(.secondary)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding()
+            .background(tint.opacity(0.10), in: RoundedRectangle(cornerRadius: 14))
+            .contentShape(Rectangle())
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding()
-        .background(tint.opacity(0.10), in: RoundedRectangle(cornerRadius: 14))
+        .buttonStyle(.plain)
+        .disabled(onTap == nil)
     }
 }
 
