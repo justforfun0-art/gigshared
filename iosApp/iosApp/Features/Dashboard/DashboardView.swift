@@ -31,6 +31,8 @@ struct DashboardView: View {
     @State private var showPayments = false
     @State private var showAnalytics = false
     @State private var showPostJob = false
+    /// Collapses the swipe section when the deck is empty (no jobs to swipe).
+    @State private var swipeDeckEmpty = false
 
     init(dashboard: any DashboardRepository,
          referralRepo: any ReferralRepository,
@@ -219,8 +221,14 @@ struct DashboardView: View {
             VStack(alignment: .leading, spacing: 10) {
                 Label(L("swipe_to_apply"), systemImage: "hand.draw")
                     .font(.headline)
-                JobSwipeView(jobs: swipeJobs, applications: applications, employeeId: employeeId, profile: profile)
-                    .frame(height: 460)
+                JobSwipeView(jobs: swipeJobs, applications: applications,
+                             employeeId: employeeId, profile: profile,
+                             onContentEmptyChange: { empty in
+                                 withAnimation(.easeInOut(duration: 0.2)) { swipeDeckEmpty = empty }
+                             })
+                    // Tall while there's a deck to swipe; compact when empty so
+                    // the "all caught up" state doesn't leave a big void.
+                    .frame(height: swipeDeckEmpty ? 220 : 460)
             }
         }
     }

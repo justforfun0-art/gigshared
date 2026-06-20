@@ -17,11 +17,26 @@ struct JobSwipeView: View {
     private let green = Color(red: 0x22/255, green: 0xC5/255, blue: 0x5E/255)
     private let red = Color(red: 0xEF/255, green: 0x44/255, blue: 0x44/255)
 
+    /// Reports whether the deck is currently empty/loading (no swipeable card),
+    /// so a host like the dashboard can collapse the reserved height.
+    var onContentEmptyChange: ((Bool) -> Void)? = nil
+
     init(jobs: any JobRepository, applications: any ApplicationRepository,
-         employeeId: String, profile: (any ProfileRepository)? = nil) {
+         employeeId: String, profile: (any ProfileRepository)? = nil,
+         onContentEmptyChange: ((Bool) -> Void)? = nil) {
         _viewModel = StateObject(wrappedValue: JobSwipeViewModel(
             jobs: jobs, applications: applications, employeeId: employeeId, profile: profile
         ))
+        self.onContentEmptyChange = onContentEmptyChange
+    }
+
+    /// True when there's no swipeable card to show (loaded-but-empty, or failed).
+    private var hasNoCard: Bool {
+        switch viewModel.state {
+        case .loaded: return viewModel.isEmpty
+        case .failed: return true
+        case .idle, .loading: return false
+        }
     }
 
     var body: some View {
@@ -51,6 +66,8 @@ struct JobSwipeView: View {
         }
         .task { await viewModel.load() }
         .animation(.spring(response: 0.35, dampingFraction: 0.7), value: viewModel.jobs.map(\.id))
+        .onChange(of: hasNoCard) { onContentEmptyChange?($0) }
+        .onAppear { onContentEmptyChange?(hasNoCard) }
     }
 
     // MARK: - Deck
@@ -211,14 +228,15 @@ struct JobSwipeView: View {
     }
 
     private var emptyDeck: some View {
-        VStack(spacing: 12) {
-            Image(systemName: "checkmark.circle").font(.system(size: 48)).foregroundStyle(green)
-            Text(L("ios_you_re_all_caught_up")).font(.headline)
+        VStack(spacing: 8) {
+            Image(systemName: "checkmark.circle").font(.system(size: 36)).foregroundStyle(green)
+            Text(L("ios_you_re_all_caught_up")).font(.subheadline.weight(.semibold))
             Text(L("ios_no_more_gigs_to_swipe_right_now_check_ba"))
-                .font(.subheadline).foregroundStyle(.secondary).multilineTextAlignment(.center)
-            Button(L("refresh")) { Task { await viewModel.load() } }.buttonStyle(.borderedProminent)
+                .font(.caption).foregroundStyle(.secondary).multilineTextAlignment(.center)
+            Button(L("refresh")) { Task { await viewModel.load() } }
+                .buttonStyle(.borderedProminent).controlSize(.small)
         }
-        .padding(32)
+        .padding(16)
     }
 
     private func retry(_ message: String) -> some View {
