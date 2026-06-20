@@ -424,3 +424,5 @@
 "withdraw_application" = "Withdraw Application";
 "browse_jobs_action" = "Browse Jobs";
 "ios_withdraw_confirm" = "Are you sure you want to withdraw this application? This cannot be undone.";
+
+"ios_enter_otp_to_start_work" = "Enter the OTP to start work";

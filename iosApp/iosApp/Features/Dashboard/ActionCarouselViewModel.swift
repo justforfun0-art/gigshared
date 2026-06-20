@@ -82,6 +82,19 @@ final class ActionCarouselViewModel: ObservableObject {
         await load()
     }
 
+    /// ACCEPTED → "Start Work": the worker generates the start OTP, which moves
+    /// the application to OTP_REQUESTED (Android's requestStartWorkOtp). Returns
+    /// the generated code so the UI can show the enter-OTP step next.
+    @discardableResult
+    func requestStartOtp(_ app: Application) async -> String? {
+        var generated: String?
+        await run(app.id) {
+            generated = try await IosHelpersKt.generateStartOtpOrThrow(self.applications, applicationId: app.id)
+        }
+        await load()
+        return generated
+    }
+
     /// OTP_REQUESTED → submit the start OTP (Android "enter_otp" dialog).
     func submitStartOtp(_ app: Application, otp: String) async {
         let code = otp.trimmingCharacters(in: .whitespaces)

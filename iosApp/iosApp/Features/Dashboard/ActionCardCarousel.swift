@@ -177,6 +177,12 @@ struct ActionCardCarousel: View {
         switch action {
         case .openDetails, .viewDetails, .view: detailTarget = app
         case .accept: acceptTarget = app
+        case .startWork:
+            // ACCEPTED: generate the start OTP (→ OTP_REQUESTED), then open the
+            // enter-OTP step so the worker enters the code right away.
+            Task {
+                if await viewModel.requestStartOtp(app) != nil { otpInput = ""; otpTarget = app }
+            }
         case .enterOtp: otpInput = ""; otpTarget = app
         case .completeWork: detailTarget = app   // completion flow lives on the detail screen
         case .showCode:
@@ -211,7 +217,7 @@ struct ActionCardCarousel: View {
 }
 
 /// Card button actions, mirroring Android's onAction strings.
-enum CardAction { case openDetails, viewDetails, view, accept, enterOtp, completeWork, showCode }
+enum CardAction { case openDetails, viewDetails, view, accept, startWork, enterOtp, completeWork, showCode }
 
 // MARK: - Per-status card dispatcher
 
@@ -378,19 +384,15 @@ private struct StartWorkCard: View {
                     Label(loc, systemImage: "mappin").font(.caption)
                         .foregroundStyle(GHTheme.onSurfaceVariant).lineLimit(1)
                 }
-                if isOtpReady {
-                    ctaButton(L("ios_enter_start_otp"), grad(0x10B981, 0x059669), icon: "key.fill", busy: isBusy) {
-                        onAction(.enterOtp)
-                    }
-                } else {
-                    // ACCEPTED is a waiting state in Android (no active CTA).
-                    HStack(spacing: 6) {
-                        Image(systemName: "clock").font(.caption)
-                        Text(L("ios_waiting_for_employer_otp")).font(.caption.weight(.medium))
-                    }
-                    .foregroundStyle(GHTheme.hex(0x059669))
-                    .frame(maxWidth: .infinity).padding(.vertical, 10)
-                    .background(GHTheme.hex(0xD1FAE5), in: Capsule())
+                // Android shows an active "Start Work" CTA for both ACCEPTED and
+                // OTP_REQUESTED (both open the start-OTP flow); the subtitle is
+                // what differs. OTP_REQUESTED → "Enter OTP"; ACCEPTED → "Start Work".
+                Text(isOtpReady ? L("ios_enter_otp_to_start_work") : L("ios_waiting_for_employer_otp"))
+                    .font(.caption2).foregroundStyle(GHTheme.onSurfaceVariant)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                ctaButton(isOtpReady ? L("ios_enter_start_otp") : L("start_work"),
+                          grad(0x10B981, 0x059669), icon: "key.fill", busy: isBusy) {
+                    onAction(isOtpReady ? .enterOtp : .startWork)
                 }
             }
             .padding(10)

@@ -423,3 +423,5 @@
 "withdraw_application" = "आवेदन वापस लें";
 "browse_jobs_action" = "नौकरियाँ देखें";
 "ios_withdraw_confirm" = "क्या आप वाकई यह आवेदन वापस लेना चाहते हैं? इसे पूर्ववत नहीं किया जा सकता।";
+
+"ios_enter_otp_to_start_work" = "काम शुरू करने के लिए OTP दर्ज करें";
