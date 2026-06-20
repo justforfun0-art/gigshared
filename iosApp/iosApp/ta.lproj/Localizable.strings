@@ -414,3 +414,7 @@
 "total_paid_label" = "Total Paid";
 "all_payments_label" = "All Payments";
 "status_paid" = "Paid";
+
+"no_jobs_nearby" = "No jobs nearby right now";
+"empty_jobs_desc" = "New gigs drop all the time — check back soon and you'll be first in line.";
+"empty_search_no_results_generic" = "No matches found";

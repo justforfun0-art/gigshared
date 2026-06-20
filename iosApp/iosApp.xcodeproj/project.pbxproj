@@ -21,6 +21,7 @@
 		A100001A /* EarningsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100000F /* EarningsViewModel.swift */; };
 		A100001B /* EarningsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0000020 /* EarningsView.swift */; };
 		F0000059 /* HawkeyeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0000058 /* HawkeyeView.swift */; };
+		F000006D /* EmptyStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F000006C /* EmptyStateView.swift */; };
 		F0000061 /* JobSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0000060 /* JobSearchView.swift */; };
 		F0000063 /* SavedSearchesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0000062 /* SavedSearchesView.swift */; };
 		F0000065 /* EditJobView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0000064 /* EditJobView.swift */; };
@@ -149,6 +150,7 @@
 		A1000025 /* JobDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobDetailView.swift; sourceTree = "<group>"; };
 		B0000020 /* EarningsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EarningsView.swift; sourceTree = "<group>"; };
 		F0000058 /* HawkeyeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HawkeyeView.swift; sourceTree = "<group>"; };
+		F000006C /* EmptyStateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyStateView.swift; sourceTree = "<group>"; };
 		F0000060 /* JobSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobSearchView.swift; sourceTree = "<group>"; };
 		F0000062 /* SavedSearchesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedSearchesView.swift; sourceTree = "<group>"; };
 		F0000064 /* EditJobView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditJobView.swift; sourceTree = "<group>"; };
@@ -296,6 +298,7 @@
 				A100000F /* EarningsViewModel.swift */,
 				B0000020 /* EarningsView.swift */,
 				F0000058 /* HawkeyeView.swift */,
+				F000006C /* EmptyStateView.swift */,
 				F0000060 /* JobSearchView.swift */,
 				F0000062 /* SavedSearchesView.swift */,
 				B0000021 /* ProfileViewModel.swift */,
@@ -640,6 +643,7 @@
 				A100001A /* EarningsViewModel.swift in Sources */,
 				A100001B /* EarningsView.swift in Sources */,
 				F0000059 /* HawkeyeView.swift in Sources */,
+				F000006D /* EmptyStateView.swift in Sources */,
 				F0000061 /* JobSearchView.swift in Sources */,
 				F0000063 /* SavedSearchesView.swift in Sources */,
 				F0000065 /* EditJobView.swift in Sources */,

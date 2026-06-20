@@ -47,10 +47,14 @@ struct JobFeedView: View {
         case .loaded(let allJobs):
             let jobs = viewModel.filtered(allJobs)
             if allJobs.isEmpty {
-                emptyState(title: "No jobs", systemImage: "tray", message: "Check back later.")
+                EmptyStateView(systemImage: "briefcase.fill",
+                               title: L("no_jobs_nearby"),
+                               message: L("empty_jobs_desc"))
             } else if jobs.isEmpty {
-                emptyState(title: "No matches", systemImage: "magnifyingglass",
-                           message: "No jobs match “\(viewModel.query)”.")
+                EmptyStateView(systemImage: "magnifyingglass",
+                               title: L("empty_search_no_results_generic"),
+                               message: "No jobs match “\(viewModel.query)”.",
+                               iconBG: GHTheme.hex(0xEDE9FE), iconFG: GHTheme.hex(0x7C3AED))
             } else {
                 ScrollView {
                     LazyVStack(spacing: 12) {
