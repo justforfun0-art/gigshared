@@ -442,3 +442,8 @@
 
 "share_code_to_verify" = "ಪೂರ್ಣಗೊಳಿಸುವಿಕೆಯನ್ನು ಪರಿಶೀಲಿಸಲು ಈ ಕೋಡ್ ಅನ್ನು ನಿಮ್ಮ ಉದ್ಯೋಗದಾತರಿಗೆ ಓದಿ";
 "generate_new_code" = "ಹೊಸ ಕೋಡ್ ರಚಿಸಿ";
+
+"ai_autofill" = "AI ಮೂಲಕ ಸ್ವಯಂ ಭರ್ತಿ ಮಾಡಿ";
+"ai_suggestions" = "AI ಸಲಹೆಗಳು";
+"apply_suggestions" = "ಸಲಹೆಗಳನ್ನು ಅನ್ವಯಿಸಿ";
+"category_label" = "ವರ್ಗ";

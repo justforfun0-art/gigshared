@@ -442,3 +442,8 @@
 
 "share_code_to_verify" = "పూర్తిని ధృవీకరించడానికి ఈ కోడ్‌ను మీ యజమానికి చదవండి";
 "generate_new_code" = "కొత్త కోడ్ రూపొందించు";
+
+"ai_autofill" = "AIతో స్వయంచాలకంగా నింపండి";
+"ai_suggestions" = "AI సూచనలు";
+"apply_suggestions" = "సూచనలను వర్తింపజేయి";
+"category_label" = "వర్గం";

@@ -443,3 +443,8 @@
 
 "share_code_to_verify" = "Read this code to your employer to verify completion";
 "generate_new_code" = "Generate New Code";
+
+"ai_autofill" = "Auto-fill with AI";
+"ai_suggestions" = "AI Suggestions";
+"apply_suggestions" = "Apply Suggestions";
+"category_label" = "Category";

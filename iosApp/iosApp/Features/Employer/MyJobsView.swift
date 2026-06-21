@@ -34,7 +34,8 @@ struct MyJobsView: View {
             .searchable(text: $viewModel.query, placement: .navigationBarDrawer(displayMode: .always),
                         prompt: L("my_jobs_search"))
             .sheet(isPresented: $showPost) {
-                PostJobView(jobs: container.jobs, employerId: employerId) { Task { await viewModel.load() } }
+                PostJobView(jobs: container.jobs, employerId: employerId,
+                            jobExtract: container.jobExtract) { Task { await viewModel.load() } }
             }
             .sheet(item: $editingJob) { job in
                 EditJobView(jobs: container.jobs, job: job) { Task { await viewModel.load() } }

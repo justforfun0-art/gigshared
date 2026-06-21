@@ -442,3 +442,8 @@
 
 "share_code_to_verify" = "पूर्णता सत्यापित करने के लिए यह कोड अपने नियोक्ता को पढ़ें";
 "generate_new_code" = "नया कोड बनाएँ";
+
+"ai_autofill" = "AI से ऑटो-भरें";
+"ai_suggestions" = "AI सुझाव";
+"apply_suggestions" = "सुझाव लागू करें";
+"category_label" = "श्रेणी";

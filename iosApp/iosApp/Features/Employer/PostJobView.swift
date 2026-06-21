@@ -6,6 +6,8 @@ struct PostJobView: View {
 
     let jobs: any JobRepository
     let employerId: String
+    /// Optional — enables the ✨ AI auto-fill from the description.
+    var jobExtract: (any JobExtractRepository)? = nil
     let onPosted: () -> Void
 
     @Environment(\.dismiss) private var dismiss
@@ -23,6 +25,10 @@ struct PostJobView: View {
     @State private var skills = ""
     @State private var busy = false
     @State private var error: String?
+    // AI auto-fill (extract-job).
+    @State private var aiBusy = false
+    @State private var suggestion: JobSuggestion?
+    @State private var category = ""
 
     var body: some View {
         NavigationStack {
@@ -30,6 +36,17 @@ struct PostJobView: View {
                 Section(L("job_label")) {
                     TextField("Title", text: $title)
                     TextField("Description", text: $description, axis: .vertical).lineLimit(2...5)
+                    if jobExtract != nil {
+                        Button { Task { await autoFill() } } label: {
+                            HStack {
+                                if aiBusy { ProgressView() }
+                                else { Image(systemName: "sparkles") }
+                                Text(L("ai_autofill")).fontWeight(.medium)
+                            }.foregroundStyle(GHTheme.hex(0x7C3AED))
+                        }
+                        .disabled(aiBusy || description.trimmingCharacters(in: .whitespaces).count < 8)
+                    }
+                    if let s = suggestion { suggestionCard(s) }
                     TextField("Location", text: $location)
                     TextField("Pay (e.g. ₹150/hr)", text: $salary)
                 }
@@ -62,6 +79,53 @@ struct PostJobView: View {
         }
     }
 
+    /// Call the AI to suggest category/skills/title/description from the free text.
+    private func autoFill() async {
+        guard let jobExtract else { return }
+        aiBusy = true; error = nil
+        defer { aiBusy = false }
+        do {
+            suggestion = try await IosHelpersKt.extractJobOrThrow(jobExtract, text: description)
+        } catch {
+            self.error = (error as NSError).localizedDescription
+        }
+    }
+
+    /// A card showing the AI suggestions with one-tap "Apply".
+    @ViewBuilder
+    private func suggestionCard(_ s: JobSuggestion) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Label(L("ai_suggestions"), systemImage: "sparkles")
+                .font(.caption.weight(.semibold)).foregroundStyle(GHTheme.hex(0x7C3AED))
+            if let c = s.category, !c.isEmpty { rowLine(L("category_label"), c) }
+            if !s.skills.isEmpty { rowLine(L("skills"), s.skills.joined(separator: ", ")) }
+            if let t = s.title, !t.isEmpty { rowLine("Title", t) }
+            Button(L("apply_suggestions")) { applySuggestion(s) }
+                .font(.caption.weight(.semibold)).buttonStyle(.borderedProminent)
+                .tint(GHTheme.hex(0x7C3AED)).controlSize(.small)
+        }
+        .padding(10)
+        .background(GHTheme.hex(0xF5F3FF), in: RoundedRectangle(cornerRadius: 10))
+        .listRowInsets(EdgeInsets(top: 6, leading: 16, bottom: 6, trailing: 16))
+    }
+
+    private func rowLine(_ label: String, _ value: String) -> some View {
+        HStack(alignment: .top, spacing: 6) {
+            Text(label + ":").font(.caption.weight(.medium)).foregroundStyle(GHTheme.onSurfaceVariant)
+            Text(value).font(.caption).foregroundStyle(GHTheme.onBackground)
+            Spacer(minLength: 0)
+        }
+    }
+
+    private func applySuggestion(_ s: JobSuggestion) {
+        if let t = s.title, !t.isEmpty, title.isEmpty { title = t }
+        if let c = s.category, !c.isEmpty { category = c }
+        if !s.skills.isEmpty { skills = s.skills.joined(separator: ", ") }
+        // SKIE renames the Kotlin `description` field → `description_`.
+        if let d = s.description_, !d.isEmpty { description = d }
+        suggestion = nil
+    }
+
     private func post() async {
         busy = true; error = nil
         defer { busy = false }
@@ -81,7 +145,8 @@ struct PostJobView: View {
                 skillsRequired: skillList,
                 state: state.isEmpty ? nil : state,
                 district: district.isEmpty ? nil : district,
-                mapLocation: mapLocation.isEmpty ? nil : mapLocation
+                mapLocation: mapLocation.isEmpty ? nil : mapLocation,
+                jobCategory: category.isEmpty ? nil : category
             )
             onPosted()
             dismiss()

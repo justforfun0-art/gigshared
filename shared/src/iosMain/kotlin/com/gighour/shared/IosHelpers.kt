@@ -171,6 +171,13 @@ suspend fun com.gighour.shared.domain.repository.PushTokenRepository.registerTok
     registerToken(userId, token, "ios").getOrThrow()
 }
 
+/** [JobExtractRepository.extract] as a throwing suspend (AI Post-Job suggestions). */
+@Throws(Throwable::class)
+suspend fun com.gighour.shared.domain.repository.JobExtractRepository.extractJobOrThrow(
+    text: String,
+): com.gighour.shared.domain.repository.JobSuggestion =
+    extract(text).getOrThrow()
+
 /** [SavedSearchesRepository.list] as a throwing suspend. */
 @Throws(Throwable::class)
 suspend fun com.gighour.shared.domain.repository.SavedSearchesRepository.listSavedSearchesOrThrow(): List<com.gighour.shared.domain.repository.SavedSearch> =
@@ -278,6 +285,7 @@ suspend fun JobRepository.createJobOrThrow(
     state: String?,
     district: String?,
     mapLocation: String?,
+    jobCategory: String?,
 ): Job = createJob(
     Job(
         id = "",
@@ -287,6 +295,7 @@ suspend fun JobRepository.createJobOrThrow(
         location = location,
         salaryRange = salaryRange,
         skillsRequired = skillsRequired,
+        jobCategory = jobCategory,
         jobDate = jobDate,
         startTime = startTime,
         endTime = endTime,
