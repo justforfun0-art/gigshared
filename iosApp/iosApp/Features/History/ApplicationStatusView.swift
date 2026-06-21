@@ -25,6 +25,10 @@ struct ApplicationStatusView: View {
     @State private var showWithdrawConfirm = false
     @State private var withdrawing = false
     @State private var actionError: String?
+    // Inline completion code (COMPLETION_PENDING) — loaded from the work session.
+    @State private var pendingCode: String?
+    @State private var loadingCode = false
+    @State private var regenerating = false
 
     private var job: Job? { application.job }
 
@@ -122,7 +126,7 @@ struct ApplicationStatusView: View {
         case .otpRequested:
             primaryAction(L("enter_otp_btn"), "key.fill") { openSession = true }
         case .completionPending:
-            primaryAction(L("ios_read_this_code_to_your_employer"), "qrcode") { openSession = true }
+            completionCodeCard
         case .applied, .shortlisted:
             if applications != nil {
                 Button { showWithdrawConfirm = true } label: {
@@ -136,6 +140,59 @@ struct ApplicationStatusView: View {
             primaryAction(L("browse_jobs_action"), "magnifyingglass") { browseJobs() }
         default:
             EmptyView()
+        }
+    }
+
+    /// Inline completion-code card (Android's COMPLETION_PENDING card): green
+    /// check + "share this code", the big monospace code, and Generate New Code.
+    private var completionCodeCard: some View {
+        VStack(spacing: 14) {
+            HStack(spacing: 12) {
+                Circle().fill(GHTheme.hex(0xD1FAE5)).frame(width: 40, height: 40)
+                    .overlay(Image(systemName: "checkmark.circle.fill").foregroundStyle(GHTheme.hex(0x10B981)))
+                Text(L("share_code_to_verify"))
+                    .font(.subheadline).foregroundStyle(GHTheme.onSurfaceVariant)
+                Spacer(minLength: 0)
+            }
+            Text(pendingCode ?? "------")
+                .font(.system(size: 34, weight: .bold, design: .monospaced))
+                .kerning(8)
+                .foregroundStyle(GHTheme.hex(0x10B981))
+                .frame(maxWidth: .infinity)
+                .redacted(reason: loadingCode && pendingCode == nil ? .placeholder : [])
+
+            Button { Task { await regenerateCode() } } label: {
+                if regenerating { ProgressView().frame(maxWidth: .infinity) }
+                else { Label(L("generate_new_code"), systemImage: "arrow.clockwise").frame(maxWidth: .infinity) }
+            }
+            .buttonStyle(.bordered).tint(GHTheme.hex(0x10B981)).controlSize(.large)
+            .disabled(regenerating)
+        }
+        .padding(16)
+        .frame(maxWidth: .infinity)
+        .background(Color.white, in: RoundedRectangle(cornerRadius: 16))
+        .overlay(RoundedRectangle(cornerRadius: 16).stroke(GHTheme.outline, lineWidth: 1))
+        .task { await loadCode() }
+    }
+
+    /// Pull the existing completion OTP from the work session (Android shows the
+    /// already-generated code, not a fresh one).
+    private func loadCode() async {
+        guard pendingCode == nil, let applications, !loadingCode else { return }
+        loadingCode = true
+        defer { loadingCode = false }
+        if let session = try? await IosHelpersKt.getWorkSessionOrThrow(applications, applicationId: application.id),
+           let otp = session.completionOtp, !otp.isEmpty {
+            pendingCode = otp
+        }
+    }
+
+    private func regenerateCode() async {
+        guard let applications else { return }
+        regenerating = true
+        defer { regenerating = false }
+        if let code = try? await IosHelpersKt.regenerateCompletionOtpOrThrow(applications, applicationId: application.id) {
+            pendingCode = code
         }
     }
 

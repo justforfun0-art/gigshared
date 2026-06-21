@@ -439,3 +439,6 @@
 "district_required" = "ज़िला *";
 "about" = "परिचय";
 "bio_placeholder" = "नियोक्ताओं को अपने बारे में बताएं";
+
+"share_code_to_verify" = "पूर्णता सत्यापित करने के लिए यह कोड अपने नियोक्ता को पढ़ें";
+"generate_new_code" = "नया कोड बनाएँ";

@@ -440,3 +440,6 @@
 "district_required" = "District *";
 "about" = "About";
 "bio_placeholder" = "Tell employers about yourself";
+
+"share_code_to_verify" = "Read this code to your employer to verify completion";
+"generate_new_code" = "Generate New Code";
