@@ -240,6 +240,7 @@ struct RootView: View {
                               applications: container.applications,
                               profile: container.profile,
                               messages: container.messages,
+                              onSelectTab: { selected = $0 },
                               session: session)
             case 1:
                 JobFeedView(jobs: container.jobs,
