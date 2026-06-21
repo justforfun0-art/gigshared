@@ -23,6 +23,8 @@ struct DashboardView: View {
     private let dashboardRepo: any DashboardRepository
     /// Employer Quick Actions switch tabs (RootView owns the selection).
     var onSelectTab: ((Int) -> Void)? = nil
+    /// Opens the Applications tab pre-filtered to Active (home "Active" tile).
+    var onShowActiveApplications: (() -> Void)? = nil
     private let userPhone: String
     private let employeeId: String
     @State private var showNotifications = false
@@ -43,16 +45,19 @@ struct DashboardView: View {
          messages: (any MessageRepository)? = nil,
          payments: (any PaymentRepository)? = nil,
          onSelectTab: ((Int) -> Void)? = nil,
+         onShowActiveApplications: (() -> Void)? = nil,
          session: AuthData) {
         _viewModel = StateObject(wrappedValue: DashboardViewModel(
             dashboard: dashboard,
             referralRepo: referralRepo,
             jobs: swipeJobs,
+            applications: applications,
             userId: session.userId,
             userType: session.userType
         ))
         self.dashboardRepo = dashboard
         self.onSelectTab = onSelectTab
+        self.onShowActiveApplications = onShowActiveApplications
         self.notifications = notifications
         self.swipeJobs = swipeJobs
         self.applications = applications
@@ -234,7 +239,7 @@ struct DashboardView: View {
             // Tiles navigate like Android (employee tabs: 2=Applications, 3=Earnings).
             LazyVGrid(columns: columns, spacing: 12) {
                 StatTile(title: "Applications", value: "\(s.totalApplications)", icon: "doc.text", tint: .blue) { onSelectTab?(2) }
-                StatTile(title: "Active jobs", value: "\(s.activeJobs)", icon: "bolt", tint: .orange) { onSelectTab?(2) }
+                StatTile(title: "Active jobs", value: "\(viewModel.activeApplicationsCount ?? Int(s.activeJobs))", icon: "bolt", tint: .orange) { onShowActiveApplications?() }
                 StatTile(title: "Completed", value: "\(s.completedJobs)", icon: "checkmark.seal", tint: .green) { onSelectTab?(2) }
                 StatTile(title: "Earnings", value: "₹\(s.totalEarnings)", icon: "indianrupeesign.circle", tint: .green) { onSelectTab?(3) }
                 StatTile(title: "Pending pay", value: "₹\(s.pendingPayments)", icon: "hourglass", tint: .amber) { onSelectTab?(3) }

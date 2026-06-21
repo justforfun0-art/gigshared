@@ -21,6 +21,9 @@ final class DashboardViewModel: ObservableObject {
     @Published private(set) var insights: EmployerInsights?
     /// Employer's most recent jobs (for the "Your Recent Jobs" dashboard section).
     @Published private(set) var recentJobs: [Job] = []
+    /// Employee: count of active applications (isActive()), matching the History
+    /// "Active" filter so the home tile and that chip agree. nil = fall back to stat.
+    @Published private(set) var activeApplicationsCount: Int?
 
     private let dashboard: any DashboardRepository
     private let referralRepo: any ReferralRepository
@@ -28,15 +31,18 @@ final class DashboardViewModel: ObservableObject {
     let isEmployer: Bool
 
     private let jobs: (any JobRepository)?
+    private let applications: (any ApplicationRepository)?
 
     init(dashboard: any DashboardRepository,
          referralRepo: any ReferralRepository,
          jobs: (any JobRepository)? = nil,
+         applications: (any ApplicationRepository)? = nil,
          userId: String,
          userType: String?) {
         self.dashboard = dashboard
         self.referralRepo = referralRepo
         self.jobs = jobs
+        self.applications = applications
         self.userId = userId
         self.isEmployer = (userType?.lowercased() == "employer")
     }
@@ -49,7 +55,18 @@ final class DashboardViewModel: ObservableObject {
             if self.isEmployer {
                 group.addTask { await self.loadInsights() }
                 group.addTask { await self.loadRecentJobs() }
+            } else {
+                group.addTask { await self.loadActiveApplicationsCount() }
             }
+        }
+    }
+
+    /// Count active applications the same way the History "Active" filter does
+    /// (isActive()), so the home tile matches that chip.
+    private func loadActiveApplicationsCount() async {
+        guard let applications else { return }
+        if let apps = try? await IosHelpersKt.getActiveEmployeeApplicationsOrThrow(applications, employeeId: userId) {
+            activeApplicationsCount = apps.filter { $0.status.isActive() }.count
         }
     }
 

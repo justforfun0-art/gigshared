@@ -11,17 +11,22 @@ struct MyApplicationsView: View {
     private let messages: (any MessageRepository)?
     private let employeeId: String
     private let isEmployer: Bool
-    @State private var filter: HistoryFilter = .all
+    @State private var filter: HistoryFilter
+    @State private var employerFilter: EmployerFilter
 
     /// Role accent — violet for employees, green for employers.
     private var accent: Color { isEmployer ? GHTheme.tertiary : GHTheme.primary }
 
     init(applications: any ApplicationRepository, employeeId: String,
-         messages: (any MessageRepository)? = nil, isEmployer: Bool = false) {
+         messages: (any MessageRepository)? = nil, isEmployer: Bool = false,
+         initialActive: Bool = false) {
         self.applications = applications
         self.messages = messages
         self.employeeId = employeeId
         self.isEmployer = isEmployer
+        // Land on the Active tab when opened from the home "Active" tile.
+        _filter = State(initialValue: initialActive ? .active : .all)
+        _employerFilter = State(initialValue: initialActive ? .active : .active)
         _viewModel = StateObject(
             wrappedValue: MyApplicationsViewModel(applications: applications, employeeId: employeeId, isEmployer: isEmployer)
         )
@@ -39,7 +44,6 @@ struct MyApplicationsView: View {
         case selected = "Selected", inProgress = "In Progress", completed = "Completed"
         var id: String { rawValue }
     }
-    @State private var employerFilter: EmployerFilter = .active
     @State private var query: String = ""
 
     var body: some View {

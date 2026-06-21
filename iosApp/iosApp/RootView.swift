@@ -25,6 +25,8 @@ struct RootView: View {
     @State private var showHawkeye = false
     @State private var showJobSearch = false
     @State private var showSavedSearches = false
+    /// When the home "Active" tile is tapped, open the Applications tab pre-filtered to Active.
+    @State private var applicationsActiveOnOpen = false
     /// Active WORK_IN_PROGRESS application opened from the floating job bar.
     @State private var activeJobApp: Application?
 
@@ -221,7 +223,9 @@ struct RootView: View {
                 MyApplicationsView(applications: container.applications,
                                    employeeId: session.userId,
                                    messages: container.messages,
-                                   isEmployer: true)
+                                   isEmployer: true,
+                                   initialActive: applicationsActiveOnOpen)
+                    .id(applicationsActiveOnOpen)
             case 3:
                 PaymentsView(payments: container.payments,
                              employerId: session.userId,
@@ -240,7 +244,8 @@ struct RootView: View {
                               applications: container.applications,
                               profile: container.profile,
                               messages: container.messages,
-                              onSelectTab: { selected = $0 },
+                              onSelectTab: { applicationsActiveOnOpen = false; selected = $0 },
+                              onShowActiveApplications: { applicationsActiveOnOpen = true; selected = 2 },
                               session: session)
             case 1:
                 JobFeedView(jobs: container.jobs,
@@ -248,7 +253,9 @@ struct RootView: View {
                             employeeId: session.userId,
                             profile: container.profile)
             case 2:
-                MyApplicationsView(applications: container.applications, employeeId: session.userId, messages: container.messages)
+                MyApplicationsView(applications: container.applications, employeeId: session.userId,
+                                   messages: container.messages, initialActive: applicationsActiveOnOpen)
+                    .id(applicationsActiveOnOpen)
             case 3:
                 EarningsView(dashboard: container.dashboard,
                              applications: container.applications,
