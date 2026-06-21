@@ -74,12 +74,15 @@ struct MyApplicationsView: View {
         if isEmployer {
             employerFilterTabs
         } else {
+            let apps = currentApps
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 24) {
                     ForEach(HistoryFilter.allCases) { f in
                         let selected = f == filter
+                        // Count shown only on the All and Active tabs.
+                        let n = (f == .all || f == .active) ? historyCount(f, apps) : nil
                         VStack(spacing: 6) {
-                            Text(f.rawValue)
+                            Text(n.map { "\(f.rawValue) (\($0))" } ?? f.rawValue)
                                 .font(.system(size: 15, weight: selected ? .semibold : .regular))
                                 .foregroundStyle(selected ? accent : GHTheme.onSurfaceVariant)
                             Rectangle().fill(selected ? accent : .clear).frame(height: 2)
@@ -90,6 +93,22 @@ struct MyApplicationsView: View {
                 .padding(.horizontal)
             }
             .padding(.vertical, 8)
+        }
+    }
+
+    /// Count for an employee history filter (used for the All/Active tab badges).
+    private func historyCount(_ f: HistoryFilter, _ apps: [Application]) -> Int {
+        apps.filter { historyMatches(f, $0) }.count
+    }
+    private func historyMatches(_ f: HistoryFilter, _ app: Application) -> Bool {
+        switch f {
+        case .all: return true
+        case .active: return app.status.isActive()
+        case .completed: return app.status == .completed
+        case .expired: return app.status == .expired
+        case .rejected:
+            return [.rejected, .rejectedOnce, .rejectedAndReshown, .noShow, .withdrawn, .notInterested]
+                .contains(app.status)
         }
     }
 
@@ -116,9 +135,10 @@ struct MyApplicationsView: View {
             HStack(spacing: 22) {
                 ForEach(EmployerFilter.allCases) { f in
                     let selected = f == employerFilter
-                    let n = employerCount(f, apps)
+                    // Count shown only on the Active and All tabs.
+                    let n = (f == .all || f == .active) ? employerCount(f, apps) : nil
                     VStack(spacing: 6) {
-                        Text(n > 0 ? "\(f.rawValue) (\(n))" : f.rawValue)
+                        Text(n.map { "\(f.rawValue) (\($0))" } ?? f.rawValue)
                             .font(.system(size: 14, weight: selected ? .semibold : .regular))
                             .foregroundStyle(selected ? accent : GHTheme.onSurfaceVariant)
                         Rectangle().fill(selected ? accent : .clear).frame(height: 2)
