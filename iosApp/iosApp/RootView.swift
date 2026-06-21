@@ -25,8 +25,9 @@ struct RootView: View {
     @State private var showHawkeye = false
     @State private var showJobSearch = false
     @State private var showSavedSearches = false
-    /// When the home "Active" tile is tapped, open the Applications tab pre-filtered to Active.
-    @State private var applicationsActiveOnOpen = false
+    /// When a home tile is tapped, open the Applications tab pre-filtered
+    /// (e.g. .active / .completed). nil = default (All).
+    @State private var desiredAppsFilter: MyApplicationsView.HistoryFilter?
     /// Active WORK_IN_PROGRESS application opened from the floating job bar.
     @State private var activeJobApp: Application?
 
@@ -224,8 +225,8 @@ struct RootView: View {
                                    employeeId: session.userId,
                                    messages: container.messages,
                                    isEmployer: true,
-                                   initialActive: applicationsActiveOnOpen)
-                    .id(applicationsActiveOnOpen)
+                                   initialFilter: desiredAppsFilter)
+                    .id(desiredAppsFilter?.rawValue ?? "all")
             case 3:
                 PaymentsView(payments: container.payments,
                              employerId: session.userId,
@@ -244,8 +245,11 @@ struct RootView: View {
                               applications: container.applications,
                               profile: container.profile,
                               messages: container.messages,
-                              onSelectTab: { applicationsActiveOnOpen = false; selected = $0 },
-                              onShowActiveApplications: { applicationsActiveOnOpen = true; selected = 2 },
+                              onSelectTab: { desiredAppsFilter = nil; selected = $0 },
+                              onShowApplications: { tab in
+                                  desiredAppsFilter = (tab == "completed") ? .completed : .active
+                                  selected = 2
+                              },
                               session: session)
             case 1:
                 JobFeedView(jobs: container.jobs,
@@ -254,8 +258,8 @@ struct RootView: View {
                             profile: container.profile)
             case 2:
                 MyApplicationsView(applications: container.applications, employeeId: session.userId,
-                                   messages: container.messages, initialActive: applicationsActiveOnOpen)
-                    .id(applicationsActiveOnOpen)
+                                   messages: container.messages, initialFilter: desiredAppsFilter)
+                    .id(desiredAppsFilter?.rawValue ?? "all")
             case 3:
                 EarningsView(dashboard: container.dashboard,
                              applications: container.applications,

@@ -19,17 +19,26 @@ struct MyApplicationsView: View {
 
     init(applications: any ApplicationRepository, employeeId: String,
          messages: (any MessageRepository)? = nil, isEmployer: Bool = false,
-         initialActive: Bool = false) {
+         initialFilter: HistoryFilter? = nil) {
         self.applications = applications
         self.messages = messages
         self.employeeId = employeeId
         self.isEmployer = isEmployer
-        // Land on the Active tab when opened from the home "Active" tile.
-        _filter = State(initialValue: initialActive ? .active : .all)
-        _employerFilter = State(initialValue: initialActive ? .active : .active)
+        // Open on a specific tab when launched from a home tile (Active/Completed).
+        _filter = State(initialValue: initialFilter ?? .all)
+        _employerFilter = State(initialValue: Self.employerEquivalent(initialFilter))
         _viewModel = StateObject(
             wrappedValue: MyApplicationsViewModel(applications: applications, employeeId: employeeId, isEmployer: isEmployer)
         )
+    }
+
+    /// Map a home-tile HistoryFilter to the employer tab set (default: Active).
+    private static func employerEquivalent(_ f: HistoryFilter?) -> EmployerFilter {
+        switch f {
+        case .completed: return .completed
+        case .active: return .active
+        default: return .active
+        }
     }
 
     enum HistoryFilter: String, CaseIterable, Identifiable {
