@@ -32,6 +32,7 @@ final class AppContainer {
     let savedSearches: any SavedSearchesRepository
     let pushTokens: any PushTokenRepository
     let jobExtract: any JobExtractRepository
+    let match: any MatchRepository
     let assistant: AssistantEngine
 
     init(config: BackendConfig) {
@@ -79,6 +80,7 @@ final class AppContainer {
         self.savedSearches = SavedSearchesRepositoryImpl(api: SavedSearchesApi(client: api))
         self.pushTokens = PushTokenRepositoryImpl(supabaseClient: supabase)
         self.jobExtract = JobExtractRepositoryImpl(api: JobExtractApi(client: api))
+        self.match = MatchRepositoryImpl(api: MatchApi(client: api))
         self.assistant = AssistantEngine(
             jobs: jobs,
             applications: applications,

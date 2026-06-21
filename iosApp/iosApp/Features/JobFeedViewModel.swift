@@ -23,12 +23,20 @@ final class JobFeedViewModel: ObservableObject {
     private let jobs: any JobRepository
     private let profileRepo: (any ProfileRepository)?
     private let employeeId: String?
+    private let matchRepo: (any MatchRepository)?
+    /// Semantic match score per jobId (0..100), from the embedding matcher (#4).
+    @Published private(set) var matchScores: [String: Int] = [:]
 
-    init(jobs: any JobRepository, profile: (any ProfileRepository)? = nil, employeeId: String? = nil) {
+    init(jobs: any JobRepository, profile: (any ProfileRepository)? = nil,
+         employeeId: String? = nil, match: (any MatchRepository)? = nil) {
         self.jobs = jobs
         self.profileRepo = profile
         self.employeeId = employeeId
+        self.matchRepo = match
     }
+
+    /// The match % for a job, if the embedding matcher returned one.
+    func matchScore(_ jobId: String) -> Int? { matchScores[jobId] }
 
     func load() async {
         state = .loading
@@ -61,6 +69,13 @@ final class JobFeedViewModel: ObservableObject {
                 }.map(\.element)
             }
             self.state = .loaded(list)
+
+            // Semantic match scores (#4) — best-effort overlay; the feed already
+            // rendered, so a failure or empty result just hides the badge.
+            if let matchRepo {
+                matchScores = (try? await IosHelpersKt.matchScoresOrThrow(
+                    matchRepo, state: stateName, district: district, limit: 50)) as? [String: Int] ?? [:]
+            }
         } catch {
             self.state = .failed((error as NSError).localizedDescription)
         }

@@ -255,7 +255,8 @@ struct RootView: View {
                 JobFeedView(jobs: container.jobs,
                             applications: container.applications,
                             employeeId: session.userId,
-                            profile: container.profile)
+                            profile: container.profile,
+                            match: container.match)
             case 2:
                 MyApplicationsView(applications: container.applications, employeeId: session.userId,
                                    messages: container.messages, initialFilter: desiredAppsFilter)

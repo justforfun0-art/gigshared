@@ -11,9 +11,10 @@ struct JobFeedView: View {
     private let employeeId: String
 
     init(jobs: any JobRepository, applications: any ApplicationRepository,
-         employeeId: String, profile: (any ProfileRepository)? = nil) {
+         employeeId: String, profile: (any ProfileRepository)? = nil,
+         match: (any MatchRepository)? = nil) {
         _viewModel = StateObject(wrappedValue: JobFeedViewModel(
-            jobs: jobs, profile: profile, employeeId: employeeId
+            jobs: jobs, profile: profile, employeeId: employeeId, match: match
         ))
         self.applications = applications
         self.employeeId = employeeId
@@ -62,7 +63,7 @@ struct JobFeedView: View {
                             NavigationLink {
                                 JobDetailView(job: job, applications: applications, employeeId: employeeId)
                             } label: {
-                                JobFeedRow(job: job)
+                                JobFeedRow(job: job, matchScore: viewModel.matchScore(job.id))
                             }
                             .buttonStyle(.plain)
                         }
@@ -99,6 +100,8 @@ struct JobFeedView: View {
 /// A job summary card for the feed list (Android card look).
 private struct JobFeedRow: View {
     let job: Job
+    /// Semantic match % (#4); a violet badge when a strong match (≥60).
+    var matchScore: Int? = nil
 
     var body: some View {
         GHCard {
@@ -108,6 +111,13 @@ private struct JobFeedRow: View {
                         .font(.headline)
                         .foregroundStyle(GHTheme.onBackground)
                     Spacer()
+                    if let s = matchScore, s >= 60 {
+                        Label("\(s)% match", systemImage: "sparkles")
+                            .font(.caption2.weight(.semibold))
+                            .foregroundStyle(GHTheme.hex(0x7C3AED))
+                            .padding(.horizontal, 8).padding(.vertical, 3)
+                            .background(GHTheme.hex(0xF5F3FF), in: Capsule())
+                    }
                     Image(systemName: "chevron.right").font(.caption).foregroundStyle(GHTheme.muted)
                 }
                 if let salary = job.salaryRange, !salary.isEmpty {

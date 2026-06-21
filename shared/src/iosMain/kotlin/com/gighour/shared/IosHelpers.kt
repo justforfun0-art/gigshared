@@ -171,6 +171,15 @@ suspend fun com.gighour.shared.domain.repository.PushTokenRepository.registerTok
     registerToken(userId, token, "ios").getOrThrow()
 }
 
+/** [MatchRepository.matchScores] as a throwing suspend (jobId → 0..100 match %). */
+@Throws(Throwable::class)
+suspend fun com.gighour.shared.domain.repository.MatchRepository.matchScoresOrThrow(
+    state: String?,
+    district: String?,
+    limit: Int,
+): Map<String, Int> =
+    matchScores(state, district, limit).getOrThrow()
+
 /** [JobExtractRepository.extract] as a throwing suspend (AI Post-Job suggestions). */
 @Throws(Throwable::class)
 suspend fun com.gighour.shared.domain.repository.JobExtractRepository.extractJobOrThrow(
