@@ -76,6 +76,17 @@ struct AssistantView: View {
                         }
                     }
                 }
+                // Agentic action — a confirm button the assistant proposed.
+                if let action = msg.action {
+                    Button {
+                        Task { await viewModel.confirm(action, on: msg.id) }
+                    } label: {
+                        Label(action.confirmLabel, systemImage: "checkmark.circle.fill")
+                            .font(.subheadline.weight(.semibold))
+                    }
+                    .buttonStyle(.borderedProminent).tint(accent).controlSize(.small)
+                    .disabled(viewModel.isThinking)
+                }
             }
             if !msg.fromUser { Spacer(minLength: 40) }
         }

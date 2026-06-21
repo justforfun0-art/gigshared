@@ -8,6 +8,7 @@ package com.gighour.shared.data.assistant
 enum class AssistantIntent {
     GREETING, THANKS,
     APPLICATIONS, ACTIVE_JOBS, WHY_REJECTED, EARNINGS, FIND_JOBS,
+    APPLY_TOP_JOB,
     HELP_APPLY, HELP_PAYMENT, HELP_OTP, WHAT_IS,
     UNKNOWN;
 
@@ -23,6 +24,11 @@ enum class AssistantIntent {
             if (t.anyOf("my application", "applications", "applied", "my applies")) return APPLICATIONS
             if (t.anyOf("active job", "ongoing", "in progress", "current job", "my active")) return ACTIVE_JOBS
             if (t.anyOf("earning", "earned", "income", "how much", "salary", "money", "paid")) return EARNINGS
+            // Agentic apply — must precede FIND_JOBS / HELP_APPLY ("apply" is shared).
+            // Worker only; the engine no-ops it for employers.
+            if (!isEmployer && t.contains("apply") &&
+                t.anyOf("for me", "top job", "best job", "apply me", "auto apply", "apply to the", "nearby", "near me", "best match")
+            ) return APPLY_TOP_JOB
             if (t.anyOf("find job", "jobs near", "nearby job", "jobs in", "show jobs", "available jobs")) return FIND_JOBS
 
             if (t.anyOf("how to apply", "how do i apply", "apply for")) return HELP_APPLY

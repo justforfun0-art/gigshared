@@ -13,10 +13,24 @@ import com.gighour.shared.util.Logger
 /** One label/value stat line in an assistant reply. */
 data class AssistantStat(val label: String, val value: String)
 
-/** The assistant's reply: a text body + optional simple stat lines. */
+/**
+ * A confirmable action the assistant proposes (agentic). The UI renders
+ * [confirmLabel] as a button; on tap it calls [AssistantEngine.executeAction]
+ * with this action. [kind] + [targetId] identify what to do.
+ */
+data class AssistantAction(
+    val kind: Kind,
+    val targetId: String,
+    val confirmLabel: String,
+) {
+    enum class Kind { APPLY_TO_JOB }
+}
+
+/** The assistant's reply: text + optional stat lines + an optional pending action. */
 data class AssistantReply(
     val text: String,
     val stats: List<AssistantStat> = emptyList(),
+    val action: AssistantAction? = null,
 )
 
 /**
@@ -41,6 +55,7 @@ class AssistantEngine(
             AssistantIntent.WHY_REJECTED -> whyRejected(userId)
             AssistantIntent.EARNINGS -> earnings(userId, isEmployer)
             AssistantIntent.FIND_JOBS -> findJobs(userId, isEmployer)
+            AssistantIntent.APPLY_TOP_JOB -> proposeApplyTopJob(userId, isEmployer)
             AssistantIntent.HELP_APPLY -> AssistantReply(AssistantFaq.howToApply)
             AssistantIntent.HELP_PAYMENT -> AssistantReply(AssistantFaq.howPaymentWorks)
             AssistantIntent.HELP_OTP -> AssistantReply(AssistantFaq.otpHelp)
@@ -154,6 +169,53 @@ class AssistantEngine(
             },
             onFailure = { networkError() },
         )
+    }
+
+    /**
+     * Agentic: propose applying to the best nearby job. Returns a reply with a
+     * confirmable action (the UI shows a button; tapping it calls [executeAction]).
+     * Never applies directly — the user must confirm.
+     */
+    private suspend fun proposeApplyTopJob(userId: String, isEmployer: Boolean): AssistantReply {
+        if (isEmployer) return AssistantReply("Applying to jobs is for workers. You can post a job from the My Jobs tab.")
+        val p = profile.getEmployeeProfile(userId).getOrNull()
+        val filter = p?.let { JobFilter(state = it.state, district = it.district) }
+        return jobs.getJobs(filter = filter, page = 1, limit = 1).fold(
+            onSuccess = { list ->
+                val top = list.firstOrNull()
+                    ?: return AssistantReply("I couldn’t find an open job near ${p?.district ?: "you"} right now. Check back soon!")
+                AssistantReply(
+                    text = "The best match near ${p?.district ?: "you"} is “${top.title}”" +
+                        (top.salaryRange?.let { " ($it)" } ?: "") +
+                        ".\n\nWant me to apply for you?",
+                    action = AssistantAction(
+                        kind = AssistantAction.Kind.APPLY_TO_JOB,
+                        targetId = top.id,
+                        confirmLabel = "Apply to “${top.title}”",
+                    ),
+                )
+            },
+            onFailure = { networkError() },
+        )
+    }
+
+    /**
+     * Execute a confirmed assistant action (the user tapped the confirm button).
+     * Returns the result as a reply.
+     */
+    suspend fun executeAction(userId: String, action: AssistantAction): AssistantReply {
+        return when (action.kind) {
+            AssistantAction.Kind.APPLY_TO_JOB ->
+                applications.applyToJob(jobId = action.targetId, employeeId = userId).fold(
+                    onSuccess = { AssistantReply("Done! ✅ I’ve applied for you. You’ll be notified if you’re selected. Track it in History.") },
+                    onFailure = { e ->
+                        val msg = e.message ?: ""
+                        if (msg.contains("already", ignoreCase = true))
+                            AssistantReply("You’ve already applied to that job. 👍")
+                        else networkError()
+                    },
+                )
+        }
     }
 
     /** Free-form fallback through the Gemini-backed API. */
