@@ -171,6 +171,15 @@ suspend fun com.gighour.shared.domain.repository.PushTokenRepository.registerTok
     registerToken(userId, token, "ios").getOrThrow()
 }
 
+/** [ForecastRepository.demand] as a throwing suspend (district demand trends, #5). */
+@Throws(Throwable::class)
+suspend fun com.gighour.shared.domain.repository.ForecastRepository.demandOrThrow(
+    state: String?,
+    district: String?,
+    limit: Int,
+): List<com.gighour.shared.domain.repository.DemandInfo> =
+    demand(state, district, limit).getOrThrow()
+
 /** [MatchRepository.matchScores] as a throwing suspend (jobId → 0..100 match %). */
 @Throws(Throwable::class)
 suspend fun com.gighour.shared.domain.repository.MatchRepository.matchScoresOrThrow(

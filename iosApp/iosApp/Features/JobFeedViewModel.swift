@@ -24,15 +24,20 @@ final class JobFeedViewModel: ObservableObject {
     private let profileRepo: (any ProfileRepository)?
     private let employeeId: String?
     private let matchRepo: (any MatchRepository)?
+    private let forecastRepo: (any ForecastRepository)?
     /// Semantic match score per jobId (0..100), from the embedding matcher (#4).
     @Published private(set) var matchScores: [String: Int] = [:]
+    /// The top rising-demand category nearby (#5), for the surge banner. nil = none.
+    @Published private(set) var risingTrend: DemandInfo?
 
     init(jobs: any JobRepository, profile: (any ProfileRepository)? = nil,
-         employeeId: String? = nil, match: (any MatchRepository)? = nil) {
+         employeeId: String? = nil, match: (any MatchRepository)? = nil,
+         forecast: (any ForecastRepository)? = nil) {
         self.jobs = jobs
         self.profileRepo = profile
         self.employeeId = employeeId
         self.matchRepo = match
+        self.forecastRepo = forecast
     }
 
     /// The match % for a job, if the embedding matcher returned one.
@@ -75,6 +80,12 @@ final class JobFeedViewModel: ObservableObject {
             if let matchRepo {
                 matchScores = (try? await IosHelpersKt.matchScoresOrThrow(
                     matchRepo, state: stateName, district: district, limit: 50)) as? [String: Int] ?? [:]
+            }
+            // Demand surge banner (#5) — top rising category nearby, best-effort.
+            if let forecastRepo {
+                let trends = (try? await IosHelpersKt.demandOrThrow(
+                    forecastRepo, state: stateName, district: district, limit: 5)) ?? []
+                risingTrend = trends.first { $0.rising }
             }
         } catch {
             self.state = .failed((error as NSError).localizedDescription)

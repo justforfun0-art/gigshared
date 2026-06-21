@@ -256,7 +256,8 @@ struct RootView: View {
                             applications: container.applications,
                             employeeId: session.userId,
                             profile: container.profile,
-                            match: container.match)
+                            match: container.match,
+                            forecast: container.forecast)
             case 2:
                 MyApplicationsView(applications: container.applications, employeeId: session.userId,
                                    messages: container.messages, initialFilter: desiredAppsFilter)

@@ -12,9 +12,9 @@ struct JobFeedView: View {
 
     init(jobs: any JobRepository, applications: any ApplicationRepository,
          employeeId: String, profile: (any ProfileRepository)? = nil,
-         match: (any MatchRepository)? = nil) {
+         match: (any MatchRepository)? = nil, forecast: (any ForecastRepository)? = nil) {
         _viewModel = StateObject(wrappedValue: JobFeedViewModel(
-            jobs: jobs, profile: profile, employeeId: employeeId, match: match
+            jobs: jobs, profile: profile, employeeId: employeeId, match: match, forecast: forecast
         ))
         self.applications = applications
         self.employeeId = employeeId
@@ -59,6 +59,9 @@ struct JobFeedView: View {
             } else {
                 ScrollView {
                     LazyVStack(spacing: 12) {
+                        if let trend = viewModel.risingTrend {
+                            demandBanner(trend)
+                        }
                         ForEach(jobs, id: \.id) { job in
                             NavigationLink {
                                 JobDetailView(job: job, applications: applications, employeeId: employeeId)
@@ -94,6 +97,24 @@ struct JobFeedView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding()
+    }
+
+    /// "🔥 Cleaning gigs are surging near you" demand-trend banner (#5).
+    private func demandBanner(_ trend: DemandInfo) -> some View {
+        HStack(spacing: 10) {
+            Image(systemName: "flame.fill").font(.title3).foregroundStyle(GHTheme.hex(0xF97316))
+            VStack(alignment: .leading, spacing: 2) {
+                Text("\(trend.category) gigs are surging near you")
+                    .font(.subheadline.weight(.semibold)).foregroundStyle(GHTheme.onBackground)
+                Text("\(Int(trend.recentCount)) posted this week\(trend.trendPct > 0 ? " · up \(Int(trend.trendPct))%" : "") — apply early")
+                    .font(.caption).foregroundStyle(GHTheme.onSurfaceVariant)
+            }
+            Spacer(minLength: 0)
+        }
+        .padding(12)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(GHTheme.hex(0xFFF7ED), in: RoundedRectangle(cornerRadius: 14))
+        .overlay(RoundedRectangle(cornerRadius: 14).stroke(GHTheme.hex(0xFED7AA), lineWidth: 1))
     }
 }
 
