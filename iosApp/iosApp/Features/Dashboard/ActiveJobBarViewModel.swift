@@ -1,4 +1,5 @@
 import Foundation
+import os
 import Shared
 
 /// Backs the in-app floating "live job progress" bar (iOS counterpart of
@@ -53,6 +54,8 @@ final class ActiveJobBarViewModel: ObservableObject {
             job = resolved
             // Start/update the Lock Screen / Dynamic Island Live Activity.
             let earned = rate * (max(Date().timeIntervalSince(started), 0) / 3600.0)
+            Logger(subsystem: "com.gighour.liveactivity", category: "WIP")
+                .info("WIP detected → syncing Live Activity for \"\(resolved.title, privacy: .public)\" (rate \(rate, privacy: .public))")
             LiveWorkActivityManager.shared.sync(
                 applicationId: resolved.applicationId, jobTitle: resolved.title,
                 startedAt: resolved.startedAt, hourlyRate: rate, earned: earned
